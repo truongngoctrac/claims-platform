@@ -57,6 +57,21 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "claim-blue": {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          500: "#0891b2",
+          600: "#0e7490",
+          700: "#0f566b",
+          900: "#164e63",
+        },
+        "claim-teal": {
+          50: "#f0fdfa",
+          100: "#ccfbf1",
+          500: "#14b8a6",
+          600: "#0d9488",
+          700: "#0f766e",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
