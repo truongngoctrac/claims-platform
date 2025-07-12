@@ -137,15 +137,19 @@ export function Navigation() {
                 </Link>
               )}
 
-              <Link to="/submit">
+              <Link to="/healthcare-claim">
                 <Button
-                  variant={isActive("/submit") ? "secondary" : "ghost"}
+                  variant={
+                    isActive("/healthcare-claim") ? "secondary" : "ghost"
+                  }
                   className={cn(
                     "text-sm font-medium",
-                    isActive("/submit") && "bg-accent text-accent-foreground",
+                    isActive("/healthcare-claim") &&
+                      "bg-accent text-accent-foreground",
                   )}
                 >
-                  Submit Claim
+                  <FileText className="h-4 w-4 mr-2" />
+                  Nộp hồ sơ y tế
                 </Button>
               </Link>
 
