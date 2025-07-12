@@ -43,52 +43,143 @@ import { makeAuthenticatedRequest } from "@/contexts/AuthContext";
 import { UserRole } from "@shared/auth";
 
 export default function Dashboard() {
-  const claims = [
-    {
-      id: "CLM-2024-001",
-      customer: "John Smith",
-      type: "Auto Insurance",
-      amount: "$12,500",
-      status: "pending",
-      priority: "high",
-      assignee: "Sarah Wilson",
-      submitted: "2024-01-15",
-      daysOpen: 3,
-    },
-    {
-      id: "CLM-2024-002",
-      customer: "Maria Garcia",
-      type: "Home Insurance",
-      amount: "$8,200",
-      status: "in-review",
-      priority: "medium",
-      assignee: "Mike Johnson",
-      submitted: "2024-01-14",
-      daysOpen: 4,
-    },
-    {
-      id: "CLM-2024-003",
-      customer: "David Chen",
-      type: "Health Insurance",
-      amount: "$3,400",
-      status: "approved",
-      priority: "low",
-      assignee: "Lisa Brown",
-      submitted: "2024-01-12",
-      daysOpen: 6,
-    },
-    {
-      id: "CLM-2024-004",
-      customer: "Emily Johnson",
-      type: "Auto Insurance",
-      amount: "$15,800",
-      status: "requires-info",
-      priority: "high",
-      assignee: "Tom Wilson",
-      submitted: "2024-01-13",
-      daysOpen: 5,
-    },
-  ];
+  const { user } = useAuth();
+  const [claims, setClaims] = useState<any[]>([]);
+  const [executives, setExecutives] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedClaim, setSelectedClaim] = useState<any>(null);
+  const [assignmentData, setAssignmentData] = useState({
+    assignedTo: "",
+    priority: "medium",
+    notes: "",
+    deadline: "",
+  });
+  const [assignmentLoading, setAssignmentLoading] = useState(false);
+  const [assignmentError, setAssignmentError] = useState("");
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch claims and executives in parallel
+      const [claimsResponse, executivesResponse] = await Promise.all([
+        makeAuthenticatedRequest("/api/claims"),
+        makeAuthenticatedRequest("/api/users/claim-executives"),
+      ]);
+
+      const [claimsData, executivesData] = await Promise.all([
+        claimsResponse.json(),
+        executivesResponse.json(),
+      ]);
+
+      if (claimsData.success) {
+        setClaims(claimsData.claims);
+      }
+
+      if (executivesData.success) {
+        setExecutives(executivesData.users);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelfAssign = async (claimId: string) => {
+    try {
+      const response = await makeAuthenticatedRequest(
+        `/api/claims/${claimId}/self-assign`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            priority: "medium",
+            notes: "Self-assigned for processing",
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Refresh claims data
+        fetchData();
+      } else {
+        console.error("Self-assignment failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error self-assigning claim:", error);
+    }
+  };
+
+  const handleAssignClaim = async () => {
+    if (!selectedClaim || !assignmentData.assignedTo) return;
+
+    try {
+      setAssignmentLoading(true);
+      setAssignmentError("");
+
+      const response = await makeAuthenticatedRequest("/api/claims/assign", {
+        method: "POST",
+        body: JSON.stringify({
+          claimId: selectedClaim.id,
+          ...assignmentData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAssignDialogOpen(false);
+        setSelectedClaim(null);
+        setAssignmentData({
+          assignedTo: "",
+          priority: "medium",
+          notes: "",
+          deadline: "",
+        });
+        // Refresh claims data
+        fetchData();
+      } else {
+        setAssignmentError(data.message || "Assignment failed");
+      }
+    } catch (error) {
+      setAssignmentError("An error occurred during assignment");
+      console.error("Error assigning claim:", error);
+    } finally {
+      setAssignmentLoading(false);
+    }
+  };
+
+  const openAssignDialog = (claim: any) => {
+    setSelectedClaim(claim);
+    setAssignDialogOpen(true);
+    setAssignmentError("");
+  };
+
+  const canAssign = user && ["admin", "claims_manager"].includes(user.role);
+  const canSelfAssign = user && user.role === "claim_executive";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navigation />
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading dashboard...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status: string) => {
     const variants: { [key: string]: string } = {
