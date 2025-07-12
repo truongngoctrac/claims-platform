@@ -33,6 +33,32 @@ import {
   handleGetUnreadCount,
 } from "./routes/notifications";
 
+// Healthcare claims routes
+import {
+  handleGetHealthcareClaims,
+  handleGetHealthcareClaim,
+  handleCreateHealthcareClaim,
+  handleSubmitHealthcareClaim,
+  handleAssignHealthcareClaim,
+  handleSelfAssignHealthcareClaim,
+  handleReviewHealthcareClaim,
+  handleAddClaimComment,
+  handleGetCustomerDashboard,
+  handleGetTPADashboard,
+  handleGetInsuranceDashboard,
+} from "./routes/healthcare-claims";
+
+// Integration routes
+import {
+  handleBHXHEligibilityCheck,
+  handleHISPatientHistory,
+  handleOCRProcessDocument,
+  handleInitiatePayment,
+  handleInsuranceCompanyNotification,
+  handleFraudDetection,
+  handleDigitalSignatureVerification,
+} from "./routes/integrations";
+
 export function createServer() {
   const app = express();
 
@@ -126,6 +152,84 @@ export function createServer() {
     authenticate,
     authorize([UserRole.ADMIN]),
     handleCreateNotification,
+  );
+
+  // Healthcare Claims routes
+  app.get("/api/healthcare-claims", authenticate, handleGetHealthcareClaims);
+  app.post("/api/healthcare-claims", authenticate, handleCreateHealthcareClaim);
+  app.get("/api/healthcare-claims/:id", authenticate, handleGetHealthcareClaim);
+  app.post(
+    "/api/healthcare-claims/:id/submit",
+    authenticate,
+    handleSubmitHealthcareClaim,
+  );
+  app.post(
+    "/api/healthcare-claims/assign",
+    authenticate,
+    authorize([UserRole.ADMIN, UserRole.CLAIMS_MANAGER]),
+    handleAssignHealthcareClaim,
+  );
+  app.post(
+    "/api/healthcare-claims/:claimId/self-assign",
+    authenticate,
+    handleSelfAssignHealthcareClaim,
+  );
+  app.post(
+    "/api/healthcare-claims/review",
+    authenticate,
+    authorize([UserRole.ADMIN, UserRole.CLAIMS_MANAGER]),
+    handleReviewHealthcareClaim,
+  );
+  app.post(
+    "/api/healthcare-claims/:claimId/comments",
+    authenticate,
+    handleAddClaimComment,
+  );
+
+  // Dashboard routes
+  app.get("/api/dashboard/customer", authenticate, handleGetCustomerDashboard);
+  app.get("/api/dashboard/tpa", authenticate, handleGetTPADashboard);
+  app.get(
+    "/api/dashboard/insurance",
+    authenticate,
+    handleGetInsuranceDashboard,
+  );
+
+  // Integration routes (mock services)
+  app.post(
+    "/api/integrations/bhxh/eligibility",
+    authenticate,
+    handleBHXHEligibilityCheck,
+  );
+  app.post(
+    "/api/integrations/his/patient-history",
+    authenticate,
+    handleHISPatientHistory,
+  );
+  app.post(
+    "/api/integrations/ocr/process",
+    authenticate,
+    handleOCRProcessDocument,
+  );
+  app.post(
+    "/api/integrations/payment/initiate",
+    authenticate,
+    handleInitiatePayment,
+  );
+  app.post(
+    "/api/integrations/insurance/notify",
+    authenticate,
+    handleInsuranceCompanyNotification,
+  );
+  app.post(
+    "/api/integrations/fraud-detection",
+    authenticate,
+    handleFraudDetection,
+  );
+  app.post(
+    "/api/integrations/signature/verify",
+    authenticate,
+    handleDigitalSignatureVerification,
   );
 
   return app;
