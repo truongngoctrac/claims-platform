@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,20 +61,39 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        "claim-blue": {
-          50: "#f0f9ff",
-          100: "#e0f2fe",
-          500: "#0891b2",
-          600: "#0e7490",
-          700: "#0f566b",
-          900: "#164e63",
+        // ClaimFlow brand colors
+        "brand-orange": {
+          50: "#fff7ed",
+          100: "#ffedd5",
+          500: "#ff6b35", // Primary brand orange
+          600: "#ea5a2b",
+          700: "#c44621",
+          900: "#7c2d12",
         },
-        "claim-teal": {
-          50: "#f0fdfa",
-          100: "#ccfbf1",
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
+        "brand-blue": {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          500: "#2e86ab", // Secondary brand blue
+          600: "#2563eb",
+          700: "#1d4ed8",
+          900: "#1e3a8a",
+        },
+        // Status colors
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
+        // Neutral grays
+        neutral: {
+          50: "#f8f9fa",
+          100: "#f1f3f4",
+          200: "#e8eaed",
+          300: "#dadce0",
+          400: "#bdc1c6",
+          500: "#9aa0a6",
+          600: "#80868b",
+          700: "#5f6368",
+          800: "#3c4043",
+          900: "#343a40",
         },
       },
       borderRadius: {
