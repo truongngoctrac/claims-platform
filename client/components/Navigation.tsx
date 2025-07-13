@@ -74,20 +74,55 @@ export function Navigation() {
 
   if (!isAuthenticated) {
     return (
-      <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
+      <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex h-16 items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
                 <FileText className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-foreground font-inter">
                 ClaimFlow
               </span>
             </Link>
-            <Link to="/login">
-              <Button>Sign In</Button>
-            </Link>
+
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-6 text-sm">
+                <a
+                  href="#features"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Tính năng
+                </a>
+                <a
+                  href="#process"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Quy trình
+                </a>
+                <a
+                  href="#support"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Hỗ trợ
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="hidden sm:flex">
+                  <Phone className="w-4 h-4 mr-2" />
+                  1900-xxxx
+                </Button>
+                <Link to="/login">
+                  <Button className="bg-primary hover:bg-primary/90">
+                    Đăng nhập
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -95,15 +130,18 @@ export function Navigation() {
   }
 
   return (
-    <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
+    <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
                 <FileText className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-foreground font-inter">
                 ClaimFlow
               </span>
             </Link>
@@ -113,11 +151,11 @@ export function Navigation() {
                 <Button
                   variant={isActive("/") ? "secondary" : "ghost"}
                   className={cn(
-                    "text-sm font-medium",
+                    "text-sm font-medium transition-colors",
                     isActive("/") && "bg-accent text-accent-foreground",
                   )}
                 >
-                  Overview
+                  Trang chủ
                 </Button>
               </Link>
 
@@ -126,13 +164,13 @@ export function Navigation() {
                   <Button
                     variant={isActive("/dashboard") ? "secondary" : "ghost"}
                     className={cn(
-                      "text-sm font-medium",
+                      "text-sm font-medium transition-colors",
                       isActive("/dashboard") &&
                         "bg-accent text-accent-foreground",
                     )}
                   >
                     <BarChart3 className="h-4 w-4 mr-2" />
-                    Dashboard
+                    Bảng điều khiển
                   </Button>
                 </Link>
               )}
@@ -143,34 +181,37 @@ export function Navigation() {
                     isActive("/healthcare-claim") ? "secondary" : "ghost"
                   }
                   className={cn(
-                    "text-sm font-medium",
+                    "text-sm font-medium transition-colors",
                     isActive("/healthcare-claim") &&
                       "bg-accent text-accent-foreground",
                   )}
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  Nộp hồ sơ y tế
+                  Nộp hồ sơ
                 </Button>
               </Link>
 
               {canAccessAdmin && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="text-sm font-medium">
+                    <Button
+                      variant="ghost"
+                      className="text-sm font-medium transition-colors"
+                    >
                       <Users className="h-4 w-4 mr-2" />
-                      Admin
+                      Quản trị
                       <ChevronDown className="h-4 w-4 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/users">User Management</Link>
+                      <Link to="/admin/users">Quản lý người dùng</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/assignments">Assignments</Link>
+                      <Link to="/admin/assignments">Phân công công việc</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/settings">System Settings</Link>
+                      <Link to="/admin/settings">Cài đặt hệ thống</Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -221,15 +262,15 @@ export function Navigation() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <User className="mr-2 h-4 w-4" />
-                  Profile
+                  Thông tin cá nhân
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  Cài đặt
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Bell className="mr-2 h-4 w-4" />
-                  Notifications
+                  Thông báo
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -237,7 +278,7 @@ export function Navigation() {
                   className="text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  Đăng xuất
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
