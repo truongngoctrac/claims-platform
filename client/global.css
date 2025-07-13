@@ -1,41 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
+   * ClaimFlow Healthcare - Color System
+   * Primary: #FF6B35 (Orange) - Warm, trustworthy
+   * Secondary: #2E86AB (Blue) - Professional, safe
+   * Neutral: #F8F9FA (Light Gray), #343A40 (Dark Gray)
+   */
   :root {
     --background: 0 0% 100%;
-    --foreground: 215 19% 15%;
+    --foreground: 210 10% 23%; /* #343A40 equivalent */
 
     --card: 0 0% 100%;
-    --card-foreground: 215 19% 15%;
+    --card-foreground: 210 10% 23%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 19% 15%;
+    --popover-foreground: 210 10% 23%;
 
-    --primary: 197 85% 15%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary Orange #FF6B35 */
+    --primary: 18 100% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 17% 95%;
-    --secondary-foreground: 215 19% 15%;
+    /* Secondary Blue #2E86AB */
+    --secondary: 202 58% 43%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 17% 95%;
-    --muted-foreground: 215 16% 47%;
+    /* Neutral Light #F8F9FA */
+    --muted: 210 17% 98%;
+    --muted-foreground: 210 10% 23%;
 
-    --accent: 197 85% 95%;
-    --accent-foreground: 197 85% 15%;
+    /* Accent using secondary blue */
+    --accent: 202 58% 95%;
+    --accent-foreground: 202 58% 43%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    /* Status Colors */
+    --success: 122 39% 49%; /* #28A745 */
+    --success-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 197 85% 15%;
+    --warning: 45 100% 51%; /* #FFC107 */
+    --warning-foreground: 210 10% 23%;
+
+    --destructive: 354 70% 54%; /* #DC3545 */
+    --destructive-foreground: 0 0% 100%;
+
+    --info: 188 78% 41%; /* #17A2B8 */
+    --info-foreground: 0 0% 100%;
+
+    --border: 210 20% 92%;
+    --input: 210 20% 92%;
+    --ring: 18 100% 60%;
 
     --radius: 0.5rem;
 
@@ -57,33 +74,35 @@
   }
 
   .dark {
-    --background: 215 30% 6%;
+    --background: 210 10% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 215 30% 6%;
+    --card: 210 10% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 215 30% 6%;
+    --popover: 210 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 197 85% 65%;
-    --primary-foreground: 215 30% 6%;
+    /* Primary Orange in dark mode */
+    --primary: 18 100% 65%;
+    --primary-foreground: 210 10% 8%;
 
-    --secondary: 215 25% 12%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary Blue in dark mode */
+    --secondary: 202 58% 48%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 25% 12%;
-    --muted-foreground: 215 15% 65%;
+    --muted: 210 10% 15%;
+    --muted-foreground: 210 5% 65%;
 
-    --accent: 215 25% 12%;
-    --accent-foreground: 197 85% 65%;
+    --accent: 210 10% 15%;
+    --accent-foreground: 202 58% 48%;
 
-    --destructive: 0 75% 55%;
+    --destructive: 354 70% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 215 25% 12%;
-    --input: 215 25% 12%;
-    --ring: 197 85% 65%;
+    --border: 210 10% 15%;
+    --input: 210 10% 15%;
+    --ring: 18 100% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -101,6 +120,138 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-inter font-semibold;
+  }
+
+  p,
+  span,
+  div {
+    @apply font-roboto;
+  }
+}
+
+@layer components {
+  /* Custom button variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+  }
+
+  /* Status colors */
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
+
+  .text-info {
+    color: hsl(var(--info));
+  }
+
+  .bg-info {
+    background-color: hsl(var(--info));
+  }
+
+  /* 8px grid system */
+  .spacing-xs {
+    @apply p-1;
+  } /* 4px */
+  .spacing-sm {
+    @apply p-2;
+  } /* 8px */
+  .spacing-md {
+    @apply p-4;
+  } /* 16px */
+  .spacing-lg {
+    @apply p-6;
+  } /* 24px */
+  .spacing-xl {
+    @apply p-8;
+  } /* 32px */
+  .spacing-2xl {
+    @apply p-12;
+  } /* 48px */
+  .spacing-3xl {
+    @apply p-16;
+  } /* 64px */
+
+  /* Card shadows */
+  .card-shadow {
+    @apply shadow-sm border border-border/50;
+  }
+
+  .card-shadow-hover {
+    @apply shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-muted animate-pulse rounded;
+  }
+
+  /* Touch-friendly mobile buttons */
+  .btn-mobile {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-in-out;
+  }
+}
+
+@layer utilities {
+  /* Typography scale */
+  .text-h1-desktop {
+    @apply text-[32px] leading-[40px];
+  }
+  .text-h1-mobile {
+    @apply text-[24px] leading-[32px];
+  }
+  .text-h2-desktop {
+    @apply text-[28px] leading-[36px];
+  }
+  .text-h2-mobile {
+    @apply text-[20px] leading-[28px];
+  }
+  .text-h3-desktop {
+    @apply text-[24px] leading-[32px];
+  }
+  .text-h3-mobile {
+    @apply text-[18px] leading-[26px];
+  }
+  .text-body-desktop {
+    @apply text-[16px] leading-[24px];
+  }
+  .text-body-mobile {
+    @apply text-[14px] leading-[20px];
+  }
+  .text-caption-desktop {
+    @apply text-[14px] leading-[20px];
+  }
+  .text-caption-mobile {
+    @apply text-[12px] leading-[16px];
   }
 }
