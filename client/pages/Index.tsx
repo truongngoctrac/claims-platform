@@ -4,298 +4,527 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   FileText,
-  BarChart3,
+  Clock,
   Shield,
-  Zap,
   Users,
   CheckCircle,
   ArrowRight,
-  Clock,
-  Target,
+  Phone,
+  Star,
   TrendingUp,
+  Eye,
+  MessageCircle,
+  Award,
+  Zap,
+  Heart,
+  Home,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+// Counter animation hook
+function useCounter(end: number, duration: number = 2000) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+
+      setCount(Math.floor(progress * end));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [end, duration]);
+
+  return count;
+}
 
 export default function Index() {
+  const claimsProcessed = useCounter(45678);
+  const avgProcessingHours = useCounter(18);
+  const satisfactionRate = useCounter(97);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-claim-blue-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
       {/* Hero Section */}
-      <section className="py-20 px-6">
-        <div className="container mx-auto text-center">
-          <Badge
-            variant="secondary"
-            className="mb-6 px-4 py-2 text-sm font-medium"
-          >
-            <Zap className="w-4 h-4 mr-2" />
-            Intelligent Claims Processing
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Streamline Your{" "}
-            <span className="text-primary">Claims Processing</span>
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Transform your insurance claims workflow with our intelligent
-            platform. Process claims faster, reduce errors, and improve customer
-            satisfaction with automated workflows and AI-powered insights.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/dashboard">
-              <Button size="lg" className="px-8 py-3 text-lg font-semibold">
-                <BarChart3 className="w-5 h-5 mr-2" />
-                View Dashboard
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <Link to="/submit">
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 py-3 text-lg font-semibold"
-              >
-                <FileText className="w-5 h-5 mr-2" />
-                Submit New Claim
-              </Button>
-            </Link>
+      <section className="relative px-6 py-16 md:py-24 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-orange-50 via-white to-brand-blue-50 opacity-60" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+
+        <div className="container mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Content */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <Badge
+                  variant="secondary"
+                  className="bg-brand-orange-100 text-brand-orange-700 border-brand-orange-200"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Nền tảng bồi thường thông minh
+                </Badge>
+
+                <h1 className="text-h1-mobile md:text-h1-desktop font-bold text-foreground leading-tight">
+                  Xử lý Bồi thường{" "}
+                  <span className="text-primary">Nhanh chóng</span> -{" "}
+                  <span className="text-secondary">Đơn giản</span> -{" "}
+                  <span className="text-success">Minh bạch</span>
+                </h1>
+
+                <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed max-w-xl">
+                  Nộp yêu cầu bồi thường online trong{" "}
+                  <span className="font-semibold text-primary">5 phút</span>,
+                  theo dõi tiến độ real-time và nhận kết quả nhanh chóng. Hệ
+                  thống AI hỗ trợ xử lý tự động cho trải nghiệm tối ưu.
+                </p>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/healthcare-claim" className="flex-1 sm:flex-none">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold btn-mobile shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <FileText className="w-5 h-5 mr-2" />
+                    Nộp yêu cầu bồi thường ngay
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+
+                <Link to="/track-status" className="flex-1 sm:flex-none">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-8 py-4 text-lg font-semibold btn-mobile transition-all duration-300"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    Kiểm tra trạng thái yêu cầu
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center gap-6 pt-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 fill-warning text-warning"
+                      />
+                    ))}
+                  </div>
+                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                    4.9/5 từ 12,500+ đánh giá
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-success" />
+                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                    Bảo mật SSL 256-bit
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Image */}
+            <div className="relative order-first lg:order-last">
+              <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 rounded-3xl p-8 md:p-12">
+                {/* Floating Cards */}
+                <div className="absolute -top-6 -left-6 bg-white rounded-xl shadow-lg p-4 rotate-3 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-success" />
+                    <span className="text-sm font-medium">Đã duyệt</span>
+                  </div>
+                  <div className="text-lg font-bold text-success">2.8M VND</div>
+                </div>
+
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 -rotate-3 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-info" />
+                    <span className="text-sm font-medium">Đang xử lý</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Còn 1 ngày
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-4 -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-primary" />
+                    <span className="text-sm font-medium">Gia đình</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    4 thành viên
+                  </div>
+                </div>
+
+                {/* Central Illustration */}
+                <div className="text-center">
+                  <div className="w-48 h-48 mx-auto bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-6 shadow-2xl">
+                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center">
+                      <FileText className="w-16 h-16 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="text-h3-mobile md:text-h3-desktop font-semibold text-foreground mb-2">
+                    Hệ thống thông minh
+                  </h3>
+                  <p className="text-muted-foreground">
+                    AI hỗ trợ xử lý tự động
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 px-6 bg-white/80 backdrop-blur">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">98%</div>
-              <div className="text-muted-foreground">Processing Accuracy</div>
+      {/* Trust Statistics */}
+      <section className="py-12 bg-white border-y">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-2">
+              <div className="text-3xl md:text-4xl font-bold text-primary">
+                {claimsProcessed.toLocaleString()}+
+              </div>
+              <div className="text-muted-foreground">
+                Yêu cầu đã xử lý thành công
+              </div>
+              <div className="flex items-center justify-center gap-1">
+                <TrendingUp className="w-4 h-4 text-success" />
+                <span className="text-sm text-success">+23% tháng này</span>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">3.2x</div>
-              <div className="text-muted-foreground">Faster Processing</div>
+
+            <div className="space-y-2">
+              <div className="text-3xl md:text-4xl font-bold text-secondary">
+                {avgProcessingHours}h
+              </div>
+              <div className="text-muted-foreground">
+                Thời gian xử lý trung bình
+              </div>
+              <div className="w-24 h-2 bg-muted rounded-full mx-auto">
+                <div className="w-3/4 h-full bg-secondary rounded-full" />
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">50k+</div>
-              <div className="text-muted-foreground">Claims Processed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-              <div className="text-muted-foreground">System Availability</div>
+
+            <div className="space-y-2">
+              <div className="text-3xl md:text-4xl font-bold text-success">
+                {satisfactionRate}%
+              </div>
+              <div className="text-muted-foreground">
+                Tỷ lệ hài lòng khách hàng
+              </div>
+              <div className="flex justify-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-warning text-warning" />
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6">
-        <div className="container mx-auto">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-muted/30">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Powerful Features for Modern Claims Processing
+            <Badge variant="outline" className="mb-4">
+              Tính năng nổi bật
+            </Badge>
+            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4">
+              Tại sao chọn ClaimFlow?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage claims efficiently and effectively
+            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto">
+              Chúng tôi cam kết mang đến trải nghiệm bồi thường tốt nhất với
+              công nghệ hiện đại
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="card-shadow-hover border-0 bg-gradient-to-br from-primary/5 to-primary/10">
               <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <FileText className="w-6 h-6 text-primary" />
+                <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-xl">Smart Case Assignment</CardTitle>
+                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                  Nộp yêu cầu nhanh
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  Intelligent routing of claims to the right handlers based on
-                  complexity, expertise, and workload distribution.
+                <p className="text-muted-foreground mb-4">
+                  Hoàn thành nộp yêu cầu chỉ trong 5 phút với form thông minh và
+                  AI hỗ trợ
                 </p>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Tự động điền thông tin</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Xác thực tức thì</span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-shadow-hover border-0 bg-gradient-to-br from-secondary/5 to-secondary/10">
               <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-claim-teal-100 flex items-center justify-center mb-4">
-                  <BarChart3 className="w-6 h-6 text-claim-teal-600" />
+                <div className="w-12 h-12 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center mb-4">
+                  <Eye className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-xl">Real-time Analytics</CardTitle>
+                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                  Theo dõi real-time
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  Comprehensive dashboards with performance metrics,
-                  productivity tracking, and actionable insights.
+                <p className="text-muted-foreground mb-4">
+                  Cập nhật tiến độ xử lý theo thời gian thực với thông báo push
                 </p>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Thông báo tức thì</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Timeline chi tiết</span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-shadow-hover border-0 bg-gradient-to-br from-success/5 to-success/10">
               <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-emerald-600" />
+                <div className="w-12 h-12 rounded-xl bg-success text-white flex items-center justify-center mb-4">
+                  <MessageCircle className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-xl">Fraud Detection</CardTitle>
+                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                  Hỗ trợ 24/7
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  AI-powered fraud detection algorithms that automatically flag
-                  suspicious claims for manual review.
+                <p className="text-muted-foreground mb-4">
+                  Đội ngũ chuyên viên và chatbot AI sẵn sàng hỗ trợ mọi lúc
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-orange-600" />
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Hotline 24/7</span>
                 </div>
-                <CardTitle className="text-xl">Workflow Automation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Streamlined processes with automated workflows, reducing
-                  manual tasks and improving efficiency.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-purple-600" />
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span className="text-sm">Chat AI thông minh</span>
                 </div>
-                <CardTitle className="text-xl">Multi-tenant Support</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Support for multiple insurance partners with secure data
-                  isolation and customizable workflows.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-                  <Target className="w-6 h-6 text-blue-600" />
-                </div>
-                <CardTitle className="text-xl">OCR & AI Integration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Advanced document processing with OCR technology and AI
-                  validation for faster claim verification.
-                </p>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Process Flow Section */}
-      <section className="py-20 px-6 bg-white/80 backdrop-blur">
-        <div className="container mx-auto">
+      {/* Process Timeline */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Streamlined Claims Process
+            <Badge variant="outline" className="mb-4">
+              Quy trình đơn giản
+            </Badge>
+            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4">
+              4 bước xử lý bồi th��ờng
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              From submission to resolution in record time
+            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto">
+              Quy trình minh bạch và tự động hóa giúp rút ng���n thời gian xử lý
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                1
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Submit Claim</h3>
-              <p className="text-muted-foreground text-sm">
-                Easy online submission with document upload and validation
-              </p>
-            </div>
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-muted transform -translate-y-1/2 hidden md:block" />
+            <div
+              className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-success transform -translate-y-1/2 hidden md:block"
+              style={{ width: "75%" }}
+            />
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-claim-teal-500 text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                2
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {/* Step 1 */}
+              <div className="text-center relative">
+                <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <h3 className="text-h3-mobile font-semibold mb-2">
+                  1. Nộp yêu cầu online
+                </h3>
+                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                  Điền form và upload tài liệu trong 5 phút
+                </p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Auto-Assignment</h3>
-              <p className="text-muted-foreground text-sm">
-                Intelligent routing to the most suitable claims handler
-              </p>
-            </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                3
+              {/* Step 2 */}
+              <div className="text-center relative">
+                <div className="w-16 h-16 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
+                  <Shield className="w-8 h-8" />
+                </div>
+                <h3 className="text-h3-mobile font-semibold mb-2">
+                  2. Xác minh thông tin
+                </h3>
+                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                  AI kiểm tra và xác thực tài liệu tự động
+                </p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Processing</h3>
-              <p className="text-muted-foreground text-sm">
-                Efficient review with AI-powered insights and fraud detection
-              </p>
-            </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                4
+              {/* Step 3 */}
+              <div className="text-center relative">
+                <div className="w-16 h-16 rounded-full bg-warning text-white flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
+                  <Users className="w-8 h-8" />
+                </div>
+                <h3 className="text-h3-mobile font-semibold mb-2">
+                  3. Đánh giá và phê duyệt
+                </h3>
+                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                  Chuyên viên thẩm định và đưa ra quyết định
+                </p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Resolution</h3>
-              <p className="text-muted-foreground text-sm">
-                Quick decision and payout with full audit trail
-              </p>
+
+              {/* Step 4 */}
+              <div className="text-center relative">
+                <div className="w-16 h-16 rounded-full bg-success text-white flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
+                  <Award className="w-8 h-8" />
+                </div>
+                <h3 className="text-h3-mobile font-semibold mb-2">
+                  4. Thanh toán bồi thường
+                </h3>
+                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                  Chuyển khoản trực tiếp trong 24h
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-r from-primary to-claim-teal-600">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Ready to Transform Your Claims Process?
+      <section className="py-16 md:py-24 bg-gradient-to-r from-primary via-primary/90 to-secondary relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 border border-white rounded-full" />
+          <div className="absolute bottom-10 right-10 w-24 h-24 border border-white rounded-full" />
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 border border-white rounded-full" />
+        </div>
+
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-white mb-4">
+            Sẵn sàng bắt đầu hành trình bồi thường?
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of insurance professionals who trust ClaimFlow for
-            their claims processing needs.
+          <p className="text-body-mobile md:text-body-desktop text-white/90 mb-8 max-w-2xl mx-auto">
+            Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Trải
+            nghiệm dịch vụ bồi thường nhanh chóng và minh bạch ngay hôm nay.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/dashboard">
+            <Link to="/healthcare-claim">
               <Button
                 size="lg"
                 variant="secondary"
-                className="px-8 py-3 text-lg font-semibold"
+                className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold btn-mobile shadow-lg"
               >
-                <TrendingUp className="w-5 h-5 mr-2" />
-                Explore Dashboard
+                <FileText className="w-5 h-5 mr-2" />
+                Bắt đầu ngay
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
+
             <Button
               size="lg"
               variant="outline"
-              className="px-8 py-3 text-lg font-semibold bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold btn-mobile"
             >
-              <Users className="w-5 h-5 mr-2" />
-              Contact Sales
+              <Phone className="w-5 h-5 mr-2" />
+              Gọi tư vấn: 1900-xxxx
             </Button>
+          </div>
+
+          <div className="mt-8 flex items-center justify-center gap-8 text-white/80 text-sm">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span>Bảo mật tuyệt đối</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              <span>Xử lý nhanh 24h</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4" />
+              <span>Đảm bảo chất lượng</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-white border-t">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <FileText className="h-5 w-5 text-primary-foreground" />
+      <footer className="py-12 bg-neutral-900 text-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <span className="text-xl font-bold">ClaimFlow</span>
               </div>
-              <span className="text-xl font-bold text-foreground">
-                ClaimFlow
-              </span>
+              <p className="text-neutral-400 text-sm">
+                Nền tảng bồi thường bảo hiểm y tế thông minh, nhanh chóng và
+                minh bạch.
+              </p>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-primary" />
+                <span className="text-sm">Hotline: 1900-xxxx</span>
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              © 2024 ClaimFlow. All rights reserved.
+
+            <div>
+              <h4 className="font-semibold mb-4">Dịch vụ</h4>
+              <div className="space-y-2 text-sm text-neutral-400">
+                <div>Bồi thường ngoại trú</div>
+                <div>Bồi thường nội trú</div>
+                <div>Bồi thường cấp cứu</div>
+                <div>Bồi thường thai sản</div>
+              </div>
             </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Hỗ trợ</h4>
+              <div className="space-y-2 text-sm text-neutral-400">
+                <div>Hướng dẫn nộp hồ sơ</div>
+                <div>Câu hỏi thường gặp</div>
+                <div>Liên hệ hỗ trợ</div>
+                <div>Chính sách bảo mật</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Công ty</h4>
+              <div className="space-y-2 text-sm text-neutral-400">
+                <div>Về ClaimFlow</div>
+                <div>Tin tức</div>
+                <div>Tuyển dụng</div>
+                <div>Đối tác</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-sm text-neutral-400">
+            <p>© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
           </div>
         </div>
       </footer>
