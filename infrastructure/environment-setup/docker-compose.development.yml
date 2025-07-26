@@ -1,0 +1,301 @@
+version: '3.8'
+
+name: healthcare-claims-dev
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: healthcare-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dev_admin
+      MONGO_INITDB_ROOT_PASSWORD: dev_password_123
+      MONGO_INITDB_DATABASE: healthcare_claims_dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_dev:/data/db
+      - ./mongodb/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - healthcare-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7.2-alpine
+    container_name: healthcare-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    networks:
+      - healthcare-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Elasticsearch for Search
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: healthcare-elasticsearch-dev
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data_dev:/usr/share/elasticsearch/data
+    networks:
+      - healthcare-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Basic Claims Service
+  basic-claims-service:
+    build:
+      context: ../../backend/basic-claims-service
+      dockerfile: Dockerfile
+    container_name: healthcare-claims-service-dev
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - MONGODB_URI=mongodb://dev_admin:dev_password_123@mongodb:27017/healthcare_claims_dev?authSource=admin
+      - REDIS_URL=redis://redis:6379/0
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - JWT_SECRET_KEY=dev_jwt_secret_key_change_in_production
+      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
+    ports:
+      - "5001:5000"
+    volumes:
+      - ../../backend/basic-claims-service:/app
+      - /app/__pycache__
+    networks:
+      - healthcare-network
+    depends_on:
+      - mongodb
+      - redis
+      - elasticsearch
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Policy Management Service
+  policy-management-service:
+    build:
+      context: ../../backend/policy-management-service
+      dockerfile: Dockerfile
+    container_name: healthcare-policy-service-dev
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - MONGODB_URI=mongodb://dev_admin:dev_password_123@mongodb:27017/healthcare_claims_dev?authSource=admin
+      - REDIS_URL=redis://redis:6379/1
+      - JWT_SECRET_KEY=dev_jwt_secret_key_change_in_production
+      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
+    ports:
+      - "5002:5000"
+    volumes:
+      - ../../backend/policy-management-service:/app
+      - /app/__pycache__
+    networks:
+      - healthcare-network
+    depends_on:
+      - mongodb
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # User Management Service
+  user-management-service:
+    build:
+      context: ../../backend/user-management-service
+      dockerfile: Dockerfile
+    container_name: healthcare-user-service-dev
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - MONGODB_URI=mongodb://dev_admin:dev_password_123@mongodb:27017/healthcare_claims_dev?authSource=admin
+      - REDIS_URL=redis://redis:6379/2
+      - JWT_SECRET_KEY=dev_jwt_secret_key_change_in_production
+      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
+      - EMAIL_SMTP_HOST=mailhog
+      - EMAIL_SMTP_PORT=1025
+      - EMAIL_USE_TLS=false
+    ports:
+      - "5003:5000"
+    volumes:
+      - ../../backend/user-management-service:/app
+      - /app/__pycache__
+    networks:
+      - healthcare-network
+    depends_on:
+      - mongodb
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ../../backend/infrastructure-setup/api-gateway
+      dockerfile: Dockerfile
+    container_name: healthcare-api-gateway-dev
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=development
+      - CLAIMS_SERVICE_URL=http://basic-claims-service:5000
+      - POLICY_SERVICE_URL=http://policy-management-service:5000
+      - USER_SERVICE_URL=http://user-management-service:5000
+      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
+      - RATE_LIMIT_REQUESTS=1000
+      - RATE_LIMIT_WINDOW=3600
+    ports:
+      - "8000:8000"
+    networks:
+      - healthcare-network
+    depends_on:
+      - basic-claims-service
+      - policy-management-service
+      - user-management-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Development Server (optional for full-stack development)
+  frontend-dev:
+    build:
+      context: ../../
+      dockerfile: Dockerfile.dev
+    container_name: healthcare-frontend-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:8000
+      - VITE_WEBSOCKET_URL=ws://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../client:/app/client
+      - ../../server:/app/server
+      - ../../shared:/app/shared
+      - /app/node_modules
+    networks:
+      - healthcare-network
+    depends_on:
+      - api-gateway
+
+  # MailHog for Email Testing
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: healthcare-mailhog-dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - healthcare-network
+
+  # Nginx for Local Load Balancing (optional)
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: healthcare-nginx-dev
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - healthcare-network
+    depends_on:
+      - api-gateway
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus for Metrics (Development)
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: healthcare-prometheus-dev
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.dev.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data_dev:/prometheus
+    networks:
+      - healthcare-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # Grafana for Visualization (Development)
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: healthcare-grafana-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=dev_admin_123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data_dev:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - healthcare-network
+    depends_on:
+      - prometheus
+
+volumes:
+  mongodb_data_dev:
+    name: healthcare_mongodb_data_dev
+  redis_data_dev:
+    name: healthcare_redis_data_dev
+  elasticsearch_data_dev:
+    name: healthcare_elasticsearch_data_dev
+  prometheus_data_dev:
+    name: healthcare_prometheus_data_dev
+  grafana_data_dev:
+    name: healthcare_grafana_data_dev
+
+networks:
+  healthcare-network:
+    name: healthcare-dev-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

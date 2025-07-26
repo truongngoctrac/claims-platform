@@ -1,0 +1,119 @@
+{
+  "name": "ClaimFlow - Nền tảng Bồi thường Y tế",
+  "short_name": "ClaimFlow",
+  "description": "Nền tảng bồi thường bảo hiểm y tế thông minh, nhanh chóng và minh bạch",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF6B35",
+  "orientation": "portrait-primary",
+  "categories": ["healthcare", "insurance", "finance"],
+  "lang": "vi",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nộp hồ sơ mới",
+      "short_name": "Nộp hồ sơ",
+      "description": "Tạo yêu cầu bồi thường mới",
+      "url": "/healthcare-claim",
+      "icons": [
+        {
+          "src": "/icons/shortcut-claim.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Tra cứu hồ sơ",
+      "short_name": "Tra cứu",
+      "description": "Kiểm tra trạng thái hồ sơ",
+      "url": "/track-status",
+      "icons": [
+        {
+          "src": "/icons/shortcut-track.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Trang chủ ClaimFlow trên desktop"
+    },
+    {
+      "src": "/screenshots/mobile-claim.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Form nộp hồ sơ trên mobile"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://claimflow.vn/manifest.json"
+    }
+  ],
+  "prefer_related_applications": false,
+  "features": [
+    "offline-support",
+    "push-notifications",
+    "camera-access",
+    "file-upload",
+    "location-services"
+  ]
+}

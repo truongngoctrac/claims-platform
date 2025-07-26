@@ -1,0 +1,341 @@
+# Vietnamese Healthcare Claims - Uptime Monitoring Configuration
+# This configuration defines monitoring targets and alerting rules
+
+# Monitoring targets for different environments
+targets:
+  production:
+    - name: "Frontend Application"
+      url: "https://healthcare-claims.vn"
+      method: "GET"
+      timeout: 10s
+      interval: 60s
+      expected_status: 200
+      headers:
+        User-Agent: "HealthcareClaimsMonitor/1.0"
+      
+    - name: "API Gateway"
+      url: "https://api.healthcare-claims.vn/health"
+      method: "GET"
+      timeout: 10s
+      interval: 30s
+      expected_status: 200
+      
+    - name: "Claims Service"
+      url: "https://api.healthcare-claims.vn/api/claims/health"
+      method: "GET"
+      timeout: 10s
+      interval: 60s
+      expected_status: 200
+      
+    - name: "Policy Service"
+      url: "https://api.healthcare-claims.vn/api/policies/health"
+      method: "GET"
+      timeout: 10s
+      interval: 60s
+      expected_status: 200
+      
+    - name: "User Service"
+      url: "https://api.healthcare-claims.vn/api/users/health"
+      method: "GET"
+      timeout: 10s
+      interval: 60s
+      expected_status: 200
+
+  staging:
+    - name: "Staging Frontend"
+      url: "https://staging.healthcare-claims.vn"
+      method: "GET"
+      timeout: 10s
+      interval: 300s # 5 minutes for staging
+      expected_status: 200
+      
+    - name: "Staging API Gateway"
+      url: "https://api-staging.healthcare-claims.vn/health"
+      method: "GET"
+      timeout: 10s
+      interval: 300s
+      expected_status: 200
+
+# Health check definitions
+health_checks:
+  # Basic connectivity check
+  basic_health:
+    endpoint: "/health"
+    method: "GET"
+    timeout: 5s
+    expected_response:
+      status: 200
+      content_type: "application/json"
+      body_contains: '"status":"healthy"'
+      
+  # Detailed system health
+  detailed_health:
+    endpoint: "/health/detailed"
+    method: "GET"
+    timeout: 15s
+    expected_response:
+      status: 200
+      content_type: "application/json"
+      body_contains: '"services":'
+      
+  # Database connectivity
+  database_health:
+    endpoint: "/health/database"
+    method: "GET"
+    timeout: 10s
+    expected_response:
+      status: 200
+      body_contains: '"database":{"status":"up"}'
+      
+  # Vietnamese healthcare specific checks
+  healthcare_compliance:
+    endpoint: "/health/healthcare"
+    method: "GET"
+    timeout: 10s
+    expected_response:
+      status: 200
+      body_contains: '"status":"compliant"'
+
+# Performance thresholds
+performance_thresholds:
+  response_time:
+    warning: 2000ms   # 2 seconds
+    critical: 5000ms  # 5 seconds
+    
+  availability:
+    warning: 99.5%    # 99.5% uptime
+    critical: 99.0%   # 99% uptime
+    
+  error_rate:
+    warning: 1%       # 1% error rate
+    critical: 5%      # 5% error rate
+
+# Alerting configuration
+alerting:
+  # Incident severity levels
+  severity_levels:
+    critical:
+      description: "Service completely unavailable or major functionality broken"
+      response_time: "immediate"
+      escalation_time: "15 minutes"
+      
+    high:
+      description: "Service degraded, some functionality affected"
+      response_time: "30 minutes"
+      escalation_time: "1 hour"
+      
+    medium:
+      description: "Minor issues, service mostly functional"
+      response_time: "2 hours"
+      escalation_time: "4 hours"
+      
+    low:
+      description: "Informational alerts, no immediate action required"
+      response_time: "next business day"
+      escalation_time: "1 week"
+
+  # Alert rules
+  rules:
+    - name: "Service Down"
+      condition: "status != 200"
+      severity: "critical"
+      duration: "1 minute"
+      message: "🚨 Service {{.service}} is down ({{.status_code}})"
+      
+    - name: "High Response Time"
+      condition: "response_time > 5000ms"
+      severity: "high"
+      duration: "5 minutes"
+      message: "⚠️ High response time for {{.service}}: {{.response_time}}ms"
+      
+    - name: "Service Degraded"
+      condition: "response_time > 2000ms"
+      severity: "medium"
+      duration: "10 minutes"
+      message: "📊 Degraded performance for {{.service}}: {{.response_time}}ms"
+      
+    - name: "SSL Certificate Expiring"
+      condition: "ssl_days_until_expiry < 30"
+      severity: "medium"
+      duration: "immediate"
+      message: "🔒 SSL certificate for {{.service}} expires in {{.ssl_days_until_expiry}} days"
+      
+    - name: "Healthcare Compliance Check Failed"
+      condition: "healthcare_compliance_status != 'compliant'"
+      severity: "critical"
+      duration: "immediate"
+      message: "🏥 Healthcare compliance check failed for {{.service}}"
+
+# Notification channels
+notifications:
+  slack:
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#healthcare-alerts"
+    username: "HealthcareMonitor"
+    icon_emoji: ":hospital:"
+    
+  teams:
+    webhook_url: "${TEAMS_WEBHOOK_URL}"
+    
+  email:
+    smtp_host: "${EMAIL_SMTP_HOST}"
+    smtp_port: 587
+    username: "${EMAIL_USERNAME}"
+    password: "${EMAIL_PASSWORD}"
+    from: "alerts@healthcare-claims.vn"
+    to:
+      - "devops@healthcare-claims.vn"
+      - "oncall@healthcare-claims.vn"
+      
+  pagerduty:
+    integration_key: "${PAGERDUTY_INTEGRATION_KEY}"
+    
+  webhook:
+    url: "${CUSTOM_WEBHOOK_URL}"
+    method: "POST"
+    headers:
+      Authorization: "Bearer ${WEBHOOK_TOKEN}"
+
+# Escalation policies
+escalation:
+  - level: 1
+    wait: "15 minutes"
+    notify:
+      - "slack"
+      - "teams"
+      
+  - level: 2
+    wait: "30 minutes"
+    notify:
+      - "email"
+      - "pagerduty"
+      
+  - level: 3
+    wait: "1 hour"
+    notify:
+      - "webhook"
+
+# Maintenance windows
+maintenance_windows:
+  # Regular maintenance window
+  weekly_maintenance:
+    day: "sunday"
+    start_time: "02:00"
+    end_time: "04:00"
+    timezone: "Asia/Ho_Chi_Minh"
+    description: "Weekly system maintenance"
+    
+  # Emergency maintenance
+  emergency_maintenance:
+    description: "Emergency maintenance window"
+    # Configured dynamically when needed
+
+# Vietnamese healthcare specific monitoring
+healthcare_monitoring:
+  # Patient data access monitoring
+  patient_data_access:
+    endpoint: "/health/patient-data-access"
+    interval: 60s
+    timeout: 10s
+    alert_on_failure: true
+    
+  # Claims processing monitoring
+  claims_processing:
+    endpoint: "/health/claims-processing"
+    interval: 30s
+    timeout: 15s
+    alert_on_failure: true
+    
+  # Audit log monitoring
+  audit_logging:
+    endpoint: "/health/audit-logging"
+    interval: 300s # 5 minutes
+    timeout: 10s
+    alert_on_failure: true
+    
+  # Data compliance monitoring
+  data_compliance:
+    endpoint: "/health/data-compliance"
+    interval: 3600s # 1 hour
+    timeout: 10s
+    alert_on_failure: true
+
+# Status page configuration
+status_page:
+  title: "Vietnamese Healthcare Claims System Status"
+  description: "Real-time status of healthcare claims processing services"
+  logo_url: "https://healthcare-claims.vn/logo.png"
+  
+  # Components to display on status page
+  components:
+    - name: "Web Application"
+      description: "Main healthcare claims web interface"
+      
+    - name: "API Services"
+      description: "Backend API services for claims processing"
+      
+    - name: "Database Systems"
+      description: "Database and data storage systems"
+      
+    - name: "Authentication"
+      description: "User authentication and authorization"
+      
+    - name: "Document Processing"
+      description: "Medical document upload and processing"
+      
+    - name: "Search Services"
+      description: "Claims and policy search functionality"
+
+# Metrics collection
+metrics:
+  # Response time percentiles
+  response_time_percentiles:
+    - 50th
+    - 95th
+    - 99th
+    
+  # Availability calculation
+  availability_window: "24h"
+  
+  # Error rate calculation
+  error_rate_window: "1h"
+  
+  # Custom healthcare metrics
+  healthcare_metrics:
+    - claims_processed_per_hour
+    - average_claim_processing_time
+    - patient_data_access_count
+    - compliance_audit_events
+
+# Integration with external monitoring tools
+integrations:
+  prometheus:
+    enabled: true
+    endpoint: "/metrics"
+    scrape_interval: "30s"
+    
+  grafana:
+    enabled: true
+    dashboard_url: "${GRAFANA_DASHBOARD_URL}"
+    
+  datadog:
+    enabled: false
+    api_key: "${DATADOG_API_KEY}"
+    
+  new_relic:
+    enabled: false
+    license_key: "${NEW_RELIC_LICENSE_KEY}"
+
+# Backup monitoring
+backup_monitoring:
+  # Database backup monitoring
+  database_backup:
+    schedule: "0 2 * * *" # Daily at 2 AM
+    expected_completion_time: "1 hour"
+    alert_on_failure: true
+    
+  # Configuration backup
+  config_backup:
+    schedule: "0 3 * * 0" # Weekly on Sunday at 3 AM
+    expected_completion_time: "30 minutes"
+    alert_on_failure: true

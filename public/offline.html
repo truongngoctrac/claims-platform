@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Không có kết nối - ClaimFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #FF6B35 0%, #2E86AB 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            color: #FF6B35;
+            font-weight: bold;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            opacity: 0.9;
+        }
+        
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        
+        .features h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #FFE4DC;
+        }
+        
+        .features ul {
+            list-style: none;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .features li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ADE80;
+            font-weight: bold;
+        }
+        
+        .retry-btn {
+            background: white;
+            color: #FF6B35;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 16px;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .offline-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">CF</div>
+        
+        <h1>Không có kết nối mạng</h1>
+        <p>Bạn đang offline. Vui lòng kiểm tra kết nối internet và thử lại.</p>
+        
+        <div class="features">
+            <h3>Tính năng offline có sẵn:</h3>
+            <ul>
+                <li>Xem thông tin hồ sơ đã lưu</li>
+                <li>Soạn thảo yêu cầu mới (tự động gửi khi online)</li>
+                <li>Xem lịch sử thông báo</li>
+                <li>Tra cứu thông tin đã cache</li>
+            </ul>
+        </div>
+        
+        <button class="retry-btn" onclick="window.location.reload()">
+            🔄 Thử lại
+        </button>
+        
+        <div class="status">
+            <span class="offline-indicator"></span>
+            Trạng thái: Offline
+        </div>
+    </div>
+
+    <script>
+        // Check for online status
+        function updateOnlineStatus() {
+            const status = document.querySelector('.status');
+            const indicator = document.querySelector('.offline-indicator');
+            
+            if (navigator.onLine) {
+                status.innerHTML = '<span style="display: inline-block; width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; margin-right: 8px;"></span>Trạng thái: Online';
+                // Redirect to home when back online
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } else {
+                status.innerHTML = '<span class="offline-indicator"></span>Trạng thái: Offline';
+            }
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        
+        // Initial check
+        updateOnlineStatus();
+        
+        // Auto-retry every 30 seconds
+        setInterval(() => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

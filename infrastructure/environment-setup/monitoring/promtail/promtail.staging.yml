@@ -1,0 +1,340 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Docker container logs
+  - job_name: containers
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: containerlogs
+          __path__: /var/lib/docker/containers/*/*log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            stream: stream
+            attrs:
+      - json:
+          source: attrs
+          expressions:
+            tag:
+      - regex:
+          source: tag
+          expression: (?P<container_name>(?:[^|]*))\|(?P<image_name>(?:[^|]*))\|(?P<image_id>(?:[^|]*))\|(?P<container_id>(?:[^|]*))
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - labels:
+          stream:
+          container_name:
+          image_name:
+          image_id:
+          container_id:
+      - output:
+          source: output
+
+  # Healthcare Claims Application Logs
+  - job_name: healthcare-claims-services
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: healthcare-claims
+          __path__: /var/lib/docker/containers/*healthcare*/*log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            stream: stream
+            attrs:
+            time: time
+      - json:
+          source: attrs
+          expressions:
+            tag:
+      - regex:
+          source: tag
+          expression: (?P<container_name>(?:[^|]*))
+      - regex:
+          source: container_name
+          expression: healthcare-(?P<service_name>.*)-staging
+      - labels:
+          stream:
+          container_name:
+          service_name:
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - output:
+          source: output
+
+  # System logs
+  - job_name: syslog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syslog
+          __path__: /var/log/syslog
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\S+\s+\d+\s+\d+:\d+:\d+)\s+(?P<hostname>\S+)\s+(?P<service>\S+):\s+(?P<message>.*)$'
+      - labels:
+          hostname:
+          service:
+      - timestamp:
+          source: timestamp
+          format: Jan 02 15:04:05
+          location: UTC
+      - output:
+          source: message
+
+  # Nginx access logs
+  - job_name: nginx-access
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-access
+          __path__: /var/log/nginx/access.log
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<remote_addr>\S+)\s+\S+\s+(?P<remote_user>\S+)\s+\[(?P<time_local>[^\]]+)\]\s+"(?P<method>\S+)\s+(?P<request_uri>\S+)\s+(?P<server_protocol>\S+)"\s+(?P<status>\d+)\s+(?P<body_bytes_sent>\d+)\s+"(?P<http_referer>[^"]*)"\s+"(?P<http_user_agent>[^"]*)"'
+      - labels:
+          method:
+          status:
+          remote_addr:
+      - timestamp:
+          source: time_local
+          format: 02/Jan/2006:15:04:05 -0700
+      - output:
+          source: request_uri
+
+  # Nginx error logs
+  - job_name: nginx-error
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-error
+          __path__: /var/log/nginx/error.log
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}/\d{2}/\d{2}\s+\d{2}:\d{2}:\d{2})\s+\[(?P<log_level>\w+)\]\s+(?P<pid>\d+)#(?P<tid>\d+):\s+(?P<message>.*)$'
+      - labels:
+          log_level:
+          pid:
+      - timestamp:
+          source: timestamp
+          format: 2006/01/02 15:04:05
+      - output:
+          source: message
+
+  # MongoDB logs
+  - job_name: mongodb
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: mongodb
+          __path__: /var/lib/docker/containers/*mongodb*/*log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            time: time
+      - regex:
+          source: output
+          expression: '^(?P<timestamp>\S+)\s+(?P<severity>\w+)\s+(?P<component>\w+)\s+\[(?P<context>[^\]]+)\]\s+(?P<message>.*)$'
+      - labels:
+          severity:
+          component:
+          context:
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - output:
+          source: message
+
+  # Redis logs
+  - job_name: redis
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: redis
+          __path__: /var/lib/docker/containers/*redis*/*log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            time: time
+      - regex:
+          source: output
+          expression: '^(?P<pid>\d+):(?P<role>\w+)\s+(?P<timestamp>\d+\s+\w+\s+\d+:\d+:\d+\.\d+)\s+(?P<level>[#*-])\s+(?P<message>.*)$'
+      - labels:
+          role:
+          level:
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - output:
+          source: message
+
+  # Application-specific logs with structured parsing
+  - job_name: healthcare-structured-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: healthcare-structured
+          __path__: /var/log/healthcare-claims.log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            logger: logger
+            message: message
+            request_id: request_id
+            user_id: user_id
+            service: service
+            module: module
+            function: function
+            line: line
+            error: error
+            stack_trace: stack_trace
+      - labels:
+          level:
+          logger:
+          service:
+          module:
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - output:
+          source: message
+
+  # Authentication and authorization logs
+  - job_name: auth-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: auth-logs
+          __path__: /var/log/auth.log
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<hostname>\S+)\s+(?P<service>\S+):\s+(?P<message>.*)$'
+      - labels:
+          hostname:
+          service:
+      - timestamp:
+          source: timestamp
+          format: Jan 02 15:04:05
+          location: UTC
+      - output:
+          source: message
+
+  # Security audit logs
+  - job_name: audit-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: audit-logs
+          __path__: /var/log/audit/audit.log
+
+    pipeline_stages:
+      - regex:
+          expression: '^type=(?P<audit_type>\w+)\s+msg=audit\((?P<timestamp>[^)]+)\):\s+(?P<message>.*)$'
+      - labels:
+          audit_type:
+      - timestamp:
+          source: timestamp
+          format: 1136214245.000:00
+      - output:
+          source: message
+
+  # Custom healthcare compliance logs
+  - job_name: compliance-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: compliance
+          __path__: /var/log/healthcare-compliance.log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: "@timestamp"
+            level: level
+            event_type: event_type
+            patient_id: patient_id
+            user_id: user_id
+            action: action
+            resource: resource
+            ip_address: ip_address
+            user_agent: user_agent
+            message: message
+            compliance_status: compliance_status
+      - labels:
+          level:
+          event_type:
+          action:
+          compliance_status:
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - output:
+          source: message
+
+  # Performance monitoring logs
+  - job_name: performance-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: performance
+          __path__: /var/log/healthcare-performance.log
+
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            endpoint: endpoint
+            method: method
+            response_time_ms: response_time_ms
+            status_code: status_code
+            request_size: request_size
+            response_size: response_size
+            user_id: user_id
+            session_id: session_id
+      - labels:
+          endpoint:
+          method:
+          status_code:
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - output:
+          source: endpoint
