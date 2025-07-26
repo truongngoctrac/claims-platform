@@ -746,15 +746,15 @@ export class ScalingPolicyOptimization {
     return newPolicy;
   }
 
-  private updatePolicy(current: ScalingPolicy, new: ScalingPolicy, reward: number, learningRate: number): ScalingPolicy {
+  private updatePolicy(current: ScalingPolicy, newPolicy: ScalingPolicy, reward: number, learningRate: number): ScalingPolicy {
     const updated = JSON.parse(JSON.stringify(current)); // Deep copy
     
     // Simple policy update based on reward
     if (reward > 0) {
-      updated.targets.targetCPU = current.targets.targetCPU! + 
-        (new.targets.targetCPU! - current.targets.targetCPU!) * learningRate;
-      updated.targets.targetMemory = current.targets.targetMemory! + 
-        (new.targets.targetMemory! - current.targets.targetMemory!) * learningRate;
+      updated.targets.targetCPU = current.targets.targetCPU! +
+        (newPolicy.targets.targetCPU! - current.targets.targetCPU!) * learningRate;
+      updated.targets.targetMemory = current.targets.targetMemory! +
+        (newPolicy.targets.targetMemory! - current.targets.targetMemory!) * learningRate;
     }
     
     return updated;
