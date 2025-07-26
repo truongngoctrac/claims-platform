@@ -469,7 +469,7 @@ interface CAPStrategy {
 
 export class HealthcarePartitionManager {
   private partitionHandler: NetworkPartitionHandler;
-  private capManager: CAP TheoremManager;
+  private capManager: CAPTheoremManager;
   private criticalDataProtector: CriticalDataProtector;
 
   constructor(config: PartitionConfig, nodes: NetworkNode[]) {
