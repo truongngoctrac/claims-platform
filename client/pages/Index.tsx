@@ -412,7 +412,7 @@ export function Index() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-primary via-primary/90 to-secondary relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-r from-primary via-primary/90 to-secondary relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-32 h-32 border border-white rounded-full" />
@@ -420,50 +420,50 @@ export function Index() {
           <div className="absolute top-1/2 left-1/4 w-16 h-16 border border-white rounded-full" />
         </div>
 
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-white mb-4">
+        <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-6xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 vietnamese-text">
             Sẵn sàng bắt đầu hành trình bồi thường?
           </h2>
-          <p className="text-body-mobile md:text-body-desktop text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto vietnamese-text">
             Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Trải
             nghiệm dịch vụ bồi thường nhanh chóng và minh bạch ngay hôm nay.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link to="/healthcare-claim">
               <Button
                 size="lg"
                 variant="secondary"
-                className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold btn-mobile shadow-lg"
+                className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-lg vietnamese-text min-h-[48px]"
               >
-                <FileText className="w-5 h-5 mr-2" />
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Bắt đầu ngay
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
 
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold btn-mobile"
+              className="w-full sm:w-auto border-white text-white hover:bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold vietnamese-text min-h-[48px]"
             >
-              <Phone className="w-5 h-5 mr-2" />
+              <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Gọi tư vấn: 1900-xxxx
             </Button>
           </div>
 
-          <div className="mt-8 flex items-center justify-center gap-8 text-white/80 text-sm">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/80 text-xs sm:text-sm">
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4" />
-              <span>Bảo mật tuyệt đối</span>
+              <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="vietnamese-text">Bảo mật tuyệt đối</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span>Xử lý nhanh 24h</span>
+              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="vietnamese-text">Xử lý nhanh 24h</span>
             </div>
             <div className="flex items-center gap-2">
-              <Award className="w-4 h-4" />
-              <span>Đảm bảo chất lượng</span>
+              <Award className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="vietnamese-text">Đảm bảo chất lượng</span>
             </div>
           </div>
         </div>
