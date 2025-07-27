@@ -141,48 +141,48 @@ export function Index() {
             </div>
 
             {/* Hero Image */}
-            <div className="relative order-first lg:order-last">
-              <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 rounded-3xl p-8 md:p-12">
+            <div className="relative order-first lg:order-last mt-8 lg:mt-0">
+              <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12">
                 {/* Floating Cards */}
-                <div className="absolute -top-6 -left-6 bg-white rounded-xl shadow-lg p-4 rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-success" />
-                    <span className="text-sm font-medium">Đã duyệt</span>
+                <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 rotate-3 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-success" />
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Đã duyệt</span>
                   </div>
-                  <div className="text-lg font-bold text-success">2.8M VND</div>
+                  <div className="text-sm sm:text-base lg:text-lg font-bold text-success">2.8M VND</div>
                 </div>
 
-                <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 -rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-info" />
-                    <span className="text-sm font-medium">Đang xử lý</span>
+                <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 lg:-top-4 lg:-right-4 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 -rotate-3 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-info" />
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Đang xử lý</span>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground vietnamese-text">
                     Còn 1 ngày
                   </div>
                 </div>
 
-                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-4 -rotate-2 hover:rotate-0 transition-transform duration-300">
-                  <div className="flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-primary" />
-                    <span className="text-sm font-medium">Gia đình</span>
+                <div className="absolute -bottom-2 -left-2 sm:-bottom-3 sm:-left-3 lg:-bottom-4 lg:-left-4 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Heart className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-primary" />
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Gia đình</span>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground vietnamese-text">
                     4 thành viên
                   </div>
                 </div>
 
                 {/* Central Illustration */}
                 <div className="text-center">
-                  <div className="w-48 h-48 mx-auto bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-6 shadow-2xl">
-                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center">
-                      <FileText className="w-16 h-16 text-primary" />
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 mx-auto bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-2xl">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-white rounded-full flex items-center justify-center">
+                      <FileText className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 text-primary" />
                     </div>
                   </div>
-                  <h3 className="text-h3-mobile md:text-h3-desktop font-semibold text-foreground mb-2">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground mb-2 vietnamese-text">
                     Hệ thống thông minh
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                     AI hỗ trợ xử lý tự động
                   </p>
                 </div>
@@ -425,7 +425,7 @@ export function Index() {
             Sẵn sàng bắt đầu hành trình bồi thường?
           </h2>
           <p className="text-body-mobile md:text-body-desktop text-white/90 mb-8 max-w-2xl mx-auto">
-            Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Trải
+            Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Tr��i
             nghiệm dịch vụ bồi thường nhanh chóng và minh bạch ngay hôm nay.
           </p>
 
