@@ -57,7 +57,7 @@ export function RealTimeNotifications() {
       },
       {
         id: '3',
-        title: 'Cảnh báo hệ thống',
+        title: 'Cảnh báo hệ th���ng',
         message: 'Tải hệ thống đang cao (85%)',
         type: 'warning',
         timestamp: new Date(Date.now() - 30 * 60 * 1000),
@@ -304,11 +304,11 @@ export function RealTimeNotifications() {
               </div>
               
               {notifications.length > 0 && (
-                <div className="p-3 border-t bg-gray-50">
+                <div className="p-2 sm:p-3 border-t bg-gray-50">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full text-center"
+                    className="w-full text-center text-xs sm:text-sm vietnamese-text h-8 sm:h-9"
                     onClick={() => {
                       setShowDropdown(false);
                       // Navigate to notifications page
