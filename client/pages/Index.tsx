@@ -239,43 +239,43 @@ export function Index() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-muted/30">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-white to-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          <div className="text-center mb-12 sm:mb-16">
+            <Badge variant="outline" className="mb-4 vietnamese-text">
               Tính năng nổi bật
             </Badge>
-            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 vietnamese-text">
               Tại sao chọn ClaimFlow?
             </h2>
-            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto">
-              Ch��ng tôi cam kết mang đến trải nghiệm bồi thường tốt nhất với
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto vietnamese-text">
+              Chúng tôi cam kết mang đến trải nghiệm bồi thường tốt nhất với
               công nghệ hiện đại
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <Card className="card-shadow-hover border-0 bg-gradient-to-br from-primary/5 to-primary/10">
               <CardHeader>
                 <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-4">
                   <Zap className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl vietnamese-text">
                   Nộp yêu cầu nhanh
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-sm sm:text-base text-muted-foreground mb-4 vietnamese-text">
                   Hoàn thành nộp yêu cầu chỉ trong 5 phút với form thông minh và
                   AI hỗ trợ
                 </p>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Tự động điền thông tin</span>
+                  <span className="text-sm vietnamese-text">Tự động điền thông tin</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Xác thực tức thì</span>
+                  <span className="text-sm vietnamese-text">Xác thực tức thì</span>
                 </div>
               </CardContent>
             </Card>
@@ -494,7 +494,7 @@ export function Index() {
               <h4 className="font-semibold mb-4">Dịch vụ</h4>
               <div className="space-y-2 text-sm text-neutral-400">
                 <div>Bồi thường ngoại trú</div>
-                <div>B���i thường nội trú</div>
+                <div>Bồi thường nội trú</div>
                 <div>Bồi thường cấp cứu</div>
                 <div>Bồi thường thai sản</div>
               </div>
