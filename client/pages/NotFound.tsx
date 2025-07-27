@@ -15,8 +15,6 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-
       <div className="container mx-auto px-6 py-20">
         <div className="text-center max-w-2xl mx-auto">
           <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8">
