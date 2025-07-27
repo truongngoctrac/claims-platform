@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  FileText, 
-  Search, 
-  BarChart3, 
-  Settings, 
-  User, 
+import {
+  FileText,
+  Search,
+  BarChart3,
+  Settings,
+  User,
   Bell,
   Eye,
   Shield,
