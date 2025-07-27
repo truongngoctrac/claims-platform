@@ -193,44 +193,44 @@ export function Index() {
       </section>
 
       {/* Trust Statistics */}
-      <section className="py-12 bg-white border-y">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-2">
-              <div className="text-3xl md:text-4xl font-bold text-primary">
+      <section className="py-8 sm:py-10 md:py-12 bg-white border-y">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary vietnamese-text">
                 {claimsProcessed.toLocaleString()}+
               </div>
-              <div className="text-muted-foreground">
+              <div className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                 Yêu cầu đã xử lý thành công
               </div>
               <div className="flex items-center justify-center gap-1">
-                <TrendingUp className="w-4 h-4 text-success" />
-                <span className="text-sm text-success">+23% tháng này</span>
+                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-success" />
+                <span className="text-xs sm:text-sm text-success vietnamese-text">+23% tháng này</span>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="text-3xl md:text-4xl font-bold text-secondary">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary vietnamese-text">
                 {avgProcessingHours}h
               </div>
-              <div className="text-muted-foreground">
+              <div className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                 Thời gian xử lý trung bình
               </div>
-              <div className="w-24 h-2 bg-muted rounded-full mx-auto">
+              <div className="w-20 sm:w-24 h-2 bg-muted rounded-full mx-auto">
                 <div className="w-3/4 h-full bg-secondary rounded-full" />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="text-3xl md:text-4xl font-bold text-success">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-success vietnamese-text">
                 {satisfactionRate}%
               </div>
-              <div className="text-muted-foreground">
+              <div className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                 Tỷ lệ hài lòng khách hàng
               </div>
               <div className="flex justify-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-warning text-warning" />
+                  <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-warning text-warning" />
                 ))}
               </div>
             </div>
@@ -249,7 +249,7 @@ export function Index() {
               Tại sao chọn ClaimFlow?
             </h2>
             <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto">
-              Chúng tôi cam kết mang đến trải nghiệm bồi thường tốt nhất với
+              Ch��ng tôi cam kết mang đến trải nghiệm bồi thường tốt nhất với
               công nghệ hiện đại
             </p>
           </div>
@@ -425,7 +425,7 @@ export function Index() {
             Sẵn sàng bắt đầu hành trình bồi thường?
           </h2>
           <p className="text-body-mobile md:text-body-desktop text-white/90 mb-8 max-w-2xl mx-auto">
-            Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Tr��i
+            Tham gia cùng hàng nghìn khách hàng đã tin tưởng ClaimFlow. Trải
             nghiệm dịch vụ bồi thường nhanh chóng và minh bạch ngay hôm nay.
           </p>
 
@@ -494,7 +494,7 @@ export function Index() {
               <h4 className="font-semibold mb-4">Dịch vụ</h4>
               <div className="space-y-2 text-sm text-neutral-400">
                 <div>Bồi thường ngoại trú</div>
-                <div>Bồi thường nội trú</div>
+                <div>B���i thường nội trú</div>
                 <div>Bồi thường cấp cứu</div>
                 <div>Bồi thường thai sản</div>
               </div>
