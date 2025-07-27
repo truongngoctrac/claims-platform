@@ -41,7 +41,7 @@ export function RealTimeNotifications() {
       {
         id: '1',
         title: 'Hồ sơ mới cần xử lý',
-        message: 'Có 3 hồ sơ bồi thường mới cần được xem xét',
+        message: 'Có 3 hồ sơ bồi thường mới cần đư��c xem xét',
         type: 'info',
         timestamp: new Date(Date.now() - 5 * 60 * 1000),
         read: false,
@@ -281,7 +281,7 @@ export function RealTimeNotifications() {
                               <X className="h-3 w-3" />
                             </Button>
                           </div>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-gray-600 mt-1 vietnamese-text break-words">
                             {notification.message}
                           </p>
                           <p className="text-xs text-gray-400 mt-2">
