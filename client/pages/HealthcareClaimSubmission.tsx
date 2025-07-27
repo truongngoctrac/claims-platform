@@ -229,7 +229,7 @@ export function HealthcareClaimSubmission() {
     switch (stepIndex) {
       case 0: // Basic info
         if (!formData.type)
-          newErrors.type = "Vui lòng chọn loại yêu cầu bồi thư��ng";
+          newErrors.type = "Vui lòng chọn loại yêu cầu bồi thường";
         break;
       case 1: // Patient info
         if (!formData.patient.fullName)
@@ -424,27 +424,27 @@ export function HealthcareClaimSubmission() {
           </div>
 
           {/* Progress Steps */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center justify-between overflow-x-auto pb-2">
               {steps.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`flex items-center ${
+                  className={`flex items-center min-w-0 ${
                     index < steps.length - 1 ? "flex-1" : ""
                   }`}
                 >
                   <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex-shrink-0 ${
                       index <= currentStep
                         ? "bg-primary border-primary text-primary-foreground"
                         : "border-muted-foreground text-muted-foreground"
                     }`}
                   >
-                    {step.icon}
+                    <span className="scale-75 sm:scale-100">{step.icon}</span>
                   </div>
-                  <div className="ml-3 hidden md:block">
+                  <div className="ml-2 sm:ml-3 hidden lg:block min-w-0">
                     <div
-                      className={`text-sm font-medium ${
+                      className={`text-xs sm:text-sm font-medium vietnamese-text truncate ${
                         index <= currentStep
                           ? "text-primary"
                           : "text-muted-foreground"
@@ -455,13 +455,23 @@ export function HealthcareClaimSubmission() {
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-4 ${
+                      className={`flex-1 h-0.5 mx-2 sm:mx-4 ${
                         index < currentStep ? "bg-primary" : "bg-muted"
                       }`}
                     />
                   )}
                 </div>
               ))}
+            </div>
+
+            {/* Mobile step indicator */}
+            <div className="lg:hidden text-center mt-3">
+              <div className="text-xs sm:text-sm font-medium text-primary vietnamese-text">
+                {steps[currentStep].title}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Bước {currentStep + 1} / {steps.length}
+              </div>
             </div>
           </div>
 
