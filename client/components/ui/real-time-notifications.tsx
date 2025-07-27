@@ -217,7 +217,7 @@ export function RealTimeNotifications() {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-80 z-50">
+          <div className="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] z-50">
             <Card>
               <div className="flex items-center justify-between p-4 border-b">
                 <h3 className="font-semibold">Thông báo</h3>
