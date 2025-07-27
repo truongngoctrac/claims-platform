@@ -55,7 +55,6 @@ export function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden">
         {/* Background Pattern */}
@@ -151,15 +150,21 @@ export function Index() {
                 <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 rotate-3 hover:rotate-0 transition-transform duration-300">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-success" />
-                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Đã duyệt</span>
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">
+                      Đã duyệt
+                    </span>
                   </div>
-                  <div className="text-sm sm:text-base lg:text-lg font-bold text-success">2.8M VND</div>
+                  <div className="text-sm sm:text-base lg:text-lg font-bold text-success">
+                    2.8M VND
+                  </div>
                 </div>
 
                 <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 lg:-top-4 lg:-right-4 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 -rotate-3 hover:rotate-0 transition-transform duration-300">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <Clock className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-info" />
-                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Đang xử lý</span>
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">
+                      Đang xử lý
+                    </span>
                   </div>
                   <div className="text-xs sm:text-sm text-muted-foreground vietnamese-text">
                     Còn 1 ngày
@@ -169,7 +174,9 @@ export function Index() {
                 <div className="absolute -bottom-2 -left-2 sm:-bottom-3 sm:-left-3 lg:-bottom-4 lg:-left-4 bg-white rounded-lg sm:rounded-xl shadow-lg p-2 sm:p-3 lg:p-4 -rotate-2 hover:rotate-0 transition-transform duration-300">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <Heart className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-primary" />
-                    <span className="text-xs sm:text-sm font-medium vietnamese-text">Gia đình</span>
+                    <span className="text-xs sm:text-sm font-medium vietnamese-text">
+                      Gia đình
+                    </span>
                   </div>
                   <div className="text-xs sm:text-sm text-muted-foreground vietnamese-text">
                     4 thành viên
@@ -209,7 +216,9 @@ export function Index() {
               </div>
               <div className="flex items-center justify-center gap-1">
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-success" />
-                <span className="text-xs sm:text-sm text-success vietnamese-text">+23% tháng này</span>
+                <span className="text-xs sm:text-sm text-success vietnamese-text">
+                  +23% tháng này
+                </span>
               </div>
             </div>
 
@@ -234,7 +243,10 @@ export function Index() {
               </div>
               <div className="flex justify-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-warning text-warning" />
+                  <Star
+                    key={i}
+                    className="w-3 h-3 sm:w-4 sm:h-4 fill-warning text-warning"
+                  />
                 ))}
               </div>
             </div>
@@ -275,11 +287,15 @@ export function Index() {
                 </p>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm vietnamese-text">Tự động điền thông tin</span>
+                  <span className="text-sm vietnamese-text">
+                    Tự động điền thông tin
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm vietnamese-text">Xác thực tức thì</span>
+                  <span className="text-sm vietnamese-text">
+                    Xác thực tức thì
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -299,11 +315,15 @@ export function Index() {
                 </p>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm vietnamese-text">Thông báo tức thì</span>
+                  <span className="text-sm vietnamese-text">
+                    Thông báo tức thì
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm vietnamese-text">Timeline chi tiết</span>
+                  <span className="text-sm vietnamese-text">
+                    Timeline chi tiết
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -327,7 +347,9 @@ export function Index() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm vietnamese-text">Chat AI thông minh</span>
+                  <span className="text-sm vietnamese-text">
+                    Chat AI thông minh
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -482,7 +504,9 @@ export function Index() {
                 <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg bg-primary flex items-center justify-center">
                   <FileText className="h-3 w-3 sm:h-5 sm:w-5 text-primary-foreground" />
                 </div>
-                <span className="text-lg sm:text-xl font-bold vietnamese-text">ClaimFlow</span>
+                <span className="text-lg sm:text-xl font-bold vietnamese-text">
+                  ClaimFlow
+                </span>
               </div>
               <p className="text-neutral-400 text-xs sm:text-sm vietnamese-text">
                 Nền tảng bồi thường bảo hiểm y tế thông minh, nhanh chóng và
@@ -490,12 +514,16 @@ export function Index() {
               </p>
               <div className="flex items-center gap-2">
                 <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                <span className="text-xs sm:text-sm vietnamese-text">Hotline: 1900-xxxx</span>
+                <span className="text-xs sm:text-sm vietnamese-text">
+                  Hotline: 1900-xxxx
+                </span>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Dịch vụ</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">
+                Dịch vụ
+              </h4>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
                 <div className="vietnamese-text">Bồi thường ngoại trú</div>
                 <div className="vietnamese-text">Bồi thường nội trú</div>
@@ -505,7 +533,9 @@ export function Index() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Hỗ trợ</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">
+                Hỗ trợ
+              </h4>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
                 <div className="vietnamese-text">Hướng dẫn nộp hồ sơ</div>
                 <div className="vietnamese-text">Câu hỏi thường gặp</div>
@@ -515,7 +545,9 @@ export function Index() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Công ty</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">
+                Công ty
+              </h4>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
                 <div className="vietnamese-text">Về ClaimFlow</div>
                 <div className="vietnamese-text">Tin tức</div>
@@ -526,7 +558,9 @@ export function Index() {
           </div>
 
           <div className="border-t border-neutral-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-neutral-400">
-            <p className="vietnamese-text">© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
+            <p className="vietnamese-text">
+              © 2024 ClaimFlow. Tất cả quyền được bảo lưu.
+            </p>
           </div>
         </div>
       </footer>

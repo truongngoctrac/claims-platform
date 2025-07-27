@@ -82,18 +82,24 @@ export function Login() {
         {/* Login Form */}
         <Card className="border-0 shadow-xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-center text-lg sm:text-xl vietnamese-text">Đăng nhập</CardTitle>
+            <CardTitle className="text-center text-lg sm:text-xl vietnamese-text">
+              Đăng nhập
+            </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <Alert variant="destructive">
-                  <AlertDescription className="vietnamese-text">{error}</AlertDescription>
+                  <AlertDescription className="vietnamese-text">
+                    {error}
+                  </AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="vietnamese-text">Email</Label>
+                <Label htmlFor="email" className="vietnamese-text">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   name="email"
@@ -108,7 +114,9 @@ export function Login() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="vietnamese-text">Mật khẩu</Label>
+                <Label htmlFor="password" className="vietnamese-text">
+                  Mật khẩu
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -156,10 +164,13 @@ export function Login() {
 
             {/* Demo Credentials */}
             <div className="mt-6 p-3 sm:p-4 bg-muted/50 rounded-lg">
-              <h4 className="text-sm font-medium mb-2 vietnamese-text">Tài khoản demo:</h4>
+              <h4 className="text-sm font-medium mb-2 vietnamese-text">
+                Tài khoản demo:
+              </h4>
               <div className="text-xs sm:text-sm text-muted-foreground space-y-1 vietnamese-text">
                 <div>
-                  <strong>Quản trị viên:</strong> admin@claimflow.com / password123
+                  <strong>Quản trị viên:</strong> admin@claimflow.com /
+                  password123
                 </div>
                 <div>
                   <strong>Quản lý:</strong> manager@claimflow.com / password123

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Bell, X, Check, AlertTriangle, Info } from 'lucide-react';
-import { Button } from './button';
-import { Badge } from './badge';
-import { Card, CardContent } from './card';
-import { useWebSocket } from '../../hooks/useWebSocket';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Bell, X, Check, AlertTriangle, Info } from "lucide-react";
+import { Button } from "./button";
+import { Badge } from "./badge";
+import { Card, CardContent } from "./card";
+import { useWebSocket } from "../../hooks/useWebSocket";
 
 interface WebSocketMessage {
   type: string;
@@ -15,7 +15,7 @@ interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   timestamp: Date;
   read: boolean;
   actionUrl?: string;
@@ -26,12 +26,15 @@ export function RealTimeNotifications() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleWebSocketError = useCallback((error: Event) => {
-    console.error('WebSocket error in notifications:', error);
+    console.error("WebSocket error in notifications:", error);
   }, []);
 
-  const webSocketOptions = useMemo(() => ({
-    onError: handleWebSocketError
-  }), [handleWebSocketError]);
+  const webSocketOptions = useMemo(
+    () => ({
+      onError: handleWebSocketError,
+    }),
+    [handleWebSocketError],
+  );
 
   const { isConnected, lastMessage } = useWebSocket(webSocketOptions);
 
@@ -39,44 +42,44 @@ export function RealTimeNotifications() {
   useEffect(() => {
     const mockNotifications: Notification[] = [
       {
-        id: '1',
-        title: 'Hồ sơ mới cần xử lý',
-        message: 'Có 3 hồ sơ bồi thường mới cần được xem xét',
-        type: 'info',
+        id: "1",
+        title: "Hồ sơ mới cần xử lý",
+        message: "Có 3 hồ sơ bồi thường mới cần được xem xét",
+        type: "info",
         timestamp: new Date(Date.now() - 5 * 60 * 1000),
         read: false,
-        actionUrl: '/admin'
+        actionUrl: "/admin",
       },
       {
-        id: '2',
-        title: 'Hồ sơ đã được duyệt',
-        message: 'Hồ sơ HS001234 đã được duyệt thành công',
-        type: 'success',
+        id: "2",
+        title: "Hồ sơ đã được duyệt",
+        message: "Hồ sơ HS001234 đã được duyệt thành công",
+        type: "success",
         timestamp: new Date(Date.now() - 15 * 60 * 1000),
-        read: false
+        read: false,
       },
       {
-        id: '3',
-        title: 'Cảnh báo hệ th���ng',
-        message: 'Tải hệ thống đang cao (85%)',
-        type: 'warning',
+        id: "3",
+        title: "Cảnh báo hệ th���ng",
+        message: "Tải hệ thống đang cao (85%)",
+        type: "warning",
         timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        read: true
-      }
+        read: true,
+      },
     ];
     setNotifications(mockNotifications);
   }, []);
 
   // Handle new WebSocket messages
   useEffect(() => {
-    if (lastMessage && typeof lastMessage === 'object' && lastMessage.type) {
+    if (lastMessage && typeof lastMessage === "object" && lastMessage.type) {
       try {
         // lastMessage is already a parsed WebSocketMessage object
         const data = lastMessage as WebSocketMessage;
 
         // Validate message structure
         if (!data.type || !data.data) {
-          console.warn('Invalid WebSocket message structure:', data);
+          console.warn("Invalid WebSocket message structure:", data);
           return;
         }
 
@@ -84,28 +87,34 @@ export function RealTimeNotifications() {
         let notificationData: any = null;
 
         switch (data.type) {
-          case 'notification':
+          case "notification":
             notificationData = data.data;
             break;
-          case 'claim_update':
+          case "claim_update":
             notificationData = {
-              title: 'Cập nhật hồ sơ',
-              message: data.data.message || `Hồ sơ ${data.data.claimId} đã được cập nhật`,
-              notificationType: 'info'
+              title: "Cập nhật hồ sơ",
+              message:
+                data.data.message ||
+                `Hồ sơ ${data.data.claimId} đã được cập nhật`,
+              notificationType: "info",
             };
             break;
-          case 'document_verified':
+          case "document_verified":
             notificationData = {
-              title: 'Tài liệu đã xác minh',
-              message: data.data.message || `${data.data.documentName} đã được xác minh thành công`,
-              notificationType: 'success'
+              title: "Tài liệu đã xác minh",
+              message:
+                data.data.message ||
+                `${data.data.documentName} đã được xác minh thành công`,
+              notificationType: "success",
             };
             break;
-          case 'payment_processed':
+          case "payment_processed":
             notificationData = {
-              title: 'Thanh toán hoàn tất',
-              message: data.data.message || `Đã chuyển khoản ${data.data.amount?.toLocaleString()} VND`,
-              notificationType: 'success'
+              title: "Thanh toán hoàn tất",
+              message:
+                data.data.message ||
+                `Đã chuyển khoản ${data.data.amount?.toLocaleString()} VND`,
+              notificationType: "success",
             };
             break;
         }
@@ -113,55 +122,53 @@ export function RealTimeNotifications() {
         if (notificationData) {
           const newNotification: Notification = {
             id: Date.now().toString(),
-            title: notificationData.title || 'Thông báo mới',
-            message: notificationData.message || 'Có cập nhật mới',
-            type: notificationData.notificationType || 'info',
+            title: notificationData.title || "Thông báo mới",
+            message: notificationData.message || "Có cập nhật mới",
+            type: notificationData.notificationType || "info",
             timestamp: new Date(),
             read: false,
-            actionUrl: notificationData.actionUrl
+            actionUrl: notificationData.actionUrl,
           };
 
-          setNotifications(prev => [newNotification, ...prev]);
+          setNotifications((prev) => [newNotification, ...prev]);
 
           // Show browser notification if permission granted
-          if (Notification.permission === 'granted') {
+          if (Notification.permission === "granted") {
             new Notification(newNotification.title, {
               body: newNotification.message,
-              icon: '/icon-192x192.png'
+              icon: "/icon-192x192.png",
             });
           }
         }
       } catch (error) {
-        console.error('Failed to process WebSocket message:', error);
+        console.error("Failed to process WebSocket message:", error);
       }
     }
   }, [lastMessage]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(n => ({ ...n, read: true }))
-    );
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'success':
+      case "success":
         return <Check className="h-4 w-4 text-green-500" />;
-      case 'warning':
+      case "warning":
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'error':
+      case "error":
         return <X className="h-4 w-4 text-red-500" />;
       default:
         return <Info className="h-4 w-4 text-blue-500" />;
@@ -178,7 +185,7 @@ export function RealTimeNotifications() {
     if (days > 0) return `${days} ngày trước`;
     if (hours > 0) return `${hours} giờ trước`;
     if (minutes > 0) return `${minutes} phút trước`;
-    return 'Vừa xong';
+    return "Vừa xong";
   };
 
   return (
@@ -192,35 +199,37 @@ export function RealTimeNotifications() {
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <Badge 
-            variant="destructive" 
+          <Badge
+            variant="destructive"
             className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0"
           >
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {unreadCount > 99 ? "99+" : unreadCount}
           </Badge>
         )}
         {/* Connection status indicator */}
-        <div 
+        <div
           className={`absolute bottom-0 right-0 w-2 h-2 rounded-full ${
-            isConnected ? 'bg-green-500' : 'bg-red-500'
+            isConnected ? "bg-green-500" : "bg-red-500"
           }`}
-          title={isConnected ? 'Đã kết nối' : 'Mất kết nối'}
+          title={isConnected ? "Đã kết nối" : "Mất kết nối"}
         />
       </Button>
 
       {showDropdown && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40" 
+          <div
+            className="fixed inset-0 z-40"
             onClick={() => setShowDropdown(false)}
           />
-          
+
           {/* Dropdown */}
           <div className="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] z-50">
             <Card>
               <div className="flex items-center justify-between p-3 sm:p-4 border-b">
-                <h3 className="font-semibold text-sm sm:text-base vietnamese-text">Thông báo</h3>
+                <h3 className="font-semibold text-sm sm:text-base vietnamese-text">
+                  Thông báo
+                </h3>
                 <div className="flex items-center gap-1 sm:gap-2">
                   {unreadCount > 0 && (
                     <Button
@@ -243,14 +252,14 @@ export function RealTimeNotifications() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="max-h-72 sm:max-h-80 overflow-y-auto">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
                     <div
                       key={notification.id}
                       className={`p-2 sm:p-3 border-b last:border-b-0 hover:bg-muted cursor-pointer ${
-                        !notification.read ? 'bg-blue-50' : ''
+                        !notification.read ? "bg-blue-50" : ""
                       }`}
                       onClick={() => {
                         markAsRead(notification.id);
@@ -265,9 +274,13 @@ export function RealTimeNotifications() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
-                            <h4 className={`text-sm font-medium vietnamese-text break-words ${
-                              !notification.read ? 'text-gray-900' : 'text-gray-600'
-                            }`}>
+                            <h4
+                              className={`text-sm font-medium vietnamese-text break-words ${
+                                !notification.read
+                                  ? "text-gray-900"
+                                  : "text-gray-600"
+                              }`}
+                            >
                               {notification.title}
                             </h4>
                             <Button
@@ -302,7 +315,7 @@ export function RealTimeNotifications() {
                   </div>
                 )}
               </div>
-              
+
               {notifications.length > 0 && (
                 <div className="p-2 sm:p-3 border-t bg-gray-50">
                   <Button

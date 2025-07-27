@@ -473,14 +473,18 @@ export function HealthcareClaimSubmission() {
           {/* Form Content */}
           <Card className="shadow-lg">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg sm:text-xl vietnamese-text">{steps[currentStep].title}</CardTitle>
+              <CardTitle className="text-lg sm:text-xl vietnamese-text">
+                {steps[currentStep].title}
+              </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               {/* Step 0: Basic Information */}
               {currentStep === 0 && (
                 <div className="space-y-6">
                   <div>
-                    <Label htmlFor="claimType" className="vietnamese-text">Loại yêu cầu bồi thường *</Label>
+                    <Label htmlFor="claimType" className="vietnamese-text">
+                      Loại yêu cầu bồi thường *
+                    </Label>
                     <Select
                       value={formData.type}
                       onValueChange={(value) =>
@@ -488,31 +492,58 @@ export function HealthcareClaimSubmission() {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại yêu cầu bồi thường" className="vietnamese-text" />
+                        <SelectValue
+                          placeholder="Chọn loại yêu cầu bồi thường"
+                          className="vietnamese-text"
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={ClaimType.OUTPATIENT} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.OUTPATIENT}
+                          className="vietnamese-text"
+                        >
                           Ngoại trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.INPATIENT} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.INPATIENT}
+                          className="vietnamese-text"
+                        >
                           Nội trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.EMERGENCY} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.EMERGENCY}
+                          className="vietnamese-text"
+                        >
                           Cấp cứu
                         </SelectItem>
-                        <SelectItem value={ClaimType.DENTAL} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.DENTAL}
+                          className="vietnamese-text"
+                        >
                           Nha khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.MATERNITY} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.MATERNITY}
+                          className="vietnamese-text"
+                        >
                           Sản khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.PHARMACY} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.PHARMACY}
+                          className="vietnamese-text"
+                        >
                           Dược phẩm
                         </SelectItem>
-                        <SelectItem value={ClaimType.SURGERY} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.SURGERY}
+                          className="vietnamese-text"
+                        >
                           Phẫu thuật
                         </SelectItem>
-                        <SelectItem value={ClaimType.DIAGNOSTIC} className="vietnamese-text">
+                        <SelectItem
+                          value={ClaimType.DIAGNOSTIC}
+                          className="vietnamese-text"
+                        >
                           Chẩn đoán
                         </SelectItem>
                       </SelectContent>
