@@ -213,7 +213,7 @@ export function Navigation() {
               ) : (
                 <div className="flex items-center space-x-2">
                   <Link to="/login">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="vietnamese-text text-xs sm:text-sm">
                       Đăng nhập
                     </Button>
                   </Link>
@@ -226,12 +226,12 @@ export function Navigation() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2"
+                  className="p-1.5 sm:p-2"
                 >
                   {mobileMenuOpen ? (
-                    <X className="h-5 w-5" />
+                    <X className="h-4 w-4 sm:h-5 sm:w-5" />
                   ) : (
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
                   )}
                 </Button>
               </div>
