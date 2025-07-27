@@ -249,7 +249,7 @@ export function RealTimeNotifications() {
                   notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-3 border-b last:border-b-0 hover:bg-muted cursor-pointer ${
+                      className={`p-2 sm:p-3 border-b last:border-b-0 hover:bg-muted cursor-pointer ${
                         !notification.read ? 'bg-blue-50' : ''
                       }`}
                       onClick={() => {
