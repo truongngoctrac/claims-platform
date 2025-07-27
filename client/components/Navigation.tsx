@@ -174,11 +174,11 @@ export function Navigation() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex flex-col space-y-1 p-2">
-                      <p className="text-sm font-medium leading-none">{getUserDisplayName(user)}</p>
+                      <p className="text-sm font-medium leading-none vietnamese-text">{getUserDisplayName(user)}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
-                      <Badge variant="outline" className="w-fit text-xs mt-1">
+                      <Badge variant="outline" className="w-fit text-xs mt-1 vietnamese-text">
                         {user.role === 'admin' ? 'Quản trị viên' :
                          user.role === 'claims_manager' ? 'Quản lý bồi thường' :
                          user.role === 'claim_executive' ? 'Nhân viên xử lý' :
