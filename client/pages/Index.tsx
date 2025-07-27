@@ -116,24 +116,24 @@ export function Index() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex items-center gap-6 pt-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pt-4">
                 <div className="flex items-center gap-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className="w-4 h-4 fill-warning text-warning"
+                        className="w-3 h-3 sm:w-4 sm:h-4 fill-warning text-warning"
                       />
                     ))}
                   </div>
-                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                  <span className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                     4.9/5 từ 12,500+ đánh giá
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-success" />
-                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground vietnamese-text">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-success" />
+                  <span className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                     Bảo mật SSL 256-bit
                   </span>
                 </div>
@@ -522,7 +522,7 @@ export function Index() {
           </div>
 
           <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-sm text-neutral-400">
-            <p>© 2024 ClaimFlow. Tất cả quy��n được bảo lưu.</p>
+            <p>© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
           </div>
         </div>
       </footer>
