@@ -86,7 +86,7 @@ export function Index() {
                   Nộp yêu cầu bồi thường online trong{" "}
                   <span className="font-semibold text-primary">5 phút</span>,
                   theo dõi tiến độ real-time và nhận kết quả nhanh chóng. Hệ
-                  thống AI hỗ trợ xử lý tự động cho trải nghiệm t��i ưu.
+                  thống AI hỗ trợ xử lý tự động cho trải nghiệm tối ưu.
                 </p>
               </div>
 
