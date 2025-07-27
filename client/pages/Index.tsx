@@ -133,8 +133,8 @@ export function Index() {
 
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-success" />
-                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
-                    Bảo m��t SSL 256-bit
+                  <span className="text-caption-mobile md:text-caption-desktop text-muted-foreground vietnamese-text">
+                    Bảo mật SSL 256-bit
                   </span>
                 </div>
               </div>
