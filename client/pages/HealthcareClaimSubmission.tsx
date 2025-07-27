@@ -365,8 +365,6 @@ export function HealthcareClaimSubmission() {
   if (submitSuccess) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
-
         <div className="container mx-auto px-6 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
@@ -378,7 +376,7 @@ export function HealthcareClaimSubmission() {
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
-              Hồ sơ bồi thường của bạn ��ã được nộp thành công. Chúng tôi sẽ xử
+              Hồ sơ bồi thường của bạn đã được nộp thành công. Chúng tôi sẽ xử
               lý và thông báo kết quả trong thời gian sớm nhất.
             </p>
 
@@ -1071,7 +1069,7 @@ export function HealthcareClaimSubmission() {
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
                       Vui lòng kiểm tra lại toàn bộ thông tin trước khi nộp hồ
-                      sơ. Sau khi n���p, bạn sẽ không thể chỉnh sửa thông tin.
+                      sơ. Sau khi nộp, bạn sẽ không thể chỉnh sửa thông tin.
                     </AlertDescription>
                   </Alert>
 
