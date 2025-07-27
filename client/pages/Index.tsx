@@ -91,15 +91,15 @@ export function Index() {
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl">
                 <Link to="/healthcare-claim" className="flex-1 sm:flex-none">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 vietnamese-text min-h-[48px]"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 vietnamese-text min-h-[48px]"
                   >
                     <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Nộp yêu cầu bồi thường ngay
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                    <span className="truncate">Nộp yêu cầu bồi thường ngay</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>
 
@@ -107,10 +107,10 @@ export function Index() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="w-full sm:w-auto border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all duration-300 vietnamese-text min-h-[48px]"
+                    className="w-full sm:w-auto border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold transition-all duration-300 vietnamese-text min-h-[48px]"
                   >
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Kiểm tra trạng thái yêu cầu
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                    <span className="truncate">Kiểm tra trạng thái yêu cầu</span>
                   </Button>
                 </Link>
               </div>
