@@ -12,8 +12,8 @@ import {
   AuditTrailEntry,
   AuditAction,
   ComplianceImpact,
-  ConsentValidationResult
-} from './types';
+  ConsentValidationResult,
+} from "./types";
 
 export class ConsentManagementSystemService {
   private consentRecords: Map<string, ConsentRecord> = new Map();
@@ -25,25 +25,25 @@ export class ConsentManagementSystemService {
     private config: ConsentManagementConfig,
     private logger: any,
     private auditService: any,
-    private notificationService: any
+    private notificationService: any,
   ) {}
 
   // Consent Collection and Recording
   async recordConsent(
-    consentRequest: ConsentRequest
+    consentRequest: ConsentRequest,
   ): Promise<ComplianceServiceResponse<ConsentRecord>> {
     try {
       const validation = await this.validateConsentRequest(consentRequest);
       if (!validation.valid) {
         return {
           success: false,
-          error: `Invalid consent request: ${validation.errors.join(', ')}`
+          error: `Invalid consent request: ${validation.errors.join(", ")}`,
         };
       }
 
       const consentId = this.generateConsentId();
       const evidence = await this.collectConsentEvidence(consentRequest);
-      
+
       const consentRecord: ConsentRecord = {
         id: consentId,
         dataSubjectId: consentRequest.dataSubjectId,
@@ -57,7 +57,7 @@ export class ConsentManagementSystemService {
         ipAddress: consentRequest.context.ipAddress,
         userAgent: consentRequest.context.userAgent,
         evidence: evidence,
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       // Store the consent record
@@ -65,61 +65,68 @@ export class ConsentManagementSystemService {
 
       // Add to history
       await this.addToConsentHistory(consentRequest.dataSubjectId, {
-        action: 'consent_given',
+        action: "consent_given",
         consentId,
         timestamp: new Date(),
         purpose: consentRequest.purpose,
-        details: { method: consentRequest.method, granularity: consentRequest.granularity }
+        details: {
+          method: consentRequest.method,
+          granularity: consentRequest.granularity,
+        },
       });
 
       // Audit logging
       await this.auditService.log({
         action: AuditAction.CONSENT_GIVEN,
-        resourceType: 'consent_record',
+        resourceType: "consent_record",
         resourceId: consentId,
         dataSubjectId: consentRequest.dataSubjectId,
         details: {
           purpose: consentRequest.purpose,
           method: consentRequest.method,
-          granularity: consentRequest.granularity
+          granularity: consentRequest.granularity,
         },
-        result: 'success',
-        complianceImpact: ComplianceImpact.HIGH
+        result: "success",
+        complianceImpact: ComplianceImpact.HIGH,
       });
 
       // Trigger consent given notifications
-      await this.triggerConsentNotifications(consentRecord, 'consent_given');
+      await this.triggerConsentNotifications(consentRecord, "consent_given");
 
       return {
         success: true,
-        data: consentRecord
+        data: consentRecord,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Consent recording failed'
+        error:
+          error instanceof Error ? error.message : "Consent recording failed",
       };
     }
   }
 
   // Consent Withdrawal
   async withdrawConsent(
-    withdrawalRequest: ConsentWithdrawalRequest
+    withdrawalRequest: ConsentWithdrawalRequest,
   ): Promise<ComplianceServiceResponse<ConsentWithdrawalResult>> {
     try {
-      const validation = await this.validateWithdrawalRequest(withdrawalRequest);
+      const validation =
+        await this.validateWithdrawalRequest(withdrawalRequest);
       if (!validation.valid) {
         return {
           success: false,
-          error: `Invalid withdrawal request: ${validation.errors.join(', ')}`
+          error: `Invalid withdrawal request: ${validation.errors.join(", ")}`,
         };
       }
 
-      const consentRecord = this.consentRecords.get(withdrawalRequest.consentId);
+      const consentRecord = this.consentRecords.get(
+        withdrawalRequest.consentId,
+      );
       if (!consentRecord) {
         return {
           success: false,
-          error: 'Consent record not found'
+          error: "Consent record not found",
         };
       }
 
@@ -128,34 +135,43 @@ export class ConsentManagementSystemService {
       consentRecord.withdrawalDate = new Date();
 
       // Process withdrawal implications
-      const withdrawalResult = await this.processWithdrawalImplications(consentRecord, withdrawalRequest);
+      const withdrawalResult = await this.processWithdrawalImplications(
+        consentRecord,
+        withdrawalRequest,
+      );
 
       // Add to history
       await this.addToConsentHistory(consentRecord.dataSubjectId, {
-        action: 'consent_withdrawn',
+        action: "consent_withdrawn",
         consentId: withdrawalRequest.consentId,
         timestamp: new Date(),
         purpose: consentRecord.purpose,
-        details: { reason: withdrawalRequest.reason, method: withdrawalRequest.method }
+        details: {
+          reason: withdrawalRequest.reason,
+          method: withdrawalRequest.method,
+        },
       });
 
       // Audit logging
       await this.auditService.log({
         action: AuditAction.CONSENT_WITHDRAWN,
-        resourceType: 'consent_record',
+        resourceType: "consent_record",
         resourceId: withdrawalRequest.consentId,
         dataSubjectId: consentRecord.dataSubjectId,
         details: {
           purpose: consentRecord.purpose,
           reason: withdrawalRequest.reason,
-          implications: withdrawalResult.implications
+          implications: withdrawalResult.implications,
         },
-        result: 'success',
-        complianceImpact: ComplianceImpact.HIGH
+        result: "success",
+        complianceImpact: ComplianceImpact.HIGH,
       });
 
       // Trigger withdrawal notifications
-      await this.triggerConsentNotifications(consentRecord, 'consent_withdrawn');
+      await this.triggerConsentNotifications(
+        consentRecord,
+        "consent_withdrawn",
+      );
 
       const result: ConsentWithdrawalResult = {
         withdrawal_id: this.generateId(),
@@ -164,17 +180,18 @@ export class ConsentManagementSystemService {
         withdrawal_date: consentRecord.withdrawalDate!,
         implications: withdrawalResult.implications,
         next_steps: withdrawalResult.nextSteps,
-        confirmation_required: withdrawalResult.confirmationRequired
+        confirmation_required: withdrawalResult.confirmationRequired,
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Consent withdrawal failed'
+        error:
+          error instanceof Error ? error.message : "Consent withdrawal failed",
       };
     }
   }
@@ -183,64 +200,77 @@ export class ConsentManagementSystemService {
   async validateConsent(
     dataSubjectId: string,
     purpose: DataProcessingPurpose,
-    currentDate: Date = new Date()
+    currentDate: Date = new Date(),
   ): Promise<ComplianceServiceResponse<ConsentValidationResult>> {
     try {
-      const relevantConsents = await this.findRelevantConsents(dataSubjectId, purpose);
-      
+      const relevantConsents = await this.findRelevantConsents(
+        dataSubjectId,
+        purpose,
+      );
+
       if (relevantConsents.length === 0) {
         return {
           success: true,
           data: {
             isValid: false,
-            consentId: '',
+            consentId: "",
             validationChecks: {
               consent_exists: false,
               consent_current: false,
               consent_specific: false,
               consent_informed: false,
-              consent_unambiguous: false
+              consent_unambiguous: false,
             },
-            recommendations: ['Obtain valid consent for this purpose']
-          }
+            recommendations: ["Obtain valid consent for this purpose"],
+          },
         };
       }
 
       const latestConsent = this.getLatestConsent(relevantConsents);
-      const validationChecks = await this.performConsentValidationChecks(latestConsent, purpose, currentDate);
-      
-      const isValid = Object.values(validationChecks).every(check => check);
+      const validationChecks = await this.performConsentValidationChecks(
+        latestConsent,
+        purpose,
+        currentDate,
+      );
+
+      const isValid = Object.values(validationChecks).every((check) => check);
 
       const result: ConsentValidationResult = {
         isValid,
         consentId: latestConsent.id,
         validationChecks,
         expiryDate: latestConsent.expiryDate,
-        recommendations: await this.generateValidationRecommendations(validationChecks, latestConsent)
+        recommendations: await this.generateValidationRecommendations(
+          validationChecks,
+          latestConsent,
+        ),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Consent validation failed'
+        error:
+          error instanceof Error ? error.message : "Consent validation failed",
       };
     }
   }
 
   // Consent Renewal and Refresh
   async renewConsent(
-    renewalRequest: ConsentRenewalRequest
+    renewalRequest: ConsentRenewalRequest,
   ): Promise<ComplianceServiceResponse<ConsentRenewalResult>> {
     try {
-      const existingConsent = this.consentRecords.get(renewalRequest.existingConsentId);
+      const existingConsent = this.consentRecords.get(
+        renewalRequest.existingConsentId,
+      );
       if (!existingConsent) {
         return {
           success: false,
-          error: 'Existing consent record not found'
+          error: "Existing consent record not found",
         };
       }
 
@@ -251,15 +281,15 @@ export class ConsentManagementSystemService {
         granularity: renewalRequest.granularity || existingConsent.granularity,
         method: renewalRequest.method,
         context: renewalRequest.context,
-        customTerms: renewalRequest.customTerms
+        customTerms: renewalRequest.customTerms,
       };
 
       const newConsentResult = await this.recordConsent(newConsentRequest);
-      
+
       if (!newConsentResult.success) {
         return {
           success: false,
-          error: `Consent renewal failed: ${newConsentResult.error}`
+          error: `Consent renewal failed: ${newConsentResult.error}`,
         };
       }
 
@@ -269,14 +299,14 @@ export class ConsentManagementSystemService {
 
       // Add to history
       await this.addToConsentHistory(existingConsent.dataSubjectId, {
-        action: 'consent_renewed',
+        action: "consent_renewed",
         consentId: newConsentResult.data!.id,
         timestamp: new Date(),
         purpose: existingConsent.purpose,
-        details: { 
+        details: {
           old_consent_id: renewalRequest.existingConsentId,
-          renewal_reason: renewalRequest.reason 
-        }
+          renewal_reason: renewalRequest.reason,
+        },
       });
 
       const result: ConsentRenewalResult = {
@@ -285,24 +315,28 @@ export class ConsentManagementSystemService {
         new_consent_id: newConsentResult.data!.id,
         renewal_date: new Date(),
         reason: renewalRequest.reason,
-        changes: await this.identifyConsentChanges(existingConsent, newConsentResult.data!)
+        changes: await this.identifyConsentChanges(
+          existingConsent,
+          newConsentResult.data!,
+        ),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Consent renewal failed'
+        error:
+          error instanceof Error ? error.message : "Consent renewal failed",
       };
     }
   }
 
   // Granular Consent Management
   async updateGranularConsent(
-    updateRequest: GranularConsentUpdate
+    updateRequest: GranularConsentUpdate,
   ): Promise<ComplianceServiceResponse<GranularConsentResult>> {
     try {
       const results: GranularConsentUpdateResult[] = [];
@@ -310,12 +344,12 @@ export class ConsentManagementSystemService {
       for (const purposeUpdate of updateRequest.purposeUpdates) {
         const updateResult = await this.updatePurposeConsent(
           updateRequest.dataSubjectId,
-          purposeUpdate
+          purposeUpdate,
         );
         results.push(updateResult);
       }
 
-      const overallSuccess = results.every(result => result.success);
+      const overallSuccess = results.every((result) => result.success);
 
       const result: GranularConsentResult = {
         update_id: this.generateId(),
@@ -323,25 +357,32 @@ export class ConsentManagementSystemService {
         update_date: new Date(),
         purpose_updates: results,
         overall_success: overallSuccess,
-        active_consents: await this.getActiveConsents(updateRequest.dataSubjectId),
-        withdrawn_consents: await this.getWithdrawnConsents(updateRequest.dataSubjectId)
+        active_consents: await this.getActiveConsents(
+          updateRequest.dataSubjectId,
+        ),
+        withdrawn_consents: await this.getWithdrawnConsents(
+          updateRequest.dataSubjectId,
+        ),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Granular consent update failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Granular consent update failed",
       };
     }
   }
 
   // Consent Dashboard and Reporting
   async getConsentDashboard(
-    dataSubjectId: string
+    dataSubjectId: string,
   ): Promise<ComplianceServiceResponse<ConsentDashboard>> {
     try {
       const activeConsents = await this.getActiveConsents(dataSubjectId);
@@ -357,46 +398,59 @@ export class ConsentManagementSystemService {
         expired_consents: expiredConsents,
         pending_renewals: pendingRenewals,
         consent_summary: {
-          total_consents: activeConsents.length + withdrawnConsents.length + expiredConsents.length,
+          total_consents:
+            activeConsents.length +
+            withdrawnConsents.length +
+            expiredConsents.length,
           active_count: activeConsents.length,
           withdrawn_count: withdrawnConsents.length,
           expired_count: expiredConsents.length,
-          pending_renewals_count: pendingRenewals.length
+          pending_renewals_count: pendingRenewals.length,
         },
         purpose_breakdown: await this.getConsentPurposeBreakdown(dataSubjectId),
         recent_activities: await this.getRecentConsentActivities(dataSubjectId),
-        recommendations: await this.generateConsentRecommendations(dataSubjectId)
+        recommendations:
+          await this.generateConsentRecommendations(dataSubjectId),
       };
 
       return {
         success: true,
-        data: dashboard
+        data: dashboard,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Dashboard generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Dashboard generation failed",
       };
     }
   }
 
   // Consent Monitoring and Automation
-  async monitorConsentCompliance(): Promise<ComplianceServiceResponse<ConsentComplianceReport>> {
+  async monitorConsentCompliance(): Promise<
+    ComplianceServiceResponse<ConsentComplianceReport>
+  > {
     try {
       const allConsents = Array.from(this.consentRecords.values());
       const currentDate = new Date();
 
-      const expiringConsents = allConsents.filter(consent => 
-        this.isExpiringSoon(consent, currentDate)
+      const expiringConsents = allConsents.filter((consent) =>
+        this.isExpiringSoon(consent, currentDate),
       );
 
-      const expiredConsents = allConsents.filter(consent => 
-        this.isExpired(consent, currentDate)
+      const expiredConsents = allConsents.filter((consent) =>
+        this.isExpired(consent, currentDate),
       );
 
       const invalidConsents = [];
       for (const consent of allConsents) {
-        const validation = await this.validateConsent(consent.dataSubjectId, consent.purpose, currentDate);
+        const validation = await this.validateConsent(
+          consent.dataSubjectId,
+          consent.purpose,
+          currentDate,
+        );
         if (validation.success && !validation.data?.isValid) {
           invalidConsents.push(consent);
         }
@@ -405,33 +459,52 @@ export class ConsentManagementSystemService {
       const report: ConsentComplianceReport = {
         report_date: currentDate,
         total_consents: allConsents.length,
-        active_consents: allConsents.filter(c => c.status === ConsentStatus.GIVEN).length,
-        withdrawn_consents: allConsents.filter(c => c.status === ConsentStatus.WITHDRAWN).length,
+        active_consents: allConsents.filter(
+          (c) => c.status === ConsentStatus.GIVEN,
+        ).length,
+        withdrawn_consents: allConsents.filter(
+          (c) => c.status === ConsentStatus.WITHDRAWN,
+        ).length,
         expired_consents: expiredConsents.length,
         expiring_soon: expiringConsents.length,
         invalid_consents: invalidConsents.length,
-        compliance_rate: this.calculateComplianceRate(allConsents, invalidConsents),
+        compliance_rate: this.calculateComplianceRate(
+          allConsents,
+          invalidConsents,
+        ),
         trending_withdrawals: await this.analyzeTrendingWithdrawals(),
         purpose_analysis: await this.analyzeConsentByPurpose(),
         method_analysis: await this.analyzeConsentByMethod(),
-        recommendations: await this.generateComplianceRecommendations(allConsents, invalidConsents),
-        action_items: await this.generateActionItems(expiringConsents, expiredConsents, invalidConsents)
+        recommendations: await this.generateComplianceRecommendations(
+          allConsents,
+          invalidConsents,
+        ),
+        action_items: await this.generateActionItems(
+          expiringConsents,
+          expiredConsents,
+          invalidConsents,
+        ),
       };
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Compliance monitoring failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Compliance monitoring failed",
       };
     }
   }
 
   // Automated Consent Renewal
-  async automatedConsentRenewal(): Promise<ComplianceServiceResponse<AutomatedRenewalResult>> {
+  async automatedConsentRenewal(): Promise<
+    ComplianceServiceResponse<AutomatedRenewalResult>
+  > {
     try {
       const renewalCandidates = await this.identifyRenewalCandidates();
       const renewalResults: RenewalAttemptResult[] = [];
@@ -445,46 +518,59 @@ export class ConsentManagementSystemService {
         execution_date: new Date(),
         candidates_identified: renewalCandidates.length,
         renewal_attempts: renewalResults.length,
-        successful_renewals: renewalResults.filter(r => r.success).length,
-        failed_renewals: renewalResults.filter(r => !r.success).length,
+        successful_renewals: renewalResults.filter((r) => r.success).length,
+        failed_renewals: renewalResults.filter((r) => !r.success).length,
         renewal_results: renewalResults,
-        next_execution: await this.scheduleNextAutomatedRenewal()
+        next_execution: await this.scheduleNextAutomatedRenewal(),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Automated renewal failed'
+        error:
+          error instanceof Error ? error.message : "Automated renewal failed",
       };
     }
   }
 
   // Privacy Preference Management
   async updatePrivacyPreferences(
-    preferencesUpdate: PrivacyPreferencesUpdate
+    preferencesUpdate: PrivacyPreferencesUpdate,
   ): Promise<ComplianceServiceResponse<PrivacyPreferencesResult>> {
     try {
-      const currentPreferences = await this.getPrivacyPreferences(preferencesUpdate.dataSubjectId);
-      const updatedPreferences = await this.mergePrivacyPreferences(currentPreferences, preferencesUpdate);
+      const currentPreferences = await this.getPrivacyPreferences(
+        preferencesUpdate.dataSubjectId,
+      );
+      const updatedPreferences = await this.mergePrivacyPreferences(
+        currentPreferences,
+        preferencesUpdate,
+      );
 
       // Validate preferences
-      const validation = await this.validatePrivacyPreferences(updatedPreferences);
+      const validation =
+        await this.validatePrivacyPreferences(updatedPreferences);
       if (!validation.valid) {
         return {
           success: false,
-          error: `Invalid preferences: ${validation.errors.join(', ')}`
+          error: `Invalid preferences: ${validation.errors.join(", ")}`,
         };
       }
 
       // Apply preference changes
-      const consentChanges = await this.applyPreferenceChanges(preferencesUpdate.dataSubjectId, updatedPreferences);
+      const consentChanges = await this.applyPreferenceChanges(
+        preferencesUpdate.dataSubjectId,
+        updatedPreferences,
+      );
 
       // Save preferences
-      await this.savePrivacyPreferences(preferencesUpdate.dataSubjectId, updatedPreferences);
+      await this.savePrivacyPreferences(
+        preferencesUpdate.dataSubjectId,
+        updatedPreferences,
+      );
 
       const result: PrivacyPreferencesResult = {
         preferences_id: this.generateId(),
@@ -492,57 +578,70 @@ export class ConsentManagementSystemService {
         updated_preferences: updatedPreferences,
         consent_changes: consentChanges,
         effective_date: new Date(),
-        notification_sent: await this.sendPreferencesUpdateNotification(preferencesUpdate.dataSubjectId, consentChanges)
+        notification_sent: await this.sendPreferencesUpdateNotification(
+          preferencesUpdate.dataSubjectId,
+          consentChanges,
+        ),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Privacy preferences update failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Privacy preferences update failed",
       };
     }
   }
 
   // Private helper methods
-  private async validateConsentRequest(request: ConsentRequest): Promise<ValidationResult> {
+  private async validateConsentRequest(
+    request: ConsentRequest,
+  ): Promise<ValidationResult> {
     const errors: string[] = [];
 
     // Validate data subject
     if (!request.dataSubjectId) {
-      errors.push('Data subject ID is required');
+      errors.push("Data subject ID is required");
     }
 
     // Validate purpose
     if (!request.purpose) {
-      errors.push('Processing purpose is required');
+      errors.push("Processing purpose is required");
     }
 
     // Validate method
     if (!request.method) {
-      errors.push('Consent method is required');
+      errors.push("Consent method is required");
     }
 
     // Validate context for certain methods
-    if (request.method === ConsentMethod.DIGITAL_SIGNATURE && !request.context.ipAddress) {
-      errors.push('IP address is required for digital signature consent');
+    if (
+      request.method === ConsentMethod.DIGITAL_SIGNATURE &&
+      !request.context.ipAddress
+    ) {
+      errors.push("IP address is required for digital signature consent");
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
-  private async collectConsentEvidence(request: ConsentRequest): Promise<ConsentEvidence> {
+  private async collectConsentEvidence(
+    request: ConsentRequest,
+  ): Promise<ConsentEvidence> {
     const evidence: ConsentEvidence = {
       type: this.mapMethodToEvidenceType(request.method),
       evidence: await this.generateEvidenceString(request),
       timestamp: new Date(),
-      verificationCode: this.generateVerificationCode()
+      verificationCode: this.generateVerificationCode(),
     };
 
     if (request.context.witnessId) {
@@ -552,32 +651,40 @@ export class ConsentManagementSystemService {
     return evidence;
   }
 
-  private async calculateExpiryDate(request: ConsentRequest): Promise<Date | undefined> {
+  private async calculateExpiryDate(
+    request: ConsentRequest,
+  ): Promise<Date | undefined> {
     const policy = this.consentPolicies.get(request.purpose);
     if (policy?.defaultExpiryPeriod) {
-      return new Date(Date.now() + policy.defaultExpiryPeriod * 24 * 60 * 60 * 1000);
+      return new Date(
+        Date.now() + policy.defaultExpiryPeriod * 24 * 60 * 60 * 1000,
+      );
     }
     return undefined;
   }
 
-  private async findRelevantConsents(dataSubjectId: string, purpose: DataProcessingPurpose): Promise<ConsentRecord[]> {
-    return Array.from(this.consentRecords.values()).filter(consent => 
-      consent.dataSubjectId === dataSubjectId && 
-      consent.purpose === purpose &&
-      consent.status === ConsentStatus.GIVEN
+  private async findRelevantConsents(
+    dataSubjectId: string,
+    purpose: DataProcessingPurpose,
+  ): Promise<ConsentRecord[]> {
+    return Array.from(this.consentRecords.values()).filter(
+      (consent) =>
+        consent.dataSubjectId === dataSubjectId &&
+        consent.purpose === purpose &&
+        consent.status === ConsentStatus.GIVEN,
     );
   }
 
   private getLatestConsent(consents: ConsentRecord[]): ConsentRecord {
-    return consents.reduce((latest, current) => 
-      current.consentDate > latest.consentDate ? current : latest
+    return consents.reduce((latest, current) =>
+      current.consentDate > latest.consentDate ? current : latest,
     );
   }
 
   private async performConsentValidationChecks(
     consent: ConsentRecord,
     purpose: DataProcessingPurpose,
-    currentDate: Date
+    currentDate: Date,
   ): Promise<Record<string, boolean>> {
     return {
       consent_exists: true,
@@ -586,7 +693,7 @@ export class ConsentManagementSystemService {
       consent_informed: await this.wasInformed(consent),
       consent_unambiguous: await this.wasUnambiguous(consent),
       consent_freely_given: await this.wasFreelyGiven(consent),
-      consent_withdrawable: await this.isWithdrawable(consent)
+      consent_withdrawable: await this.isWithdrawable(consent),
     };
   }
 
@@ -605,36 +712,41 @@ export class ConsentManagementSystemService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'consent-management-service',
-      updatedBy: 'consent-management-service',
-      tags: ['consent', 'gdpr'],
-      classification: 'confidential' as any
+      createdBy: "consent-management-service",
+      updatedBy: "consent-management-service",
+      tags: ["consent", "gdpr"],
+      classification: "confidential" as any,
     };
   }
 
-  private mapMethodToEvidenceType(method: ConsentMethod): ConsentEvidence['type'] {
+  private mapMethodToEvidenceType(
+    method: ConsentMethod,
+  ): ConsentEvidence["type"] {
     switch (method) {
       case ConsentMethod.CHECKBOX:
-        return 'checkbox';
+        return "checkbox";
       case ConsentMethod.DIGITAL_SIGNATURE:
-        return 'signature';
+        return "signature";
       case ConsentMethod.VERBAL:
-        return 'verbal';
+        return "verbal";
       case ConsentMethod.WRITTEN:
-        return 'signature';
+        return "signature";
       case ConsentMethod.OPT_IN:
-        return 'opt-in';
+        return "opt-in";
       case ConsentMethod.DOUBLE_OPT_IN:
-        return 'double-opt-in';
+        return "double-opt-in";
       default:
-        return 'checkbox';
+        return "checkbox";
     }
   }
 
-  private async addToConsentHistory(dataSubjectId: string, entry: ConsentHistoryEntry): Promise<void> {
+  private async addToConsentHistory(
+    dataSubjectId: string,
+    entry: ConsentHistoryEntry,
+  ): Promise<void> {
     const history = this.consentHistory.get(dataSubjectId) || [];
     history.push(entry);
     this.consentHistory.set(dataSubjectId, history);
@@ -646,16 +758,25 @@ export class ConsentManagementSystemService {
 
   private isExpiringSoon(consent: ConsentRecord, currentDate: Date): boolean {
     if (!consent.expiryDate) return false;
-    const daysUntilExpiry = (consent.expiryDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000);
+    const daysUntilExpiry =
+      (consent.expiryDate.getTime() - currentDate.getTime()) /
+      (24 * 60 * 60 * 1000);
     return daysUntilExpiry <= this.config.expiryWarningDays;
   }
 
-  private calculateComplianceRate(allConsents: ConsentRecord[], invalidConsents: ConsentRecord[]): number {
-    return allConsents.length > 0 ? (1 - invalidConsents.length / allConsents.length) * 100 : 100;
+  private calculateComplianceRate(
+    allConsents: ConsentRecord[],
+    invalidConsents: ConsentRecord[],
+  ): number {
+    return allConsents.length > 0
+      ? (1 - invalidConsents.length / allConsents.length) * 100
+      : 100;
   }
 
   // Placeholder implementations for complex logic
-  private async generateEvidenceString(request: ConsentRequest): Promise<string> {
+  private async generateEvidenceString(
+    request: ConsentRequest,
+  ): Promise<string> {
     return `Consent evidence for ${request.purpose} via ${request.method}`;
   }
 
@@ -675,29 +796,45 @@ export class ConsentManagementSystemService {
     return true; // Placeholder
   }
 
-  private async getActiveConsents(dataSubjectId: string): Promise<ConsentRecord[]> {
-    return Array.from(this.consentRecords.values()).filter(consent => 
-      consent.dataSubjectId === dataSubjectId && consent.status === ConsentStatus.GIVEN
+  private async getActiveConsents(
+    dataSubjectId: string,
+  ): Promise<ConsentRecord[]> {
+    return Array.from(this.consentRecords.values()).filter(
+      (consent) =>
+        consent.dataSubjectId === dataSubjectId &&
+        consent.status === ConsentStatus.GIVEN,
     );
   }
 
-  private async getWithdrawnConsents(dataSubjectId: string): Promise<ConsentRecord[]> {
-    return Array.from(this.consentRecords.values()).filter(consent => 
-      consent.dataSubjectId === dataSubjectId && consent.status === ConsentStatus.WITHDRAWN
+  private async getWithdrawnConsents(
+    dataSubjectId: string,
+  ): Promise<ConsentRecord[]> {
+    return Array.from(this.consentRecords.values()).filter(
+      (consent) =>
+        consent.dataSubjectId === dataSubjectId &&
+        consent.status === ConsentStatus.WITHDRAWN,
     );
   }
 
-  private async getExpiredConsents(dataSubjectId: string): Promise<ConsentRecord[]> {
+  private async getExpiredConsents(
+    dataSubjectId: string,
+  ): Promise<ConsentRecord[]> {
     const currentDate = new Date();
-    return Array.from(this.consentRecords.values()).filter(consent => 
-      consent.dataSubjectId === dataSubjectId && this.isExpired(consent, currentDate)
+    return Array.from(this.consentRecords.values()).filter(
+      (consent) =>
+        consent.dataSubjectId === dataSubjectId &&
+        this.isExpired(consent, currentDate),
     );
   }
 
-  private async getPendingRenewals(dataSubjectId: string): Promise<ConsentRecord[]> {
+  private async getPendingRenewals(
+    dataSubjectId: string,
+  ): Promise<ConsentRecord[]> {
     const currentDate = new Date();
-    return Array.from(this.consentRecords.values()).filter(consent => 
-      consent.dataSubjectId === dataSubjectId && this.isExpiringSoon(consent, currentDate)
+    return Array.from(this.consentRecords.values()).filter(
+      (consent) =>
+        consent.dataSubjectId === dataSubjectId &&
+        this.isExpiringSoon(consent, currentDate),
     );
   }
 }
@@ -733,7 +870,7 @@ export interface ConsentWithdrawalRequest {
   consentId: string;
   dataSubjectId: string;
   reason?: string;
-  method: 'online' | 'email' | 'phone' | 'letter';
+  method: "online" | "email" | "phone" | "letter";
   context: ConsentContext;
 }
 
@@ -754,7 +891,7 @@ export interface GranularConsentUpdate {
 
 export interface PurposeConsentUpdate {
   purpose: DataProcessingPurpose;
-  action: 'grant' | 'withdraw' | 'modify';
+  action: "grant" | "withdraw" | "modify";
   granularity?: ConsentGranularity;
   conditions?: string[];
 }
@@ -775,9 +912,9 @@ export interface PrivacyPreferences {
 }
 
 export interface ContactMethod {
-  type: 'email' | 'sms' | 'phone' | 'mail';
+  type: "email" | "sms" | "phone" | "mail";
   allowed: boolean;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'never';
+  frequency: "daily" | "weekly" | "monthly" | "never";
 }
 
 export interface RetentionPreferences {
@@ -808,7 +945,7 @@ export interface WithdrawalRequest {
   dataSubjectId: string;
   requestDate: Date;
   reason?: string;
-  status: 'pending' | 'processed' | 'rejected';
+  status: "pending" | "processed" | "rejected";
   processedDate?: Date;
 }
 
@@ -916,7 +1053,7 @@ export interface ConsentComplianceReport {
 export interface TrendingWithdrawal {
   purpose: DataProcessingPurpose;
   withdrawal_rate: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
 }
 
 export interface PurposeAnalysis {
@@ -934,7 +1071,7 @@ export interface MethodAnalysis {
 }
 
 export interface ActionItem {
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   description: string;
   due_date: Date;
   assigned_to?: string;

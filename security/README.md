@@ -13,9 +13,11 @@ A comprehensive enterprise-grade security and compliance system designed specifi
 ## 🛡️ Core Security Services
 
 ### 1. Security Audit Service (`SecurityAuditService`)
+
 Automated security auditing and compliance verification system.
 
 **Features:**
+
 - Automated security scans
 - Compliance reporting (HIPAA, Vietnamese Healthcare Law, SOC2, ISO27001)
 - Risk assessment and scoring
@@ -23,8 +25,9 @@ Automated security auditing and compliance verification system.
 - Remediation tracking
 
 **Usage:**
+
 ```typescript
-import { SecurityAuditService } from './advanced-security/SecurityAuditService';
+import { SecurityAuditService } from "./advanced-security/SecurityAuditService";
 
 const auditService = new SecurityAuditService();
 const auditResults = await auditService.performComprehensiveAudit();
@@ -32,9 +35,11 @@ const complianceReport = await auditService.generateComplianceReport();
 ```
 
 ### 2. Penetration Testing Service (`PenetrationTestingService`)
+
 Automated penetration testing and vulnerability assessment.
 
 **Features:**
+
 - Automated web application testing
 - Network security assessment
 - API security testing
@@ -42,8 +47,9 @@ Automated penetration testing and vulnerability assessment.
 - Scheduled penetration tests
 
 **Usage:**
+
 ```typescript
-import { PenetrationTestingService } from './advanced-security/PenetrationTestingService';
+import { PenetrationTestingService } from "./advanced-security/PenetrationTestingService";
 
 const pentestService = new PenetrationTestingService();
 await pentestService.initialize();
@@ -51,9 +57,11 @@ const results = await pentestService.runAutomatedPenetrationTest();
 ```
 
 ### 3. Vulnerability Scanning Service (`VulnerabilityScanningService`)
+
 Continuous vulnerability monitoring and management.
 
 **Features:**
+
 - Real-time vulnerability scanning
 - Dependency scanning
 - Container security scanning
@@ -61,8 +69,9 @@ Continuous vulnerability monitoring and management.
 - Vulnerability database integration
 
 **Usage:**
+
 ```typescript
-import { VulnerabilityScanningService } from './advanced-security/VulnerabilityScanningService';
+import { VulnerabilityScanningService } from "./advanced-security/VulnerabilityScanningService";
 
 const vulnService = new VulnerabilityScanningService();
 const vulnerabilities = await vulnService.performComprehensiveScan();
@@ -70,9 +79,11 @@ const stats = await vulnService.getVulnerabilityStatistics();
 ```
 
 ### 4. Security Monitoring Service (`SecurityMonitoringService`)
+
 Real-time security monitoring and alerting system.
 
 **Features:**
+
 - Real-time threat monitoring
 - Custom security rules
 - Automated alerting
@@ -80,8 +91,9 @@ Real-time security monitoring and alerting system.
 - Security metrics dashboard
 
 **Usage:**
+
 ```typescript
-import { SecurityMonitoringService } from './advanced-security/SecurityMonitoringService';
+import { SecurityMonitoringService } from "./advanced-security/SecurityMonitoringService";
 
 const monitoringService = new SecurityMonitoringService();
 await monitoringService.initialize();
@@ -89,9 +101,11 @@ const dashboardData = await monitoringService.getDashboardData();
 ```
 
 ### 5. Threat Detection Service (`ThreatDetectionService`)
+
 ML-powered threat detection and analysis.
 
 **Features:**
+
 - Machine learning-based threat detection
 - Behavioral analysis
 - Anomaly detection
@@ -99,8 +113,9 @@ ML-powered threat detection and analysis.
 - Multi-layered analysis
 
 **Usage:**
+
 ```typescript
-import { ThreatDetectionService } from './advanced-security/ThreatDetectionService';
+import { ThreatDetectionService } from "./advanced-security/ThreatDetectionService";
 
 const threatService = new ThreatDetectionService();
 await threatService.initialize();
@@ -108,9 +123,11 @@ const threat = await threatService.analyzeEvent(eventData);
 ```
 
 ### 6. Intrusion Prevention Service (`IntrusionPreventionService`)
+
 Real-time intrusion prevention and blocking.
 
 **Features:**
+
 - Real-time traffic analysis
 - Automated blocking
 - Custom IPS rules
@@ -118,8 +135,9 @@ Real-time intrusion prevention and blocking.
 - Geographic restrictions
 
 **Usage:**
+
 ```typescript
-import { IntrusionPreventionService } from './advanced-security/IntrusionPreventionService';
+import { IntrusionPreventionService } from "./advanced-security/IntrusionPreventionService";
 
 const ipsService = new IntrusionPreventionService();
 await ipsService.initialize();
@@ -127,9 +145,11 @@ const result = await ipsService.analyzeAndPrevent(requestData);
 ```
 
 ### 7. Security Incident Response Service (`SecurityIncidentResponseService`)
+
 Automated incident response and management.
 
 **Features:**
+
 - Automated incident creation
 - Playbook-based response
 - Team assignment and notification
@@ -137,23 +157,26 @@ Automated incident response and management.
 - Compliance reporting
 
 **Usage:**
+
 ```typescript
-import { SecurityIncidentResponseService } from './advanced-security/SecurityIncidentResponseService';
+import { SecurityIncidentResponseService } from "./advanced-security/SecurityIncidentResponseService";
 
 const incidentService = new SecurityIncidentResponseService();
 const incidentId = await incidentService.createIncident(
-  'Data Breach Detected',
-  'Suspicious data access detected',
-  'critical',
-  'data_breach',
-  'system'
+  "Data Breach Detected",
+  "Suspicious data access detected",
+  "critical",
+  "data_breach",
+  "system",
 );
 ```
 
 ### 8. Data Loss Prevention Service (`DataLossPreventionService`)
+
 Healthcare-compliant data loss prevention.
 
 **Features:**
+
 - Vietnamese healthcare data scanning
 - PHI/PII detection
 - Real-time data monitoring
@@ -161,8 +184,9 @@ Healthcare-compliant data loss prevention.
 - Compliance reporting
 
 **Usage:**
+
 ```typescript
-import { DataLossPreventionService } from './advanced-security/DataLossPreventionService';
+import { DataLossPreventionService } from "./advanced-security/DataLossPreventionService";
 
 const dlpService = new DataLossPreventionService();
 await dlpService.initialize();
@@ -170,9 +194,11 @@ const result = await dlpService.scanAndProtectData(requestData);
 ```
 
 ### 9. Advanced Encryption Service (`AdvancedEncryptionService`)
+
 Healthcare-grade encryption for sensitive data.
 
 **Features:**
+
 - AES-256, ChaCha20 encryption
 - Healthcare-specific key management
 - Automatic encryption for PHI
@@ -180,22 +206,25 @@ Healthcare-grade encryption for sensitive data.
 - Performance optimization
 
 **Usage:**
+
 ```typescript
-import { AdvancedEncryptionService } from './advanced-security/AdvancedEncryptionService';
+import { AdvancedEncryptionService } from "./advanced-security/AdvancedEncryptionService";
 
 const encryptionService = new AdvancedEncryptionService();
 await encryptionService.initialize();
 const result = await encryptionService.encryptHealthcareData(
   patientData,
-  'restricted',
-  patientId
+  "restricted",
+  patientId,
 );
 ```
 
 ### 10. Key Management Service (`KeyManagementService`)
+
 Enterprise key management and lifecycle.
 
 **Features:**
+
 - Hardware Security Module (HSM) support
 - Automated key rotation
 - Key escrow and recovery
@@ -203,18 +232,24 @@ Enterprise key management and lifecycle.
 - Audit trails
 
 **Usage:**
+
 ```typescript
-import { KeyManagementService } from './advanced-security/KeyManagementService';
+import { KeyManagementService } from "./advanced-security/KeyManagementService";
 
 const keyService = new KeyManagementService();
 await keyService.initialize();
-const masterKey = await keyService.createMasterKey('AES-256', 'data_encryption');
+const masterKey = await keyService.createMasterKey(
+  "AES-256",
+  "data_encryption",
+);
 ```
 
 ### 11. Zero Trust Architecture Service (`ZeroTrustArchitectureService`)
+
 Zero trust security model implementation.
 
 **Features:**
+
 - Dynamic trust scoring
 - Continuous verification
 - Policy-based access
@@ -222,17 +257,20 @@ Zero trust security model implementation.
 - Adaptive security
 
 **Usage:**
+
 ```typescript
-import { ZeroTrustArchitectureService } from './advanced-security/ZeroTrustArchitectureService';
+import { ZeroTrustArchitectureService } from "./advanced-security/ZeroTrustArchitectureService";
 
 const zeroTrustService = new ZeroTrustArchitectureService();
 const accessDecision = await zeroTrustService.evaluateAccess(accessRequest);
 ```
 
 ### 12. Multi-Factor Authentication Service (`MultiFactorAuthService`)
+
 Comprehensive MFA implementation.
 
 **Features:**
+
 - TOTP, SMS, Email, Push notifications
 - Biometric integration
 - Backup codes
@@ -240,18 +278,21 @@ Comprehensive MFA implementation.
 - Healthcare compliance
 
 **Usage:**
+
 ```typescript
-import { MultiFactorAuthService } from './advanced-security/MultiFactorAuthService';
+import { MultiFactorAuthService } from "./advanced-security/MultiFactorAuthService";
 
 const mfaService = new MultiFactorAuthService();
-const setup = await mfaService.setupMFA(userId, 'totp', {});
+const setup = await mfaService.setupMFA(userId, "totp", {});
 const verification = await mfaService.verifyMFA(userId, code);
 ```
 
 ### 13. Biometric Authentication Service (`BiometricAuthenticationService`)
+
 Advanced biometric authentication.
 
 **Features:**
+
 - Fingerprint, face, voice recognition
 - Template encryption
 - Quality assessment
@@ -259,22 +300,25 @@ Advanced biometric authentication.
 - Privacy protection
 
 **Usage:**
+
 ```typescript
-import { BiometricAuthenticationService } from './advanced-security/BiometricAuthenticationService';
+import { BiometricAuthenticationService } from "./advanced-security/BiometricAuthenticationService";
 
 const biometricService = new BiometricAuthenticationService();
 const enrollment = await biometricService.enrollBiometric(
   userId,
-  'fingerprint',
+  "fingerprint",
   templateData,
-  deviceId
+  deviceId,
 );
 ```
 
 ### 14. Session Management Service (`SessionManagementService`)
+
 Advanced session security and management.
 
 **Features:**
+
 - Risk-based session management
 - Concurrent session control
 - Geographic restrictions
@@ -282,8 +326,9 @@ Advanced session security and management.
 - Privileged session monitoring
 
 **Usage:**
+
 ```typescript
-import { SessionManagementService } from './advanced-security/SessionManagementService';
+import { SessionManagementService } from "./advanced-security/SessionManagementService";
 
 const sessionService = new SessionManagementService();
 await sessionService.initialize();
@@ -292,14 +337,16 @@ const session = await sessionService.createSession(
   deviceFingerprint,
   ipAddress,
   userAgent,
-  location
+  location,
 );
 ```
 
 ### 15. Security Training Service (`SecurityTrainingService`)
+
 Automated security awareness training.
 
 **Features:**
+
 - Healthcare-specific training modules
 - Automated assignments
 - Progress tracking
@@ -307,14 +354,15 @@ Automated security awareness training.
 - Phishing simulation
 
 **Usage:**
+
 ```typescript
-import { SecurityTrainingService } from './advanced-security/SecurityTrainingService';
+import { SecurityTrainingService } from "./advanced-security/SecurityTrainingService";
 
 const trainingService = new SecurityTrainingService();
 const assignment = await trainingService.assignTraining(
   userId,
-  'healthcare_phishing_awareness',
-  dueDate
+  "healthcare_phishing_awareness",
+  dueDate,
 );
 ```
 
@@ -323,7 +371,7 @@ const assignment = await trainingService.assignTraining(
 The `SecurityManager` class provides centralized access to all security services:
 
 ```typescript
-import { securityManager } from './security';
+import { securityManager } from "./security";
 
 // Initialize all security services
 await securityManager.initialize();
@@ -336,19 +384,22 @@ const healthCheck = await securityManager.performHealthCheck();
 
 // Access individual services
 const auditResults = await securityManager.audit.performComprehensiveAudit();
-const vulnerabilities = await securityManager.vulnerability.getRecentVulnerabilities(10);
+const vulnerabilities =
+  await securityManager.vulnerability.getRecentVulnerabilities(10);
 const threats = await securityManager.threatDetection.getRecentThreats(10);
 ```
 
 ## 📋 Compliance Standards Supported
 
 ### Vietnamese Healthcare Regulations
+
 - **Law on Medical Examination and Treatment 2009**
 - **Circular 54/2017/TT-BYT** on medical record management
 - **Decision 4159/QD-BYT** on healthcare information systems
 - **Vietnamese Personal Data Protection Decree 13/2023/ND-CP**
 
 ### International Standards
+
 - **HIPAA** (Health Insurance Portability and Accountability Act)
 - **SOC 2** (Service Organization Control 2)
 - **ISO 27001** (Information Security Management)
@@ -358,46 +409,51 @@ const threats = await securityManager.threatDetection.getRecentThreats(10);
 ## 🚀 Quick Start
 
 1. **Install Dependencies**
+
 ```bash
 npm install
 ```
 
 2. **Initialize Security Services**
+
 ```typescript
-import { securityManager } from './security';
+import { securityManager } from "./security";
 
 async function initializeSecurity() {
   await securityManager.initialize();
-  console.log('Security services initialized');
+  console.log("Security services initialized");
 }
 ```
 
 3. **Configure Policies**
+
 ```typescript
 // Add custom DLP policy
 await securityManager.dlp.addDLPPolicy({
-  name: 'Vietnamese Patient Data Protection',
-  data_types: ['vietnamese_names', 'patient_id'],
-  channels: ['email', 'upload'],
-  actions: { primary: 'block' }
+  name: "Vietnamese Patient Data Protection",
+  data_types: ["vietnamese_names", "patient_id"],
+  channels: ["email", "upload"],
+  actions: { primary: "block" },
 });
 ```
 
 4. **Monitor Security Events**
+
 ```typescript
 // Listen for security events
-securityManager.on('threat_detected', (threat) => {
-  console.log('Threat detected:', threat);
+securityManager.on("threat_detected", (threat) => {
+  console.log("Threat detected:", threat);
 });
 
-securityManager.on('dlp_violation', (violation) => {
-  console.log('DLP violation:', violation);
+securityManager.on("dlp_violation", (violation) => {
+  console.log("DLP violation:", violation);
 });
 ```
 
 ## 🔐 Security Best Practices
 
 ### Data Classification
+
 - **Public**: General information
 - **Internal**: Internal business data
 - **Confidential**: Sensitive business data
@@ -405,18 +461,21 @@ securityManager.on('dlp_violation', (violation) => {
 - **Top Secret**: Highly classified data
 
 ### Encryption Standards
+
 - **AES-256-GCM** for data at rest
 - **ChaCha20-Poly1305** for high-performance encryption
 - **RSA-4096** for key exchange
 - **TLS 1.3** for data in transit
 
 ### Key Management
+
 - Hardware Security Modules (HSM) for key storage
 - Automatic key rotation (quarterly for critical keys)
 - Key escrow for disaster recovery
 - Separation of duties for key management
 
 ### Access Control
+
 - Zero trust architecture
 - Multi-factor authentication required
 - Role-based access control (RBAC)
@@ -425,6 +484,7 @@ securityManager.on('dlp_violation', (violation) => {
 ## 📊 Monitoring and Metrics
 
 ### Security Metrics
+
 - Security score (0-100)
 - Threat detection rate
 - Vulnerability remediation time
@@ -432,6 +492,7 @@ securityManager.on('dlp_violation', (violation) => {
 - Training completion rates
 
 ### Performance Metrics
+
 - Encryption/decryption throughput
 - Authentication response time
 - Session management overhead
@@ -440,6 +501,7 @@ securityManager.on('dlp_violation', (violation) => {
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```bash
 # Security Service Configuration
 SECURITY_LOG_LEVEL=info
@@ -460,30 +522,32 @@ HSM_CONNECTION_STRING=your_hsm_config
 ```
 
 ### Security Policies Configuration
+
 ```typescript
 // security-config.ts
 export const securityConfig = {
   encryption: {
-    algorithm: 'AES-256-GCM',
+    algorithm: "AES-256-GCM",
     keyRotationDays: 90,
-    complianceMode: true
+    complianceMode: true,
   },
   authentication: {
     mfaRequired: true,
     sessionTimeout: 3600,
-    maxConcurrentSessions: 3
+    maxConcurrentSessions: 3,
   },
   monitoring: {
     realTimeScanning: true,
-    alertThreshold: 'medium',
-    retentionDays: 365
-  }
+    alertThreshold: "medium",
+    retentionDays: 365,
+  },
 };
 ```
 
 ## 🆘 Emergency Procedures
 
 ### Security Incident Response
+
 1. **Detection**: Automated threat detection
 2. **Containment**: Automatic system isolation
 3. **Investigation**: Forensic evidence collection
@@ -491,6 +555,7 @@ export const securityConfig = {
 5. **Lessons Learned**: Post-incident analysis
 
 ### Data Breach Response
+
 1. **Immediate containment**
 2. **Impact assessment**
 3. **Regulatory notification** (within 72 hours)
@@ -500,6 +565,7 @@ export const securityConfig = {
 ## 📞 Support and Maintenance
 
 ### Regular Maintenance Tasks
+
 - Weekly vulnerability scans
 - Monthly security assessments
 - Quarterly penetration testing
@@ -507,6 +573,7 @@ export const securityConfig = {
 - Continuous threat monitoring
 
 ### Support Contacts
+
 - **Security Team**: security@healthcare.vn
 - **Compliance Officer**: compliance@healthcare.vn
 - **Emergency Response**: emergency@healthcare.vn

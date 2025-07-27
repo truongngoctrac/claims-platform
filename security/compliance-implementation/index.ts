@@ -2,26 +2,26 @@
 // Comprehensive security and compliance features for healthcare claims system
 
 // Core Services
-export { GDPRComplianceAutomationService } from './GDPRComplianceAutomation';
-export { DataPrivacyControlsService } from './DataPrivacyControls';
-export { RightToBeForgottenService } from './RightToBeForgotten';
-export { DataAnonymizationToolsService } from './DataAnonymizationTools';
-export { ConsentManagementSystemService } from './ConsentManagementSystem';
-export { AuditTrailAutomationService } from './AuditTrailAutomation';
-export { ComplianceReportingService } from './ComplianceReporting';
+export { GDPRComplianceAutomationService } from "./GDPRComplianceAutomation";
+export { DataPrivacyControlsService } from "./DataPrivacyControls";
+export { RightToBeForgottenService } from "./RightToBeForgotten";
+export { DataAnonymizationToolsService } from "./DataAnonymizationTools";
+export { ConsentManagementSystemService } from "./ConsentManagementSystem";
+export { AuditTrailAutomationService } from "./AuditTrailAutomation";
+export { ComplianceReportingService } from "./ComplianceReporting";
 
 // Remaining Services (to be implemented)
-export { RegulatoryChangeManagementService } from './RegulatoryChangeManagement';
-export { DataRetentionPoliciesService } from './DataRetentionPolicies';
-export { PrivacyImpactAssessmentService } from './PrivacyImpactAssessment';
-export { CrossBorderDataTransferService } from './CrossBorderDataTransfer';
-export { DataClassificationSystemService } from './DataClassificationSystem';
-export { ComplianceMonitoringService } from './ComplianceMonitoring';
-export { LegalHoldProceduresService } from './LegalHoldProcedures';
-export { ComplianceTrainingProgramsService } from './ComplianceTrainingPrograms';
+export { RegulatoryChangeManagementService } from "./RegulatoryChangeManagement";
+export { DataRetentionPoliciesService } from "./DataRetentionPolicies";
+export { PrivacyImpactAssessmentService } from "./PrivacyImpactAssessment";
+export { CrossBorderDataTransferService } from "./CrossBorderDataTransfer";
+export { DataClassificationSystemService } from "./DataClassificationSystem";
+export { ComplianceMonitoringService } from "./ComplianceMonitoring";
+export { LegalHoldProceduresService } from "./LegalHoldProcedures";
+export { ComplianceTrainingProgramsService } from "./ComplianceTrainingPrograms";
 
 // Types and Interfaces
-export * from './types';
+export * from "./types";
 
 // Compliance Manager - Central orchestration service
 export class ComplianceManager {
@@ -50,42 +50,39 @@ export class ComplianceManager {
     const logger = config.logger;
     const auditService = this.auditService;
 
-    this.gdprService = new GDPRComplianceAutomationService(
-      config.gdpr,
-      logger
-    );
+    this.gdprService = new GDPRComplianceAutomationService(config.gdpr, logger);
 
     this.privacyControlsService = new DataPrivacyControlsService(
       config.privacyControls,
       logger,
-      auditService
+      auditService,
     );
 
     this.rtbfService = new RightToBeForgottenService(
       config.rightToBeForgotten,
       logger,
       auditService,
-      config.dataMapper
+      config.dataMapper,
     );
 
     this.anonymizationService = new DataAnonymizationToolsService(
       config.anonymization,
       logger,
-      config.riskAssessment
+      config.riskAssessment,
     );
 
     this.consentService = new ConsentManagementSystemService(
       config.consent,
       logger,
       auditService,
-      config.notificationService
+      config.notificationService,
     );
 
     this.auditService = new AuditTrailAutomationService(
       config.audit,
       logger,
       config.alertService,
-      config.storageService
+      config.storageService,
     );
 
     this.reportingService = new ComplianceReportingService(
@@ -93,18 +90,39 @@ export class ComplianceManager {
       logger,
       config.dataService,
       config.renderingService,
-      config.distributionService
+      config.distributionService,
     );
 
     // Initialize remaining services (placeholders for now)
-    this.regulatoryService = new RegulatoryChangeManagementService(config.regulatory, logger);
-    this.retentionService = new DataRetentionPoliciesService(config.retention, logger);
+    this.regulatoryService = new RegulatoryChangeManagementService(
+      config.regulatory,
+      logger,
+    );
+    this.retentionService = new DataRetentionPoliciesService(
+      config.retention,
+      logger,
+    );
     this.piaService = new PrivacyImpactAssessmentService(config.pia, logger);
-    this.transferService = new CrossBorderDataTransferService(config.transfer, logger);
-    this.classificationService = new DataClassificationSystemService(config.classification, logger);
-    this.monitoringService = new ComplianceMonitoringService(config.monitoring, logger);
-    this.legalHoldService = new LegalHoldProceduresService(config.legalHold, logger);
-    this.trainingService = new ComplianceTrainingProgramsService(config.training, logger);
+    this.transferService = new CrossBorderDataTransferService(
+      config.transfer,
+      logger,
+    );
+    this.classificationService = new DataClassificationSystemService(
+      config.classification,
+      logger,
+    );
+    this.monitoringService = new ComplianceMonitoringService(
+      config.monitoring,
+      logger,
+    );
+    this.legalHoldService = new LegalHoldProceduresService(
+      config.legalHold,
+      logger,
+    );
+    this.trainingService = new ComplianceTrainingProgramsService(
+      config.training,
+      logger,
+    );
   }
 
   // Public API for accessing services
@@ -176,17 +194,18 @@ export class ComplianceManager {
       audit: await this.auditService.trackErasureCompliance(),
       overall_score: 0,
       critical_issues: [] as string[],
-      recommendations: [] as string[]
+      recommendations: [] as string[],
     };
 
     // Calculate overall score
     const scores = [
       results.gdpr.success ? results.gdpr.data?.overall_score || 0 : 0,
       results.consent.success ? results.consent.data?.compliance_rate || 0 : 0,
-      results.audit.success ? results.audit.data?.compliance_rate || 0 : 0
+      results.audit.success ? results.audit.data?.compliance_rate || 0 : 0,
     ];
-    
-    results.overall_score = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+
+    results.overall_score =
+      scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
     // Aggregate critical issues and recommendations
     if (results.gdpr.success && results.gdpr.data?.critical_issues) {
@@ -200,34 +219,41 @@ export class ComplianceManager {
   }
 
   public async processDataSubjectRequest(
-    requestType: 'access' | 'erasure' | 'portability' | 'rectification',
+    requestType: "access" | "erasure" | "portability" | "rectification",
     dataSubjectId: string,
-    requestDetails: any
+    requestDetails: any,
   ): Promise<DataSubjectRequestResult> {
     const auditEntry = {
-      userId: 'system',
-      action: 'DATA_SUBJECT_REQUEST' as any,
-      resourceType: 'data_subject_request',
+      userId: "system",
+      action: "DATA_SUBJECT_REQUEST" as any,
+      resourceType: "data_subject_request",
       resourceId: dataSubjectId,
       dataSubjectId,
       details: { requestType, requestDetails },
-      result: 'success' as const,
-      complianceImpact: 'HIGH' as any
+      result: "success" as const,
+      complianceImpact: "HIGH" as any,
     };
 
     await this.auditService.logAuditEvent(auditEntry);
 
     switch (requestType) {
-      case 'access':
-        return await this.gdprService.processDataAccessRequest(dataSubjectId, this.generateRequestId());
-      case 'erasure':
+      case "access":
+        return await this.gdprService.processDataAccessRequest(
+          dataSubjectId,
+          this.generateRequestId(),
+        );
+      case "erasure":
         return await this.rtbfService.processErasureRequest({
           dataSubjectId,
           grounds: requestDetails.grounds || [],
-          scope: requestDetails.scope || 'all'
+          scope: requestDetails.scope || "all",
         });
-      case 'portability':
-        return await this.gdprService.processPortabilityRequest(dataSubjectId, this.generateRequestId(), 'json');
+      case "portability":
+        return await this.gdprService.processPortabilityRequest(
+          dataSubjectId,
+          this.generateRequestId(),
+          "json",
+        );
       default:
         throw new Error(`Unsupported request type: ${requestType}`);
     }
@@ -237,28 +263,38 @@ export class ComplianceManager {
     const [gdprHealth, consentHealth, auditHealth] = await Promise.all([
       this.gdprService.runComplianceHealthCheck(),
       this.consentService.monitorConsentCompliance(),
-      this.auditService.trackErasureCompliance()
+      this.auditService.trackErasureCompliance(),
     ]);
 
     return {
       timestamp: new Date(),
-      overall_score: this.calculateOverallScore([gdprHealth, consentHealth, auditHealth]),
+      overall_score: this.calculateOverallScore([
+        gdprHealth,
+        consentHealth,
+        auditHealth,
+      ]),
       service_health: {
-        gdpr: gdprHealth.success ? 'healthy' : 'unhealthy',
-        consent: consentHealth.success ? 'healthy' : 'unhealthy',
-        audit: auditHealth.success ? 'healthy' : 'unhealthy',
-        privacy_controls: 'healthy', // Placeholder
-        anonymization: 'healthy', // Placeholder
-        reporting: 'healthy' // Placeholder
+        gdpr: gdprHealth.success ? "healthy" : "unhealthy",
+        consent: consentHealth.success ? "healthy" : "unhealthy",
+        audit: auditHealth.success ? "healthy" : "unhealthy",
+        privacy_controls: "healthy", // Placeholder
+        anonymization: "healthy", // Placeholder
+        reporting: "healthy", // Placeholder
       },
       key_metrics: {
-        active_consents: consentHealth.success ? consentHealth.data?.active_consents || 0 : 0,
+        active_consents: consentHealth.success
+          ? consentHealth.data?.active_consents || 0
+          : 0,
         pending_requests: 0, // Placeholder
-        compliance_score: this.calculateOverallScore([gdprHealth, consentHealth, auditHealth]),
-        risk_level: 'medium' // Placeholder
+        compliance_score: this.calculateOverallScore([
+          gdprHealth,
+          consentHealth,
+          auditHealth,
+        ]),
+        risk_level: "medium", // Placeholder
       },
       recent_activities: [], // Placeholder
-      alerts: [] // Placeholder
+      alerts: [], // Placeholder
     };
   }
 
@@ -268,14 +304,18 @@ export class ComplianceManager {
 
   private calculateOverallScore(results: any[]): number {
     const scores = results
-      .filter(result => result.success && result.data)
-      .map(result => {
-        if (result.data.overall_score !== undefined) return result.data.overall_score;
-        if (result.data.compliance_rate !== undefined) return result.data.compliance_rate;
+      .filter((result) => result.success && result.data)
+      .map((result) => {
+        if (result.data.overall_score !== undefined)
+          return result.data.overall_score;
+        if (result.data.compliance_rate !== undefined)
+          return result.data.compliance_rate;
         return 80; // Default score
       });
 
-    return scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+    return scores.length > 0
+      ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+      : 0;
   }
 }
 
@@ -327,18 +367,18 @@ export interface ComplianceDashboard {
   timestamp: Date;
   overall_score: number;
   service_health: {
-    gdpr: 'healthy' | 'unhealthy';
-    consent: 'healthy' | 'unhealthy';
-    audit: 'healthy' | 'unhealthy';
-    privacy_controls: 'healthy' | 'unhealthy';
-    anonymization: 'healthy' | 'unhealthy';
-    reporting: 'healthy' | 'unhealthy';
+    gdpr: "healthy" | "unhealthy";
+    consent: "healthy" | "unhealthy";
+    audit: "healthy" | "unhealthy";
+    privacy_controls: "healthy" | "unhealthy";
+    anonymization: "healthy" | "unhealthy";
+    reporting: "healthy" | "unhealthy";
   };
   key_metrics: {
     active_consents: number;
     pending_requests: number;
     compliance_score: number;
-    risk_level: 'low' | 'medium' | 'high';
+    risk_level: "low" | "medium" | "high";
   };
   recent_activities: any[];
   alerts: any[];
@@ -378,7 +418,7 @@ class ComplianceTrainingProgramsService {
 }
 
 // Re-export all types
-export * from './types';
+export * from "./types";
 
 // Default export
 export default ComplianceManager;

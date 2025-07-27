@@ -10,8 +10,8 @@ import {
   ComplianceServiceResponse,
   ComplianceMetadata,
   RiskLevel,
-  ComplianceReportData
-} from './types';
+  ComplianceReportData,
+} from "./types";
 
 export class ComplianceReportingService {
   private reports: Map<string, ComplianceReport> = new Map();
@@ -24,7 +24,7 @@ export class ComplianceReportingService {
     private logger: any,
     private dataService: any,
     private renderingService: any,
-    private distributionService: any
+    private distributionService: any,
   ) {
     this.initializeReportTemplates();
     this.initializeDataCollectors();
@@ -32,11 +32,11 @@ export class ComplianceReportingService {
 
   // Generate Compliance Reports
   async generateComplianceReport(
-    reportRequest: ComplianceReportRequest
+    reportRequest: ComplianceReportRequest,
   ): Promise<ComplianceServiceResponse<ComplianceReport>> {
     try {
       const reportId = this.generateReportId();
-      
+
       // Initialize report
       const report: ComplianceReport = {
         id: reportId,
@@ -50,18 +50,21 @@ export class ComplianceReportingService {
         scope: reportRequest.scope,
         findings: [],
         recommendations: [],
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       this.reports.set(reportId, report);
 
       // Collect data based on report type
       const reportData = await this.collectReportData(reportRequest);
-      
+
       // Generate findings and analysis
       const findings = await this.generateFindings(reportData, reportRequest);
-      const recommendations = await this.generateRecommendations(findings, reportRequest);
-      
+      const recommendations = await this.generateRecommendations(
+        findings,
+        reportRequest,
+      );
+
       // Update report with collected data
       report.data = reportData;
       report.findings = findings;
@@ -73,28 +76,29 @@ export class ComplianceReportingService {
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
-      const report = this.reports.get(reportRequest.reportId || '');
+      const report = this.reports.get(reportRequest.reportId || "");
       if (report) {
         report.status = ReportStatus.FAILED;
       }
-      
+
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report generation failed'
+        error:
+          error instanceof Error ? error.message : "Report generation failed",
       };
     }
   }
 
   // Scheduled Reporting
   async scheduleReport(
-    scheduleRequest: ReportScheduleRequest
+    scheduleRequest: ReportScheduleRequest,
   ): Promise<ComplianceServiceResponse<ReportSchedule>> {
     try {
       const scheduleId = this.generateScheduleId();
-      
+
       const schedule: ReportSchedule = {
         id: scheduleId,
         name: scheduleRequest.name,
@@ -108,7 +112,7 @@ export class ComplianceReportingService {
         nextExecution: this.calculateNextExecution(scheduleRequest.frequency),
         lastExecution: undefined,
         createdAt: new Date(),
-        createdBy: scheduleRequest.createdBy
+        createdBy: scheduleRequest.createdBy,
       };
 
       this.schedules.set(scheduleId, schedule);
@@ -118,21 +122,24 @@ export class ComplianceReportingService {
 
       return {
         success: true,
-        data: schedule
+        data: schedule,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report scheduling failed'
+        error:
+          error instanceof Error ? error.message : "Report scheduling failed",
       };
     }
   }
 
   // Execute Scheduled Reports
-  async executeScheduledReports(): Promise<ComplianceServiceResponse<ScheduledReportExecutionResult>> {
+  async executeScheduledReports(): Promise<
+    ComplianceServiceResponse<ScheduledReportExecutionResult>
+  > {
     try {
       const dueSchedules = Array.from(this.schedules.values()).filter(
-        schedule => schedule.enabled && this.isExecutionDue(schedule)
+        (schedule) => schedule.enabled && this.isExecutionDue(schedule),
       );
 
       const executionResults: ScheduleExecutionResult[] = [];
@@ -140,37 +147,43 @@ export class ComplianceReportingService {
       for (const schedule of dueSchedules) {
         try {
           const reportRequest = this.createReportRequestFromSchedule(schedule);
-          const reportResult = await this.generateComplianceReport(reportRequest);
-          
+          const reportResult =
+            await this.generateComplianceReport(reportRequest);
+
           if (reportResult.success) {
             // Distribute the report
-            await this.distributeReport(reportResult.data!, schedule.recipients);
-            
+            await this.distributeReport(
+              reportResult.data!,
+              schedule.recipients,
+            );
+
             // Update schedule
             schedule.lastExecution = new Date();
-            schedule.nextExecution = this.calculateNextExecution(schedule.frequency);
-            
+            schedule.nextExecution = this.calculateNextExecution(
+              schedule.frequency,
+            );
+
             executionResults.push({
               schedule_id: schedule.id,
               report_id: reportResult.data!.id,
               success: true,
               execution_time: new Date(),
-              recipients_notified: schedule.recipients.length
+              recipients_notified: schedule.recipients.length,
             });
           } else {
             executionResults.push({
               schedule_id: schedule.id,
               success: false,
               error: reportResult.error,
-              execution_time: new Date()
+              execution_time: new Date(),
             });
           }
         } catch (error) {
           executionResults.push({
             schedule_id: schedule.id,
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
-            execution_time: new Date()
+            error: error instanceof Error ? error.message : "Unknown error",
+            execution_time: new Date(),
           });
         }
       }
@@ -179,19 +192,22 @@ export class ComplianceReportingService {
         execution_id: this.generateId(),
         executed_at: new Date(),
         schedules_due: dueSchedules.length,
-        reports_generated: executionResults.filter(r => r.success).length,
-        reports_failed: executionResults.filter(r => !r.success).length,
-        execution_results: executionResults
+        reports_generated: executionResults.filter((r) => r.success).length,
+        reports_failed: executionResults.filter((r) => !r.success).length,
+        execution_results: executionResults,
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Scheduled report execution failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Scheduled report execution failed",
       };
     }
   }
@@ -200,63 +216,71 @@ export class ComplianceReportingService {
   async exportReport(
     reportId: string,
     exportFormat: ExportFormat,
-    exportOptions?: ExportOptions
+    exportOptions?: ExportOptions,
   ): Promise<ComplianceServiceResponse<ExportResult>> {
     try {
       const report = this.reports.get(reportId);
       if (!report) {
         return {
           success: false,
-          error: 'Report not found'
+          error: "Report not found",
         };
       }
 
-      const exportResult = await this.performExport(report, exportFormat, exportOptions);
+      const exportResult = await this.performExport(
+        report,
+        exportFormat,
+        exportOptions,
+      );
 
       return {
         success: true,
-        data: exportResult
+        data: exportResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report export failed'
+        error: error instanceof Error ? error.message : "Report export failed",
       };
     }
   }
 
   // Generate Dashboard Metrics
   async generateDashboardMetrics(
-    dashboardRequest: DashboardMetricsRequest
+    dashboardRequest: DashboardMetricsRequest,
   ): Promise<ComplianceServiceResponse<DashboardMetrics>> {
     try {
       const metrics: DashboardMetrics = {
         period: dashboardRequest.period,
         generated_at: new Date(),
-        compliance_overview: await this.generateComplianceOverview(dashboardRequest),
+        compliance_overview:
+          await this.generateComplianceOverview(dashboardRequest),
         risk_summary: await this.generateRiskSummary(dashboardRequest),
         trend_analysis: await this.generateTrendAnalysis(dashboardRequest),
         key_metrics: await this.generateKeyMetrics(dashboardRequest),
         recent_activities: await this.getRecentActivities(dashboardRequest),
         upcoming_deadlines: await this.getUpcomingDeadlines(dashboardRequest),
-        action_items: await this.getActionItems(dashboardRequest)
+        action_items: await this.getActionItems(dashboardRequest),
       };
 
       return {
         success: true,
-        data: metrics
+        data: metrics,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Dashboard metrics generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Dashboard metrics generation failed",
       };
     }
   }
 
   // Generate Regulatory Reports
   async generateRegulatoryReport(
-    regulatoryRequest: RegulatoryReportRequest
+    regulatoryRequest: RegulatoryReportRequest,
   ): Promise<ComplianceServiceResponse<RegulatoryReport>> {
     try {
       const report: RegulatoryReport = {
@@ -265,36 +289,45 @@ export class ComplianceReportingService {
         reporting_period: regulatoryRequest.period,
         generated_at: new Date(),
         organization_info: await this.getOrganizationInfo(),
-        compliance_statement: await this.generateComplianceStatement(regulatoryRequest),
-        detailed_assessment: await this.generateDetailedAssessment(regulatoryRequest),
-        evidence_documentation: await this.collectEvidenceDocumentation(regulatoryRequest),
-        remediation_plans: await this.generateRemediationPlans(regulatoryRequest),
-        certifications: await this.getCertifications(regulatoryRequest.framework),
+        compliance_statement:
+          await this.generateComplianceStatement(regulatoryRequest),
+        detailed_assessment:
+          await this.generateDetailedAssessment(regulatoryRequest),
+        evidence_documentation:
+          await this.collectEvidenceDocumentation(regulatoryRequest),
+        remediation_plans:
+          await this.generateRemediationPlans(regulatoryRequest),
+        certifications: await this.getCertifications(
+          regulatoryRequest.framework,
+        ),
         attestation: await this.generateAttestation(regulatoryRequest),
         submission_metadata: {
           prepared_by: regulatoryRequest.preparedBy,
           reviewed_by: regulatoryRequest.reviewedBy,
           approved_by: regulatoryRequest.approvedBy,
           submission_date: new Date(),
-          version: '1.0'
-        }
+          version: "1.0",
+        },
       };
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Regulatory report generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Regulatory report generation failed",
       };
     }
   }
 
   // Compliance Benchmarking
   async generateBenchmarkReport(
-    benchmarkRequest: BenchmarkReportRequest
+    benchmarkRequest: BenchmarkReportRequest,
   ): Promise<ComplianceServiceResponse<BenchmarkReport>> {
     try {
       const report: BenchmarkReport = {
@@ -306,26 +339,31 @@ export class ComplianceReportingService {
         industry_benchmarks: await this.getIndustryBenchmarks(benchmarkRequest),
         peer_comparisons: await this.getPeerComparisons(benchmarkRequest),
         performance_gaps: await this.identifyPerformanceGaps(benchmarkRequest),
-        improvement_opportunities: await this.identifyImprovementOpportunities(benchmarkRequest),
-        recommendations: await this.generateBenchmarkRecommendations(benchmarkRequest),
-        action_plan: await this.generateImprovementActionPlan(benchmarkRequest)
+        improvement_opportunities:
+          await this.identifyImprovementOpportunities(benchmarkRequest),
+        recommendations:
+          await this.generateBenchmarkRecommendations(benchmarkRequest),
+        action_plan: await this.generateImprovementActionPlan(benchmarkRequest),
       };
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Benchmark report generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Benchmark report generation failed",
       };
     }
   }
 
   // Report Analytics and Insights
   async generateReportAnalytics(
-    analyticsRequest: ReportAnalyticsRequest
+    analyticsRequest: ReportAnalyticsRequest,
   ): Promise<ComplianceServiceResponse<ReportAnalytics>> {
     try {
       const analytics: ReportAnalytics = {
@@ -334,30 +372,41 @@ export class ComplianceReportingService {
         period: analyticsRequest.period,
         compliance_trends: await this.analyzeComplianceTrends(analyticsRequest),
         risk_patterns: await this.analyzeRiskPatterns(analyticsRequest),
-        performance_metrics: await this.analyzePerformanceMetrics(analyticsRequest),
-        predictive_insights: await this.generatePredictiveInsights(analyticsRequest),
+        performance_metrics:
+          await this.analyzePerformanceMetrics(analyticsRequest),
+        predictive_insights:
+          await this.generatePredictiveInsights(analyticsRequest),
         anomaly_detection: await this.detectAnomalies(analyticsRequest),
-        correlation_analysis: await this.performCorrelationAnalysis(analyticsRequest),
-        recommendations: await this.generateAnalyticsRecommendations(analyticsRequest)
+        correlation_analysis:
+          await this.performCorrelationAnalysis(analyticsRequest),
+        recommendations:
+          await this.generateAnalyticsRecommendations(analyticsRequest),
       };
 
       return {
         success: true,
-        data: analytics
+        data: analytics,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report analytics generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Report analytics generation failed",
       };
     }
   }
 
   // Private helper methods
-  private async collectReportData(request: ComplianceReportRequest): Promise<ComplianceReportData> {
+  private async collectReportData(
+    request: ComplianceReportRequest,
+  ): Promise<ComplianceReportData> {
     const collector = this.dataCollectors.get(request.type);
     if (!collector) {
-      throw new Error(`No data collector found for report type: ${request.type}`);
+      throw new Error(
+        `No data collector found for report type: ${request.type}`,
+      );
     }
 
     return await collector.collect(request);
@@ -365,7 +414,7 @@ export class ComplianceReportingService {
 
   private async generateFindings(
     data: ComplianceReportData,
-    request: ComplianceReportRequest
+    request: ComplianceReportRequest,
   ): Promise<ComplianceFinding[]> {
     const findings: ComplianceFinding[] = [];
 
@@ -374,12 +423,13 @@ export class ComplianceReportingService {
       for (const violation of data.violations) {
         findings.push({
           id: this.generateId(),
-          category: 'compliance_violation',
+          category: "compliance_violation",
           severity: violation.severity,
           description: violation.description,
           evidence: violation.evidence || [],
-          impactAssessment: violation.impactAssessment || 'Impact assessment pending',
-          status: 'open'
+          impactAssessment:
+            violation.impactAssessment || "Impact assessment pending",
+          status: "open",
         });
       }
     }
@@ -390,12 +440,12 @@ export class ComplianceReportingService {
       if (this.isTrendConcerning(trend as any)) {
         findings.push({
           id: this.generateId(),
-          category: 'trending_concern',
+          category: "trending_concern",
           severity: this.assessTrendSeverity(trend as any),
           description: `Concerning trend detected in ${metric}`,
           evidence: [trend],
-          impactAssessment: 'Requires monitoring and potential intervention',
-          status: 'open'
+          impactAssessment: "Requires monitoring and potential intervention",
+          status: "open",
         });
       }
     }
@@ -405,7 +455,7 @@ export class ComplianceReportingService {
 
   private async generateRecommendations(
     findings: ComplianceFinding[],
-    request: ComplianceReportRequest
+    request: ComplianceReportRequest,
   ): Promise<ComplianceRecommendation[]> {
     const recommendations: ComplianceRecommendation[] = [];
 
@@ -418,7 +468,7 @@ export class ComplianceReportingService {
         implementation: await this.generateImplementationGuidance(finding),
         timeline: await this.estimateImplementationTimeline(finding),
         assignee: await this.suggestAssignee(finding),
-        estimatedCost: await this.estimateImplementationCost(finding)
+        estimatedCost: await this.estimateImplementationCost(finding),
       };
 
       recommendations.push(recommendation);
@@ -430,10 +480,10 @@ export class ComplianceReportingService {
   private async performExport(
     report: ComplianceReport,
     format: ExportFormat,
-    options?: ExportOptions
+    options?: ExportOptions,
   ): Promise<ExportResult> {
     const exportId = this.generateId();
-    
+
     let exportedData: Buffer;
     let mimeType: string;
     let fileExtension: string;
@@ -441,23 +491,27 @@ export class ComplianceReportingService {
     switch (format) {
       case ExportFormat.PDF:
         exportedData = await this.renderingService.renderToPDF(report, options);
-        mimeType = 'application/pdf';
-        fileExtension = 'pdf';
+        mimeType = "application/pdf";
+        fileExtension = "pdf";
         break;
       case ExportFormat.EXCEL:
-        exportedData = await this.renderingService.renderToExcel(report, options);
-        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-        fileExtension = 'xlsx';
+        exportedData = await this.renderingService.renderToExcel(
+          report,
+          options,
+        );
+        mimeType =
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        fileExtension = "xlsx";
         break;
       case ExportFormat.CSV:
         exportedData = await this.renderingService.renderToCSV(report, options);
-        mimeType = 'text/csv';
-        fileExtension = 'csv';
+        mimeType = "text/csv";
+        fileExtension = "csv";
         break;
       case ExportFormat.JSON:
         exportedData = Buffer.from(JSON.stringify(report, null, 2));
-        mimeType = 'application/json';
-        fileExtension = 'json';
+        mimeType = "application/json";
+        fileExtension = "json";
         break;
       default:
         throw new Error(`Unsupported export format: ${format}`);
@@ -472,7 +526,7 @@ export class ComplianceReportingService {
       mime_type: mimeType,
       exported_at: new Date(),
       download_url: await this.generateDownloadUrl(exportId, exportedData),
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     };
 
     return result;
@@ -493,32 +547,54 @@ export class ComplianceReportingService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'compliance-reporting-service',
-      updatedBy: 'compliance-reporting-service',
-      tags: ['compliance', 'reporting'],
-      classification: 'confidential' as any
+      createdBy: "compliance-reporting-service",
+      updatedBy: "compliance-reporting-service",
+      tags: ["compliance", "reporting"],
+      classification: "confidential" as any,
     };
   }
 
   private initializeReportTemplates(): void {
     // Initialize standard report templates
-    this.reportTemplates.set('gdpr_compliance', {
-      id: 'gdpr_compliance',
-      name: 'GDPR Compliance Report',
+    this.reportTemplates.set("gdpr_compliance", {
+      id: "gdpr_compliance",
+      name: "GDPR Compliance Report",
       framework: RegulatoryFramework.GDPR,
-      sections: ['executive_summary', 'data_processing_activities', 'consent_management', 'data_subject_rights', 'security_measures'],
-      requiredData: ['consent_records', 'processing_activities', 'subject_requests', 'security_incidents']
+      sections: [
+        "executive_summary",
+        "data_processing_activities",
+        "consent_management",
+        "data_subject_rights",
+        "security_measures",
+      ],
+      requiredData: [
+        "consent_records",
+        "processing_activities",
+        "subject_requests",
+        "security_incidents",
+      ],
     });
 
-    this.reportTemplates.set('data_breach', {
-      id: 'data_breach',
-      name: 'Data Breach Report',
+    this.reportTemplates.set("data_breach", {
+      id: "data_breach",
+      name: "Data Breach Report",
       framework: RegulatoryFramework.GDPR,
-      sections: ['incident_overview', 'impact_assessment', 'containment_actions', 'notification_timeline', 'lessons_learned'],
-      requiredData: ['incident_details', 'affected_data', 'response_actions', 'notifications']
+      sections: [
+        "incident_overview",
+        "impact_assessment",
+        "containment_actions",
+        "notification_timeline",
+        "lessons_learned",
+      ],
+      requiredData: [
+        "incident_details",
+        "affected_data",
+        "response_actions",
+        "notifications",
+      ],
     });
   }
 
@@ -527,13 +603,15 @@ export class ComplianceReportingService {
     this.dataCollectors.set(ComplianceReportType.GDPR_COMPLIANCE, {
       collect: async (request: ComplianceReportRequest) => {
         return {
-          summary: await this.dataService.getGDPRComplianceSummary(request.period),
+          summary: await this.dataService.getGDPRComplianceSummary(
+            request.period,
+          ),
           metrics: await this.dataService.getGDPRMetrics(request.period),
           trends: await this.dataService.getGDPRTrends(request.period),
           violations: await this.dataService.getGDPRViolations(request.period),
-          recommendations: []
+          recommendations: [],
         };
-      }
+      },
     });
 
     this.dataCollectors.set(ComplianceReportType.DATA_BREACH, {
@@ -543,9 +621,9 @@ export class ComplianceReportingService {
           metrics: await this.dataService.getDataBreachMetrics(request.period),
           trends: await this.dataService.getDataBreachTrends(request.period),
           violations: [],
-          recommendations: []
+          recommendations: [],
         };
-      }
+      },
     });
   }
 
@@ -571,19 +649,23 @@ export class ComplianceReportingService {
     return schedule.nextExecution <= new Date();
   }
 
-  private createReportRequestFromSchedule(schedule: ReportSchedule): ComplianceReportRequest {
+  private createReportRequestFromSchedule(
+    schedule: ReportSchedule,
+  ): ComplianceReportRequest {
     return {
       type: schedule.reportType,
       framework: schedule.framework,
       period: this.calculatePeriodFromFrequency(schedule.frequency),
       scope: schedule.parameters.scope || this.getDefaultScope(),
-      generatedBy: 'system',
+      generatedBy: "system",
       includeExecutiveSummary: true,
-      includeRecommendations: true
+      includeRecommendations: true,
     };
   }
 
-  private calculatePeriodFromFrequency(frequency: ReportFrequency): ReportingPeriod {
+  private calculatePeriodFromFrequency(
+    frequency: ReportFrequency,
+  ): ReportingPeriod {
     const end = new Date();
     let start: Date;
 
@@ -608,9 +690,9 @@ export class ComplianceReportingService {
     }
 
     return {
-      type: frequency === ReportFrequency.CUSTOM ? 'custom' : frequency,
+      type: frequency === ReportFrequency.CUSTOM ? "custom" : frequency,
       start,
-      end
+      end,
     };
   }
 
@@ -621,8 +703,8 @@ export class ComplianceReportingService {
       businessUnits: [],
       timeRange: {
         start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        end: new Date()
-      }
+        end: new Date(),
+      },
     };
   }
 
@@ -635,48 +717,63 @@ export class ComplianceReportingService {
     return RiskLevel.MEDIUM; // Placeholder
   }
 
-  private mapSeverityToPriority(severity: RiskLevel): 'high' | 'medium' | 'low' {
+  private mapSeverityToPriority(
+    severity: RiskLevel,
+  ): "high" | "medium" | "low" {
     switch (severity) {
       case RiskLevel.VERY_HIGH:
       case RiskLevel.HIGH:
-        return 'high';
+        return "high";
       case RiskLevel.MEDIUM:
-        return 'medium';
+        return "medium";
       default:
-        return 'low';
+        return "low";
     }
   }
 
-  private async generateRecommendationDescription(finding: ComplianceFinding): Promise<string> {
+  private async generateRecommendationDescription(
+    finding: ComplianceFinding,
+  ): Promise<string> {
     return `Address ${finding.category} finding with ${finding.severity} severity`;
   }
 
-  private async generateImplementationGuidance(finding: ComplianceFinding): Promise<string> {
-    return 'Implementation guidance pending';
+  private async generateImplementationGuidance(
+    finding: ComplianceFinding,
+  ): Promise<string> {
+    return "Implementation guidance pending";
   }
 
-  private async estimateImplementationTimeline(finding: ComplianceFinding): Promise<string> {
-    return '30 days';
+  private async estimateImplementationTimeline(
+    finding: ComplianceFinding,
+  ): Promise<string> {
+    return "30 days";
   }
 
   private async suggestAssignee(finding: ComplianceFinding): Promise<string> {
-    return 'compliance-team';
+    return "compliance-team";
   }
 
-  private async estimateImplementationCost(finding: ComplianceFinding): Promise<number> {
+  private async estimateImplementationCost(
+    finding: ComplianceFinding,
+  ): Promise<number> {
     return 5000; // Placeholder
   }
 
-  private async generateDownloadUrl(exportId: string, data: Buffer): Promise<string> {
+  private async generateDownloadUrl(
+    exportId: string,
+    data: Buffer,
+  ): Promise<string> {
     return `https://api.example.com/reports/download/${exportId}`;
   }
 
-  private async generateExecutiveSummary(report: ComplianceReport): Promise<Record<string, any>> {
+  private async generateExecutiveSummary(
+    report: ComplianceReport,
+  ): Promise<Record<string, any>> {
     return {
-      overview: 'Executive summary content',
+      overview: "Executive summary content",
       key_findings: report.findings.length,
       recommendations: report.recommendations.length,
-      risk_level: 'medium'
+      risk_level: "medium",
     };
   }
 }
@@ -757,7 +854,7 @@ export interface RegulatoryReportRequest {
 }
 
 export interface BenchmarkReportRequest {
-  benchmarkType: 'industry' | 'peer' | 'historical';
+  benchmarkType: "industry" | "peer" | "historical";
   period: ReportingPeriod;
   comparisonTargets: string[];
   metrics: string[];
@@ -777,10 +874,10 @@ export interface ExportOptions {
 }
 
 export interface ReportRecipient {
-  type: 'email' | 'webhook' | 'system';
+  type: "email" | "webhook" | "system";
   address: string;
   format: ExportFormat;
-  accessLevel: 'full' | 'summary' | 'executive';
+  accessLevel: "full" | "summary" | "executive";
 }
 
 export interface ReportParameters {
@@ -791,20 +888,20 @@ export interface ReportParameters {
 }
 
 export enum ExportFormat {
-  PDF = 'pdf',
-  EXCEL = 'excel',
-  CSV = 'csv',
-  JSON = 'json',
-  HTML = 'html'
+  PDF = "pdf",
+  EXCEL = "excel",
+  CSV = "csv",
+  JSON = "json",
+  HTML = "html",
 }
 
 export enum ReportFrequency {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly',
-  ANNUALLY = 'annually',
-  CUSTOM = 'custom'
+  DAILY = "daily",
+  WEEKLY = "weekly",
+  MONTHLY = "monthly",
+  QUARTERLY = "quarterly",
+  ANNUALLY = "annually",
+  CUSTOM = "custom",
 }
 
 // Result interfaces
@@ -896,7 +993,7 @@ export interface ReportAnalytics {
 export interface ComplianceOverview {
   overall_score: number;
   framework_scores: Record<string, number>;
-  trend: 'improving' | 'stable' | 'declining';
+  trend: "improving" | "stable" | "declining";
 }
 
 export interface RiskSummary {
@@ -906,8 +1003,8 @@ export interface RiskSummary {
 }
 
 export interface TrendAnalysis {
-  compliance_trend: 'improving' | 'stable' | 'declining';
-  risk_trend: 'increasing' | 'stable' | 'decreasing';
+  compliance_trend: "improving" | "stable" | "declining";
+  risk_trend: "increasing" | "stable" | "decreasing";
   key_changes: string[];
 }
 
@@ -915,8 +1012,8 @@ export interface KeyMetric {
   name: string;
   value: number;
   target?: number;
-  trend: 'up' | 'down' | 'stable';
-  importance: 'high' | 'medium' | 'low';
+  trend: "up" | "down" | "stable";
+  importance: "high" | "medium" | "low";
 }
 
 export interface Activity {
@@ -929,17 +1026,17 @@ export interface Activity {
 export interface Deadline {
   date: Date;
   description: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   responsible: string;
 }
 
 export interface ActionItem {
   id: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   due_date: Date;
   assignee: string;
-  status: 'open' | 'in_progress' | 'completed';
+  status: "open" | "in_progress" | "completed";
 }
 
 export interface OrganizationInfo {
@@ -967,7 +1064,7 @@ export interface DetailedAssessment {
 export interface RequirementAssessment {
   requirement_id: string;
   description: string;
-  compliance_status: 'compliant' | 'partial' | 'non_compliant';
+  compliance_status: "compliant" | "partial" | "non_compliant";
   evidence: string[];
   notes: string;
 }
@@ -1052,15 +1149,15 @@ export interface PerformanceGap {
   current_value: number;
   benchmark_value: number;
   gap_percentage: number;
-  significance: 'high' | 'medium' | 'low';
+  significance: "high" | "medium" | "low";
 }
 
 export interface ImprovementOpportunity {
   area: string;
   description: string;
   potential_impact: number;
-  effort_required: 'high' | 'medium' | 'low';
-  priority: 'high' | 'medium' | 'low';
+  effort_required: "high" | "medium" | "low";
+  priority: "high" | "medium" | "low";
 }
 
 export interface ActionPlan {
@@ -1081,7 +1178,7 @@ export interface Objective {
 
 export interface ComplianceTrend {
   framework: RegulatoryFramework;
-  trend_direction: 'improving' | 'stable' | 'declining';
+  trend_direction: "improving" | "stable" | "declining";
   change_rate: number;
   key_drivers: string[];
 }
@@ -1089,7 +1186,7 @@ export interface ComplianceTrend {
 export interface RiskPattern {
   pattern_type: string;
   frequency: number;
-  trend: 'increasing' | 'stable' | 'decreasing';
+  trend: "increasing" | "stable" | "decreasing";
   impact_level: RiskLevel;
 }
 
@@ -1098,7 +1195,7 @@ export interface PerformanceMetric {
   current_value: number;
   previous_value: number;
   change_percentage: number;
-  trend: 'improving' | 'stable' | 'declining';
+  trend: "improving" | "stable" | "declining";
 }
 
 export interface PredictiveInsight {
@@ -1126,5 +1223,5 @@ export interface Correlation {
   metric1: string;
   metric2: string;
   correlation_coefficient: number;
-  significance: 'high' | 'medium' | 'low';
+  significance: "high" | "medium" | "low";
 }

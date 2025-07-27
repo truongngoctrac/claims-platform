@@ -4,8 +4,8 @@ import {
   ComplianceServiceResponse,
   ComplianceMetadata,
   RiskLevel,
-  DataClassification
-} from './types';
+  DataClassification,
+} from "./types";
 
 export class DataRetentionPoliciesService {
   private retentionPolicies: Map<string, RetentionPolicy> = new Map();
@@ -15,14 +15,14 @@ export class DataRetentionPoliciesService {
 
   constructor(
     private config: DataRetentionConfig,
-    private logger: any
+    private logger: any,
   ) {
     this.initializeDefaultPolicies();
   }
 
   // Create and manage retention policies
   async createRetentionPolicy(
-    policyRequest: RetentionPolicyRequest
+    policyRequest: RetentionPolicyRequest,
   ): Promise<ComplianceServiceResponse<RetentionPolicy>> {
     try {
       const policy: RetentionPolicy = {
@@ -41,7 +41,7 @@ export class DataRetentionPoliciesService {
         active: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       // Validate policy
@@ -49,7 +49,7 @@ export class DataRetentionPoliciesService {
       if (!validation.valid) {
         return {
           success: false,
-          error: `Policy validation failed: ${validation.errors.join(', ')}`
+          error: `Policy validation failed: ${validation.errors.join(", ")}`,
         };
       }
 
@@ -57,12 +57,13 @@ export class DataRetentionPoliciesService {
 
       return {
         success: true,
-        data: policy
+        data: policy,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Policy creation failed'
+        error:
+          error instanceof Error ? error.message : "Policy creation failed",
       };
     }
   }
@@ -70,18 +71,18 @@ export class DataRetentionPoliciesService {
   // Apply retention policies to data
   async applyRetentionPolicy(
     dataItemId: string,
-    policyId: string
+    policyId: string,
   ): Promise<ComplianceServiceResponse<RetentionApplication>> {
     try {
       const dataItem = this.dataInventory.get(dataItemId);
       const policy = this.retentionPolicies.get(policyId);
 
       if (!dataItem) {
-        return { success: false, error: 'Data item not found' };
+        return { success: false, error: "Data item not found" };
       }
 
       if (!policy) {
-        return { success: false, error: 'Retention policy not found' };
+        return { success: false, error: "Retention policy not found" };
       }
 
       // Calculate retention dates
@@ -97,8 +98,8 @@ export class DataRetentionPoliciesService {
         retentionStart,
         retentionEnd,
         disposalDate,
-        status: 'active',
-        metadata: this.createMetadata()
+        status: "active",
+        metadata: this.createMetadata(),
       };
 
       // Schedule disposal
@@ -106,18 +107,21 @@ export class DataRetentionPoliciesService {
 
       return {
         success: true,
-        data: application
+        data: application,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Policy application failed'
+        error:
+          error instanceof Error ? error.message : "Policy application failed",
       };
     }
   }
 
   // Automated retention policy enforcement
-  async enforceRetentionPolicies(): Promise<ComplianceServiceResponse<RetentionEnforcementResult>> {
+  async enforceRetentionPolicies(): Promise<
+    ComplianceServiceResponse<RetentionEnforcementResult>
+  > {
     try {
       const currentDate = new Date();
       const enforcementResults: PolicyEnforcementResult[] = [];
@@ -125,9 +129,13 @@ export class DataRetentionPoliciesService {
       // Check all data items for retention compliance
       for (const [itemId, item] of this.dataInventory) {
         const applicablePolicies = await this.findApplicablePolicies(item);
-        
+
         for (const policy of applicablePolicies) {
-          const enforcementResult = await this.enforcePolicy(item, policy, currentDate);
+          const enforcementResult = await this.enforcePolicy(
+            item,
+            policy,
+            currentDate,
+          );
           enforcementResults.push(enforcementResult);
         }
       }
@@ -137,29 +145,37 @@ export class DataRetentionPoliciesService {
         executed_at: currentDate,
         items_checked: this.dataInventory.size,
         policies_applied: enforcementResults.length,
-        actions_taken: enforcementResults.filter(r => r.action_taken).length,
-        violations_detected: enforcementResults.filter(r => r.violation_detected).length,
-        enforcement_results: enforcementResults
+        actions_taken: enforcementResults.filter((r) => r.action_taken).length,
+        violations_detected: enforcementResults.filter(
+          (r) => r.violation_detected,
+        ).length,
+        enforcement_results: enforcementResults,
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Retention enforcement failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Retention enforcement failed",
       };
     }
   }
 
   // Automated data disposal
-  async executeDataDisposal(): Promise<ComplianceServiceResponse<DisposalExecutionResult>> {
+  async executeDataDisposal(): Promise<
+    ComplianceServiceResponse<DisposalExecutionResult>
+  > {
     try {
       const currentDate = new Date();
       const dueDisposals = Array.from(this.disposalSchedule.values()).filter(
-        entry => entry.disposalDate <= currentDate && entry.status === 'scheduled'
+        (entry) =>
+          entry.disposalDate <= currentDate && entry.status === "scheduled",
       );
 
       const disposalResults: DisposalResult[] = [];
@@ -173,8 +189,8 @@ export class DataRetentionPoliciesService {
             disposal_id: disposalEntry.id,
             data_item_id: disposalEntry.dataItemId,
             success: false,
-            error: error instanceof Error ? error.message : 'Disposal failed',
-            executed_at: currentDate
+            error: error instanceof Error ? error.message : "Disposal failed",
+            executed_at: currentDate,
           });
         }
       }
@@ -183,25 +199,28 @@ export class DataRetentionPoliciesService {
         execution_id: this.generateId(),
         executed_at: currentDate,
         disposals_due: dueDisposals.length,
-        disposals_successful: disposalResults.filter(r => r.success).length,
-        disposals_failed: disposalResults.filter(r => !r.success).length,
-        disposal_results: disposalResults
+        disposals_successful: disposalResults.filter((r) => r.success).length,
+        disposals_failed: disposalResults.filter((r) => !r.success).length,
+        disposal_results: disposalResults,
       };
 
       return {
         success: true,
-        data: executionResult
+        data: executionResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Disposal execution failed'
+        error:
+          error instanceof Error ? error.message : "Disposal execution failed",
       };
     }
   }
 
   // Retention compliance monitoring
-  async monitorRetentionCompliance(): Promise<ComplianceServiceResponse<RetentionComplianceReport>> {
+  async monitorRetentionCompliance(): Promise<
+    ComplianceServiceResponse<RetentionComplianceReport>
+  > {
     try {
       const report: RetentionComplianceReport = {
         report_id: this.generateId(),
@@ -214,21 +233,25 @@ export class DataRetentionPoliciesService {
         policy_violations: await this.identifyPolicyViolations(),
         compliance_score: 0,
         recommendations: [],
-        action_items: []
+        action_items: [],
       };
 
       report.compliance_score = this.calculateComplianceScore(report);
-      report.recommendations = await this.generateComplianceRecommendations(report);
+      report.recommendations =
+        await this.generateComplianceRecommendations(report);
       report.action_items = await this.generateActionItems(report);
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Compliance monitoring failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Compliance monitoring failed",
       };
     }
   }
@@ -237,7 +260,7 @@ export class DataRetentionPoliciesService {
   async applyLegalHold(
     dataItemIds: string[],
     legalHoldId: string,
-    reason: string
+    reason: string,
   ): Promise<ComplianceServiceResponse<LegalHoldApplication>> {
     try {
       const affectedItems: string[] = [];
@@ -247,12 +270,15 @@ export class DataRetentionPoliciesService {
         const dataItem = this.dataInventory.get(itemId);
         if (dataItem) {
           // Suspend any scheduled disposals
-          const disposalEntries = Array.from(this.disposalSchedule.values()).filter(
-            entry => entry.dataItemId === itemId && entry.status === 'scheduled'
+          const disposalEntries = Array.from(
+            this.disposalSchedule.values(),
+          ).filter(
+            (entry) =>
+              entry.dataItemId === itemId && entry.status === "scheduled",
           );
 
           for (const entry of disposalEntries) {
-            entry.status = 'on_hold';
+            entry.status = "on_hold";
             entry.holdReason = reason;
             entry.holdId = legalHoldId;
             suspendedDisposals.push(entry.id);
@@ -263,7 +289,7 @@ export class DataRetentionPoliciesService {
             holdId: legalHoldId,
             appliedAt: new Date(),
             reason,
-            active: true
+            active: true,
           };
 
           affectedItems.push(itemId);
@@ -277,24 +303,27 @@ export class DataRetentionPoliciesService {
         affected_items: affectedItems,
         suspended_disposals: suspendedDisposals,
         reason,
-        status: 'active'
+        status: "active",
       };
 
       return {
         success: true,
-        data: application
+        data: application,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Legal hold application failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Legal hold application failed",
       };
     }
   }
 
   // Release legal hold
   async releaseLegalHold(
-    legalHoldId: string
+    legalHoldId: string,
   ): Promise<ComplianceServiceResponse<LegalHoldRelease>> {
     try {
       const affectedItems: string[] = [];
@@ -308,12 +337,15 @@ export class DataRetentionPoliciesService {
           affectedItems.push(itemId);
 
           // Resume scheduled disposals
-          const disposalEntries = Array.from(this.disposalSchedule.values()).filter(
-            entry => entry.dataItemId === itemId && entry.holdId === legalHoldId
+          const disposalEntries = Array.from(
+            this.disposalSchedule.values(),
+          ).filter(
+            (entry) =>
+              entry.dataItemId === itemId && entry.holdId === legalHoldId,
           );
 
           for (const entry of disposalEntries) {
-            entry.status = 'scheduled';
+            entry.status = "scheduled";
             entry.holdReason = undefined;
             entry.holdId = undefined;
             resumedDisposals.push(entry.id);
@@ -326,17 +358,18 @@ export class DataRetentionPoliciesService {
         legal_hold_id: legalHoldId,
         released_at: new Date(),
         affected_items: affectedItems,
-        resumed_disposals: resumedDisposals
+        resumed_disposals: resumedDisposals,
       };
 
       return {
         success: true,
-        data: release
+        data: release,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Legal hold release failed'
+        error:
+          error instanceof Error ? error.message : "Legal hold release failed",
       };
     }
   }
@@ -345,58 +378,69 @@ export class DataRetentionPoliciesService {
   private initializeDefaultPolicies(): void {
     // Healthcare data retention policies
     const healthcarePolicy: RetentionPolicy = {
-      id: 'healthcare-default',
-      name: 'Healthcare Data Retention',
-      description: 'Default retention policy for healthcare data',
+      id: "healthcare-default",
+      name: "Healthcare Data Retention",
+      description: "Default retention policy for healthcare data",
       dataTypes: [DataType.HEALTH_DATA, DataType.PERSONAL_IDENTIFIERS],
-      purposes: [DataProcessingPurpose.HEALTHCARE_SERVICES, DataProcessingPurpose.CLAIMS_PROCESSING],
+      purposes: [
+        DataProcessingPurpose.HEALTHCARE_SERVICES,
+        DataProcessingPurpose.CLAIMS_PROCESSING,
+      ],
       retentionPeriod: 7,
-      retentionUnit: 'years',
-      legalBasis: 'Healthcare regulations',
-      jurisdiction: 'Vietnam',
-      disposalMethod: 'secure_deletion',
+      retentionUnit: "years",
+      legalBasis: "Healthcare regulations",
+      jurisdiction: "Vietnam",
+      disposalMethod: "secure_deletion",
       exceptions: [],
-      reviewSchedule: 'annually',
+      reviewSchedule: "annually",
       active: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-      metadata: this.createMetadata()
+      metadata: this.createMetadata(),
     };
 
     this.retentionPolicies.set(healthcarePolicy.id, healthcarePolicy);
   }
 
-  private async validateRetentionPolicy(policy: RetentionPolicy): Promise<ValidationResult> {
+  private async validateRetentionPolicy(
+    policy: RetentionPolicy,
+  ): Promise<ValidationResult> {
     const errors: string[] = [];
 
-    if (!policy.name || policy.name.trim() === '') {
-      errors.push('Policy name is required');
+    if (!policy.name || policy.name.trim() === "") {
+      errors.push("Policy name is required");
     }
 
     if (!policy.dataTypes || policy.dataTypes.length === 0) {
-      errors.push('At least one data type must be specified');
+      errors.push("At least one data type must be specified");
     }
 
     if (!policy.retentionPeriod || policy.retentionPeriod <= 0) {
-      errors.push('Retention period must be positive');
+      errors.push("Retention period must be positive");
     }
 
-    if (!policy.legalBasis || policy.legalBasis.trim() === '') {
-      errors.push('Legal basis is required');
+    if (!policy.legalBasis || policy.legalBasis.trim() === "") {
+      errors.push("Legal basis is required");
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   private calculateRetentionEnd(start: Date, policy: RetentionPolicy): Date {
-    const retentionMs = this.convertToMilliseconds(policy.retentionPeriod, policy.retentionUnit);
+    const retentionMs = this.convertToMilliseconds(
+      policy.retentionPeriod,
+      policy.retentionUnit,
+    );
     return new Date(start.getTime() + retentionMs);
   }
 
-  private calculateDisposalDate(retentionEnd: Date, policy: RetentionPolicy): Date {
+  private calculateDisposalDate(
+    retentionEnd: Date,
+    policy: RetentionPolicy,
+  ): Date {
     // Add grace period before disposal
     const gracePeriodMs = 30 * 24 * 60 * 60 * 1000; // 30 days
     return new Date(retentionEnd.getTime() + gracePeriodMs);
@@ -404,42 +448,47 @@ export class DataRetentionPoliciesService {
 
   private convertToMilliseconds(period: number, unit: RetentionUnit): number {
     switch (unit) {
-      case 'days':
+      case "days":
         return period * 24 * 60 * 60 * 1000;
-      case 'months':
+      case "months":
         return period * 30 * 24 * 60 * 60 * 1000;
-      case 'years':
+      case "years":
         return period * 365 * 24 * 60 * 60 * 1000;
       default:
         throw new Error(`Unsupported retention unit: ${unit}`);
     }
   }
 
-  private async scheduleDisposal(application: RetentionApplication): Promise<void> {
+  private async scheduleDisposal(
+    application: RetentionApplication,
+  ): Promise<void> {
     const disposalEntry: DisposalScheduleEntry = {
       id: this.generateId(),
       dataItemId: application.dataItemId,
       policyId: application.policyId,
       disposalDate: application.disposalDate,
-      status: 'scheduled',
-      scheduledAt: new Date()
+      status: "scheduled",
+      scheduledAt: new Date(),
     };
 
     this.disposalSchedule.set(disposalEntry.id, disposalEntry);
   }
 
-  private async findApplicablePolicies(item: DataItem): Promise<RetentionPolicy[]> {
-    return Array.from(this.retentionPolicies.values()).filter(policy => 
-      policy.active &&
-      policy.dataTypes.some(type => item.dataTypes.includes(type)) &&
-      policy.purposes.some(purpose => item.purposes.includes(purpose))
+  private async findApplicablePolicies(
+    item: DataItem,
+  ): Promise<RetentionPolicy[]> {
+    return Array.from(this.retentionPolicies.values()).filter(
+      (policy) =>
+        policy.active &&
+        policy.dataTypes.some((type) => item.dataTypes.includes(type)) &&
+        policy.purposes.some((purpose) => item.purposes.includes(purpose)),
     );
   }
 
   private async enforcePolicy(
     item: DataItem,
     policy: RetentionPolicy,
-    currentDate: Date
+    currentDate: Date,
   ): Promise<PolicyEnforcementResult> {
     const retentionEnd = this.calculateRetentionEnd(item.createdAt, policy);
     const isExpired = currentDate > retentionEnd;
@@ -453,27 +502,32 @@ export class DataRetentionPoliciesService {
       is_on_legal_hold: isOnLegalHold,
       action_taken: isExpired && !isOnLegalHold,
       violation_detected: isExpired && !isOnLegalHold,
-      enforcement_date: currentDate
+      enforcement_date: currentDate,
     };
   }
 
-  private async performDisposal(disposalEntry: DisposalScheduleEntry): Promise<DisposalResult> {
+  private async performDisposal(
+    disposalEntry: DisposalScheduleEntry,
+  ): Promise<DisposalResult> {
     const dataItem = this.dataInventory.get(disposalEntry.dataItemId);
     if (!dataItem) {
-      throw new Error('Data item not found for disposal');
+      throw new Error("Data item not found for disposal");
     }
 
     const policy = this.retentionPolicies.get(disposalEntry.policyId);
     if (!policy) {
-      throw new Error('Retention policy not found for disposal');
+      throw new Error("Retention policy not found for disposal");
     }
 
     // Perform disposal based on method
-    const disposalSuccess = await this.executeDisposalMethod(dataItem, policy.disposalMethod);
+    const disposalSuccess = await this.executeDisposalMethod(
+      dataItem,
+      policy.disposalMethod,
+    );
 
     if (disposalSuccess) {
       // Update disposal schedule
-      disposalEntry.status = 'completed';
+      disposalEntry.status = "completed";
       disposalEntry.completedAt = new Date();
 
       // Remove from data inventory
@@ -485,17 +539,20 @@ export class DataRetentionPoliciesService {
       data_item_id: dataItem.id,
       success: disposalSuccess,
       executed_at: new Date(),
-      method: policy.disposalMethod
+      method: policy.disposalMethod,
     };
   }
 
-  private async executeDisposalMethod(item: DataItem, method: DisposalMethod): Promise<boolean> {
+  private async executeDisposalMethod(
+    item: DataItem,
+    method: DisposalMethod,
+  ): Promise<boolean> {
     switch (method) {
-      case 'secure_deletion':
+      case "secure_deletion":
         return await this.performSecureDeletion(item);
-      case 'anonymization':
+      case "anonymization":
         return await this.performAnonymization(item);
-      case 'archival':
+      case "archival":
         return await this.performArchival(item);
       default:
         throw new Error(`Unsupported disposal method: ${method}`);
@@ -532,7 +589,10 @@ export class DataRetentionPoliciesService {
     const violationPenalty = (violations / totalItems) * 20;
     const overdueDisposalPenalty = (overdueDisposals / totalItems) * 30;
 
-    return Math.max(0, policyComplianceScore - violationPenalty - overdueDisposalPenalty);
+    return Math.max(
+      0,
+      policyComplianceScore - violationPenalty - overdueDisposalPenalty,
+    );
   }
 
   private generateId(): string {
@@ -542,13 +602,13 @@ export class DataRetentionPoliciesService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'data-retention-service',
-      updatedBy: 'data-retention-service',
-      tags: ['retention', 'compliance'],
-      classification: DataClassification.CONFIDENTIAL
+      createdBy: "data-retention-service",
+      updatedBy: "data-retention-service",
+      tags: ["retention", "compliance"],
+      classification: DataClassification.CONFIDENTIAL,
     };
   }
 
@@ -564,7 +624,8 @@ export class DataRetentionPoliciesService {
   private async countOverdueDisposals(): Promise<number> {
     const currentDate = new Date();
     return Array.from(this.disposalSchedule.values()).filter(
-      entry => entry.disposalDate < currentDate && entry.status === 'scheduled'
+      (entry) =>
+        entry.disposalDate < currentDate && entry.status === "scheduled",
     ).length;
   }
 
@@ -572,7 +633,8 @@ export class DataRetentionPoliciesService {
     const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
     const currentDate = new Date();
     return Array.from(this.disposalSchedule.values()).filter(
-      entry => entry.disposalDate >= currentDate && entry.disposalDate <= futureDate
+      (entry) =>
+        entry.disposalDate >= currentDate && entry.disposalDate <= futureDate,
     ).length;
   }
 
@@ -580,21 +642,25 @@ export class DataRetentionPoliciesService {
     return []; // Placeholder
   }
 
-  private async generateComplianceRecommendations(report: RetentionComplianceReport): Promise<string[]> {
+  private async generateComplianceRecommendations(
+    report: RetentionComplianceReport,
+  ): Promise<string[]> {
     const recommendations: string[] = [];
-    
+
     if (report.items_without_policies > 0) {
-      recommendations.push('Apply retention policies to all data items');
+      recommendations.push("Apply retention policies to all data items");
     }
-    
+
     if (report.overdue_disposals > 0) {
-      recommendations.push('Execute overdue data disposals');
+      recommendations.push("Execute overdue data disposals");
     }
-    
+
     return recommendations;
   }
 
-  private async generateActionItems(report: RetentionComplianceReport): Promise<ActionItem[]> {
+  private async generateActionItems(
+    report: RetentionComplianceReport,
+  ): Promise<ActionItem[]> {
     return []; // Placeholder
   }
 }
@@ -669,7 +735,7 @@ export interface RetentionApplication {
   retentionStart: Date;
   retentionEnd: Date;
   disposalDate: Date;
-  status: 'active' | 'expired' | 'disposed';
+  status: "active" | "expired" | "disposed";
   metadata: ComplianceMetadata;
 }
 
@@ -678,7 +744,7 @@ export interface DisposalScheduleEntry {
   dataItemId: string;
   policyId: string;
   disposalDate: Date;
-  status: 'scheduled' | 'on_hold' | 'completed' | 'failed';
+  status: "scheduled" | "on_hold" | "completed" | "failed";
   scheduledAt: Date;
   completedAt?: Date;
   holdReason?: string;
@@ -686,15 +752,19 @@ export interface DisposalScheduleEntry {
 }
 
 export interface RetentionException {
-  type: 'legal_hold' | 'business_requirement' | 'regulatory_requirement';
+  type: "legal_hold" | "business_requirement" | "regulatory_requirement";
   reason: string;
   extendedPeriod?: number;
   reviewDate: Date;
 }
 
-export type RetentionUnit = 'days' | 'months' | 'years';
-export type DisposalMethod = 'secure_deletion' | 'anonymization' | 'archival';
-export type ReviewSchedule = 'monthly' | 'quarterly' | 'annually' | 'biannually';
+export type RetentionUnit = "days" | "months" | "years";
+export type DisposalMethod = "secure_deletion" | "anonymization" | "archival";
+export type ReviewSchedule =
+  | "monthly"
+  | "quarterly"
+  | "annually"
+  | "biannually";
 
 // Result interfaces
 export interface RetentionEnforcementResult {
@@ -764,10 +834,10 @@ export interface ActionItem {
   id: string;
   type: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   due_date: Date;
   responsible: string;
-  status: 'open' | 'in_progress' | 'completed';
+  status: "open" | "in_progress" | "completed";
 }
 
 export interface LegalHoldApplication {
@@ -777,7 +847,7 @@ export interface LegalHoldApplication {
   affected_items: string[];
   suspended_disposals: string[];
   reason: string;
-  status: 'active' | 'released';
+  status: "active" | "released";
 }
 
 export interface LegalHoldRelease {

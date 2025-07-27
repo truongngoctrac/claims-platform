@@ -5,6 +5,7 @@ A comprehensive security implementation for healthcare applications, providing e
 ## 🛡️ Overview
 
 This security suite implements a multi-layered defense strategy covering:
+
 - **Encryption & Cryptography**
 - **Access Control & Identity Management**
 - **Data Protection & Privacy**
@@ -27,30 +28,35 @@ This security suite implements a multi-layered defense strategy covering:
 ## ✨ Features
 
 ### 🔐 Encryption & Cryptography
+
 - **End-to-End Encryption**: Complete E2E encryption with key management
 - **Database Encryption**: High-performance column/row-level encryption
 - **Backup Encryption**: Secure backup encryption with redundancy
 - **Secure Communications**: TLS 1.3, secure messaging, certificate management
 
 ### 🔒 Access Control & Identity
+
 - **Zero-Trust Architecture**: Never trust, always verify
 - **Role-Based Access Control**: Fine-grained permissions and policies
 - **Privilege Escalation Prevention**: Real-time privilege monitoring
 - **Multi-Factor Authentication**: Strong authentication mechanisms
 
 ### 🛡️ Data Protection
+
 - **Data Masking**: Advanced masking for development/testing
 - **Tokenization**: Format-preserving tokenization for sensitive data
 - **Data Loss Prevention**: Real-time DLP with policy enforcement
 - **Privacy Controls**: GDPR/HIPAA privacy protection
 
 ### 🔍 Application Security
+
 - **Static Code Analysis**: SAST scanning with custom healthcare rules
 - **Dependency Scanning**: Vulnerability detection in dependencies
 - **Container Security**: Image scanning and runtime protection
 - **Secure Development**: Security guidelines and training
 
 ### 🌐 Infrastructure Security
+
 - **Network Security**: Firewall optimization, IDS/IPS, DDoS protection
 - **Runtime Protection**: Real-time threat detection and response
 - **Security Monitoring**: Comprehensive logging and alerting
@@ -65,8 +71,8 @@ import {
   EndToEndEncryptionService,
   AccessControlOptimizer,
   DataMaskingService,
-  initializeSecuritySuite
-} from './security/data-protection';
+  initializeSecuritySuite,
+} from "./security/data-protection";
 ```
 
 ### Basic Usage
@@ -82,15 +88,15 @@ await encryption.initialize();
 // Encrypt sensitive patient data
 const encryptedPHI = await encryption.encryptData(
   patientRecord,
-  'medical_records'
+  "medical_records",
 );
 
 // Evaluate access permissions
 const accessDecision = await securityServices.accessControl.evaluateAccess(
   userId,
-  '/patient/records/123',
-  'read',
-  { sourceIP: '192.168.1.100' }
+  "/patient/records/123",
+  "read",
+  { sourceIP: "192.168.1.100" },
 );
 
 if (accessDecision.allowed) {
@@ -108,25 +114,22 @@ if (accessDecision.allowed) {
 // Mask PHI for development environment
 const maskedData = await securityServices.masking.maskData(
   patientData,
-  'hipaa_compliance'
+  "hipaa_compliance",
 );
 
 // Tokenize SSN for database storage
 const tokenizedSSN = await securityServices.tokenization.tokenize(
   patient.ssn,
-  'ssn',
-  'critical'
+  "ssn",
+  "critical",
 );
 
 // Scan for data leakage in email
-const dlpResult = await securityServices.dlp.scanContent(
-  emailContent,
-  {
-    userId: 'doctor123',
-    channel: 'email',
-    destination: 'patient@example.com'
-  }
-);
+const dlpResult = await securityServices.dlp.scanContent(emailContent, {
+  userId: "doctor123",
+  channel: "email",
+  destination: "patient@example.com",
+});
 ```
 
 ## 🏗️ Architecture
@@ -179,17 +182,19 @@ const dlpResult = await securityServices.dlp.scanContent(
 **Purpose**: Provides comprehensive encryption for data at rest and in transit.
 
 **Key Features**:
+
 - AES-256-GCM encryption
 - Automatic key rotation
 - Hardware security module support
 - Performance optimization
 
 **Usage**:
+
 ```typescript
 const encryption = new EndToEndEncryptionService({
-  algorithm: 'AES-256-GCM',
+  algorithm: "AES-256-GCM",
   keyRotationInterval: 24 * 7, // Weekly
-  keySize: 32
+  keySize: 32,
 });
 
 await encryption.initialize();
@@ -201,21 +206,23 @@ const encrypted = await encryption.encryptData(sensitiveData);
 **Purpose**: Implements zero-trust access control with risk-based authentication.
 
 **Key Features**:
+
 - Role-based and attribute-based access control
 - Real-time risk assessment
 - Policy-driven decisions
 - Comprehensive audit trails
 
 **Usage**:
+
 ```typescript
 const accessControl = new AccessControlOptimizer();
 await accessControl.initialize();
 
 const decision = await accessControl.evaluateAccess(
-  'user123',
-  '/patient/records/456',
-  'read',
-  { location: 'office', mfaVerified: true }
+  "user123",
+  "/patient/records/456",
+  "read",
+  { location: "office", mfaVerified: true },
 );
 ```
 
@@ -224,20 +231,19 @@ const decision = await accessControl.evaluateAccess(
 **Purpose**: Protects sensitive data in non-production environments.
 
 **Key Features**:
+
 - Format-preserving masking
 - Synthetic data generation
 - Contextual masking rules
 - Reversible tokenization
 
 **Usage**:
+
 ```typescript
 const masking = new DataMaskingService();
 await masking.initialize();
 
-const maskedData = await masking.maskData(
-  originalData,
-  'healthcare_standard'
-);
+const maskedData = await masking.maskData(originalData, "healthcare_standard");
 ```
 
 ### 4. Data Leakage Prevention
@@ -245,19 +251,21 @@ const maskedData = await masking.maskData(
 **Purpose**: Monitors and prevents unauthorized data disclosure.
 
 **Key Features**:
+
 - Real-time content scanning
 - Policy-based enforcement
 - Multi-channel monitoring
 - Automated response actions
 
 **Usage**:
+
 ```typescript
 const dlp = new DataLeakagePreventionService();
 await dlp.initialize();
 
 const result = await dlp.scanContent(content, {
-  userId: 'user123',
-  channel: 'email'
+  userId: "user123",
+  channel: "email",
 });
 ```
 
@@ -266,25 +274,27 @@ const result = await dlp.scanContent(content, {
 **Purpose**: Identifies security vulnerabilities in source code.
 
 **Key Features**:
+
 - SAST (Static Application Security Testing)
 - Custom healthcare security rules
 - Dependency vulnerability scanning
 - CI/CD integration
 
 **Usage**:
+
 ```typescript
 const scanner = new CodeSecurityScanner();
 await scanner.initialize();
 
 const scanId = await scanner.scanProject({
-  scanId: 'scan-123',
-  projectPath: '/path/to/project',
-  includePatterns: ['*.ts', '*.js'],
-  excludePatterns: ['node_modules'],
+  scanId: "scan-123",
+  projectPath: "/path/to/project",
+  includePatterns: ["*.ts", "*.js"],
+  excludePatterns: ["node_modules"],
   scanTypes: [
-    { type: 'sast', enabled: true },
-    { type: 'secret', enabled: true }
-  ]
+    { type: "sast", enabled: true },
+    { type: "secret", enabled: true },
+  ],
 });
 ```
 
@@ -293,12 +303,14 @@ const scanId = await scanner.scanProject({
 **Purpose**: Provides comprehensive network security and monitoring.
 
 **Key Features**:
+
 - Firewall optimization
 - Intrusion detection/prevention
 - DDoS protection
 - Traffic analysis
 
 **Usage**:
+
 ```typescript
 const networkSecurity = new NetworkSecurityOptimizer();
 await networkSecurity.initialize();
@@ -311,28 +323,29 @@ const metrics = networkSecurity.getNetworkMetrics();
 
 ### HIPAA Compliance Features
 
-| Requirement | Implementation | Service |
-|-------------|----------------|---------|
-| **Administrative Safeguards** | Role-based access, training modules | AccessControlOptimizer |
-| **Physical Safeguards** | Container security, network segmentation | ContainerSecurityService |
-| **Technical Safeguards** | Encryption, audit logs, access controls | Multiple Services |
-| **Data Integrity** | Checksums, versioning, backup validation | BackupEncryptionService |
-| **Transmission Security** | TLS 1.3, VPN, secure protocols | SecureCommunicationService |
+| Requirement                   | Implementation                           | Service                    |
+| ----------------------------- | ---------------------------------------- | -------------------------- |
+| **Administrative Safeguards** | Role-based access, training modules      | AccessControlOptimizer     |
+| **Physical Safeguards**       | Container security, network segmentation | ContainerSecurityService   |
+| **Technical Safeguards**      | Encryption, audit logs, access controls  | Multiple Services          |
+| **Data Integrity**            | Checksums, versioning, backup validation | BackupEncryptionService    |
+| **Transmission Security**     | TLS 1.3, VPN, secure protocols           | SecureCommunicationService |
 
 ### Compliance Reporting
 
 ```typescript
 // Generate HIPAA compliance report
-const complianceReport = await securityServices.accessControl.generateComplianceReport(
-  'hipaa_audit_2024',
-  { startDate: new Date('2024-01-01'), endDate: new Date('2024-12-31') }
-);
+const complianceReport =
+  await securityServices.accessControl.generateComplianceReport(
+    "hipaa_audit_2024",
+    { startDate: new Date("2024-01-01"), endDate: new Date("2024-12-31") },
+  );
 
 // Export audit logs for compliance
 const auditLogs = securityServices.accessControl.getAuditLogs({
   startDate: lastWeek,
   endDate: today,
-  includeFailures: true
+  includeFailures: true,
 });
 ```
 
@@ -367,21 +380,21 @@ DDOS_THRESHOLD=1000000000  # 1 Gbps
 ```typescript
 // Create custom access policy
 await accessControl.createPolicy({
-  name: 'Emergency Access Policy',
-  description: 'Special access during medical emergencies',
-  effect: 'allow',
-  resources: ['/patient/emergency/*'],
-  actions: ['read', 'write'],
-  principals: ['emergency_responder'],
+  name: "Emergency Access Policy",
+  description: "Special access during medical emergencies",
+  effect: "allow",
+  resources: ["/patient/emergency/*"],
+  actions: ["read", "write"],
+  principals: ["emergency_responder"],
   conditions: [
     {
-      type: 'emergency_override',
-      operator: 'equals',
-      key: 'emergency_flag',
-      value: true
-    }
+      type: "emergency_override",
+      operator: "equals",
+      key: "emergency_flag",
+      value: true,
+    },
   ],
-  priority: 200
+  priority: 200,
 });
 ```
 
@@ -392,20 +405,20 @@ await accessControl.createPolicy({
 ```typescript
 // Run security scan on codebase
 const scanResult = await codeScanner.scanProject({
-  scanId: 'dev-scan',
+  scanId: "dev-scan",
   projectPath: process.cwd(),
-  includePatterns: ['src/**/*.ts'],
-  excludePatterns: ['node_modules/**', 'dist/**'],
+  includePatterns: ["src/**/*.ts"],
+  excludePatterns: ["node_modules/**", "dist/**"],
   scanTypes: [
-    { type: 'sast', enabled: true },
-    { type: 'secret', enabled: true },
-    { type: 'dependency', enabled: true }
+    { type: "sast", enabled: true },
+    { type: "secret", enabled: true },
+    { type: "dependency", enabled: true },
   ],
-  severity: 'high_critical'
+  severity: "high_critical",
 });
 
 // Generate security report
-const report = await codeScanner.generateReport(scanResult, 'html');
+const report = await codeScanner.generateReport(scanResult, "html");
 ```
 
 ### Container Security
@@ -413,18 +426,18 @@ const report = await codeScanner.generateReport(scanResult, 'html');
 ```typescript
 // Scan container image
 const containerScan = await containerSecurity.scanContainer({
-  scanId: 'image-scan',
-  imageRef: 'healthcare/patient-api:latest',
-  scanDepth: 'comprehensive',
+  scanId: "image-scan",
+  imageRef: "healthcare/patient-api:latest",
+  scanDepth: "comprehensive",
   includeSecrets: true,
   includeMalware: true,
-  includeCompliance: true
+  includeCompliance: true,
 });
 
 // Check policy compliance
 const policyResult = await containerSecurity.evaluatePolicy(
-  'healthcare/patient-api:latest',
-  'hipaa_compliance'
+  "healthcare/patient-api:latest",
+  "hipaa_compliance",
 );
 ```
 
@@ -443,7 +456,7 @@ const allMetrics = {
   timestamp: new Date(),
   encryption: encryptionMetrics,
   access: accessMetrics,
-  dlp: dlpMetrics
+  dlp: dlpMetrics,
 };
 ```
 
@@ -451,17 +464,17 @@ const allMetrics = {
 
 ```typescript
 // Set up security event listeners
-accessControl.on('criticalViolation', (event) => {
+accessControl.on("criticalViolation", (event) => {
   // Send immediate alert
   alertingService.sendCriticalAlert(event);
 });
 
-dlp.on('dataLeakageDetected', (incident) => {
+dlp.on("dataLeakageDetected", (incident) => {
   // Trigger incident response
   incidentResponse.handleDataLeakage(incident);
 });
 
-networkSecurity.on('ddosAttackDetected', (attack) => {
+networkSecurity.on("ddosAttackDetected", (attack) => {
   // Activate DDoS mitigation
   ddosMitigation.activate(attack);
 });
@@ -475,23 +488,23 @@ const dashboardData = {
   threats: {
     active: networkSecurity.getActiveThreats().length,
     mitigated: networkSecurity.getMitigatedThreats().length,
-    total: networkSecurity.getAllThreats().length
+    total: networkSecurity.getAllThreats().length,
   },
   access: {
     successfulLogins: accessMetrics.allowedRequests,
     failedAttempts: accessMetrics.deniedRequests,
-    lockedAccounts: accessMetrics.lockedAccounts
+    lockedAccounts: accessMetrics.lockedAccounts,
   },
   encryption: {
     operationsPerSecond: encryptionMetrics.totalOperations / 3600,
     keyRotations: encryptionMetrics.keyRotations,
-    averageLatency: encryptionMetrics.averageEncryptionTime
+    averageLatency: encryptionMetrics.averageEncryptionTime,
   },
   compliance: {
     hipaaCompliance: await getHIPAAComplianceScore(),
     auditLogRetention: auditLogs.retentionDays,
-    lastSecurityScan: lastScanTimestamp
-  }
+    lastSecurityScan: lastScanTimestamp,
+  },
 };
 ```
 
@@ -503,6 +516,7 @@ const dashboardData = {
 
 **Symptoms**: Slow encryption/decryption operations
 **Solutions**:
+
 - Enable hardware acceleration
 - Optimize batch sizes
 - Check key cache configuration
@@ -512,7 +526,7 @@ const dashboardData = {
 const encryption = new EndToEndEncryptionService({
   hardwareAcceleration: true,
   cacheSize: 10000,
-  batchSize: 1000
+  batchSize: 1000,
 });
 ```
 
@@ -520,6 +534,7 @@ const encryption = new EndToEndEncryptionService({
 
 **Symptoms**: Legitimate users being denied access
 **Solutions**:
+
 - Review risk scoring algorithms
 - Adjust policy conditions
 - Update user behavior baselines
@@ -527,13 +542,16 @@ const encryption = new EndToEndEncryptionService({
 ```typescript
 // Debug access decision
 const decision = await accessControl.evaluateAccess(
-  userId, resource, action, context
+  userId,
+  resource,
+  action,
+  context,
 );
-console.log('Decision details:', {
+console.log("Decision details:", {
   allowed: decision.allowed,
   reason: decision.reason,
   matchedPolicies: decision.matchedPolicies,
-  riskScore: decision.riskScore
+  riskScore: decision.riskScore,
 });
 ```
 
@@ -541,6 +559,7 @@ console.log('Decision details:', {
 
 **Symptoms**: Legitimate content being flagged as violations
 **Solutions**:
+
 - Tune detection patterns
 - Add context rules
 - Whitelist known safe patterns
@@ -549,8 +568,8 @@ console.log('Decision details:', {
 // Add exception rule
 await dlp.addExceptionRule({
   pattern: /medical-device-id-\d{6}/,
-  context: 'device_inventory',
-  justification: 'Medical device identifiers are not PHI'
+  context: "device_inventory",
+  justification: "Medical device identifiers are not PHI",
 });
 ```
 
@@ -561,12 +580,12 @@ await dlp.addExceptionRule({
 const performanceMetrics = {
   encryption: {
     avgLatency: encryptionMetrics.averageEncryptionTime,
-    throughput: encryptionMetrics.operationsPerSecond
+    throughput: encryptionMetrics.operationsPerSecond,
   },
   access: {
     avgEvaluationTime: accessMetrics.averageEvaluationTime,
-    policyCount: accessMetrics.policiesEvaluated
-  }
+    policyCount: accessMetrics.policiesEvaluated,
+  },
 };
 
 // Optimize based on metrics
@@ -589,6 +608,7 @@ if (performanceMetrics.access.avgEvaluationTime > 50) {
 ## 🤝 Support
 
 For technical support or security issues:
+
 - **Security Team**: security@healthcare.example.com
 - **Emergency Contact**: +1-555-SECURITY
 - **Documentation**: https://docs.healthcare.example.com/security

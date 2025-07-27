@@ -12,8 +12,8 @@ import {
   ComplianceImpact,
   ComplianceMetadata,
   RiskLevel,
-  DataClassification
-} from './types';
+  DataClassification,
+} from "./types";
 
 export class GDPRComplianceAutomationService {
   private auditTrail: AuditTrailEntry[] = [];
@@ -23,35 +23,41 @@ export class GDPRComplianceAutomationService {
 
   constructor(
     private config: GDPRConfig,
-    private logger: any
+    private logger: any,
   ) {}
 
   // Article 5 - Principles of processing personal data
   async validateDataProcessingPrinciples(
-    processingRequest: DataProcessingRequest
+    processingRequest: DataProcessingRequest,
   ): Promise<ComplianceServiceResponse<DataProcessingValidation>> {
     try {
       const validation: DataProcessingValidation = {
         lawfulness: await this.validateLawfulness(processingRequest),
         fairness: await this.validateFairness(processingRequest),
         transparency: await this.validateTransparency(processingRequest),
-        purposeLimitation: await this.validatePurposeLimitation(processingRequest),
-        dataMinimisation: await this.validateDataMinimisation(processingRequest),
+        purposeLimitation:
+          await this.validatePurposeLimitation(processingRequest),
+        dataMinimisation:
+          await this.validateDataMinimisation(processingRequest),
         accuracy: await this.validateAccuracy(processingRequest),
-        storageLimitation: await this.validateStorageLimitation(processingRequest),
-        securityIntegrity: await this.validateSecurityIntegrity(processingRequest)
+        storageLimitation:
+          await this.validateStorageLimitation(processingRequest),
+        securityIntegrity:
+          await this.validateSecurityIntegrity(processingRequest),
       };
 
-      const isCompliant = Object.values(validation).every(v => v.compliant);
+      const isCompliant = Object.values(validation).every((v) => v.compliant);
 
       await this.logAuditEvent({
         action: AuditAction.READ,
-        resourceType: 'data_processing_validation',
+        resourceType: "data_processing_validation",
         resourceId: processingRequest.id,
         dataSubjectId: processingRequest.dataSubjectId,
         details: { validation, isCompliant },
-        result: isCompliant ? 'success' : 'warning',
-        complianceImpact: isCompliant ? ComplianceImpact.LOW : ComplianceImpact.HIGH
+        result: isCompliant ? "success" : "warning",
+        complianceImpact: isCompliant
+          ? ComplianceImpact.LOW
+          : ComplianceImpact.HIGH,
       });
 
       return {
@@ -60,14 +66,14 @@ export class GDPRComplianceAutomationService {
         metadata: {
           timestamp: new Date(),
           requestId: this.generateRequestId(),
-          processingTime: Date.now()
-        }
+          processingTime: Date.now(),
+        },
       };
     } catch (error) {
-      this.logger.error('GDPR validation failed:', error);
+      this.logger.error("GDPR validation failed:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Validation failed'
+        error: error instanceof Error ? error.message : "Validation failed",
       };
     }
   }
@@ -76,21 +82,32 @@ export class GDPRComplianceAutomationService {
   async validateLawfulnessOfProcessing(
     dataSubjectId: string,
     purpose: DataProcessingPurpose,
-    dataTypes: DataType[]
+    dataTypes: DataType[],
   ): Promise<ComplianceServiceResponse<LawfulnessValidation>> {
     try {
       const dataSubject = this.dataSubjects.get(dataSubjectId);
       if (!dataSubject) {
-        throw new Error('Data subject not found');
+        throw new Error("Data subject not found");
       }
 
       const legalBases = await this.identifyLegalBases(purpose, dataTypes);
-      const consentValidation = await this.validateConsent(dataSubjectId, purpose);
-      const contractValidation = await this.validateContractualNecessity(dataSubjectId, purpose);
-      const legalObligationValidation = await this.validateLegalObligation(purpose);
-      const vitalInterestsValidation = await this.validateVitalInterests(dataSubjectId, purpose);
+      const consentValidation = await this.validateConsent(
+        dataSubjectId,
+        purpose,
+      );
+      const contractValidation = await this.validateContractualNecessity(
+        dataSubjectId,
+        purpose,
+      );
+      const legalObligationValidation =
+        await this.validateLegalObligation(purpose);
+      const vitalInterestsValidation = await this.validateVitalInterests(
+        dataSubjectId,
+        purpose,
+      );
       const publicTaskValidation = await this.validatePublicTask(purpose);
-      const legitimateInterestsValidation = await this.validateLegitimateInterests(dataSubjectId, purpose);
+      const legitimateInterestsValidation =
+        await this.validateLegitimateInterests(dataSubjectId, purpose);
 
       const validation: LawfulnessValidation = {
         availableLegalBases: legalBases,
@@ -101,29 +118,32 @@ export class GDPRComplianceAutomationService {
         publicTask: publicTaskValidation,
         legitimateInterests: legitimateInterestsValidation,
         recommended: this.recommendLegalBasis(legalBases),
-        compliant: legalBases.length > 0
+        compliant: legalBases.length > 0,
       };
 
       return {
         success: true,
-        data: validation
+        data: validation,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Lawfulness validation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Lawfulness validation failed",
       };
     }
   }
 
   // Article 7 - Conditions for consent
   async validateConsentConditions(
-    consentId: string
+    consentId: string,
   ): Promise<ComplianceServiceResponse<ConsentValidation>> {
     try {
       const consent = this.consentRecords.get(consentId);
       if (!consent) {
-        throw new Error('Consent record not found');
+        throw new Error("Consent record not found");
       }
 
       const validation: ConsentValidation = {
@@ -134,10 +154,10 @@ export class GDPRComplianceAutomationService {
         withdrawable: await this.validateWithdrawable(consent),
         granular: await this.validateGranular(consent),
         plain_language: await this.validatePlainLanguage(consent),
-        record_keeping: await this.validateRecordKeeping(consent)
+        record_keeping: await this.validateRecordKeeping(consent),
       };
 
-      const isValid = Object.values(validation).every(v => v.compliant);
+      const isValid = Object.values(validation).every((v) => v.compliant);
 
       return {
         success: true,
@@ -145,13 +165,14 @@ export class GDPRComplianceAutomationService {
           ...validation,
           overall_compliance: isValid,
           expiry_date: consent.expiryDate,
-          withdrawal_mechanism: this.getWithdrawalMechanism(consent)
-        }
+          withdrawal_mechanism: this.getWithdrawalMechanism(consent),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Consent validation failed'
+        error:
+          error instanceof Error ? error.message : "Consent validation failed",
       };
     }
   }
@@ -159,12 +180,12 @@ export class GDPRComplianceAutomationService {
   // Article 12-14 - Information to be provided to data subjects
   async generateDataSubjectInformation(
     dataSubjectId: string,
-    purposes: DataProcessingPurpose[]
+    purposes: DataProcessingPurpose[],
   ): Promise<ComplianceServiceResponse<DataSubjectInformation>> {
     try {
       const dataSubject = this.dataSubjects.get(dataSubjectId);
       if (!dataSubject) {
-        throw new Error('Data subject not found');
+        throw new Error("Data subject not found");
       }
 
       const information: DataSubjectInformation = {
@@ -179,19 +200,26 @@ export class GDPRComplianceAutomationService {
         data_subject_rights: this.getDataSubjectRights(),
         right_to_withdraw: this.getWithdrawalInformation(),
         complaint_authority: this.config.supervisoryAuthority,
-        automated_decision_making: await this.getAutomatedDecisionInfo(purposes),
+        automated_decision_making:
+          await this.getAutomatedDecisionInfo(purposes),
         source_of_data: await this.getDataSource(dataSubjectId),
-        categories_of_data: await this.getCategoriesOfData(dataSubjectId, purposes)
+        categories_of_data: await this.getCategoriesOfData(
+          dataSubjectId,
+          purposes,
+        ),
       };
 
       return {
         success: true,
-        data: information
+        data: information,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Information generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Information generation failed",
       };
     }
   }
@@ -199,26 +227,27 @@ export class GDPRComplianceAutomationService {
   // Article 15 - Right of access by the data subject
   async processDataAccessRequest(
     dataSubjectId: string,
-    requestId: string
+    requestId: string,
   ): Promise<ComplianceServiceResponse<DataAccessResponse>> {
     try {
       await this.logAuditEvent({
         action: AuditAction.ACCESS,
-        resourceType: 'data_access_request',
+        resourceType: "data_access_request",
         resourceId: requestId,
         dataSubjectId,
-        details: { request_type: 'subject_access_request' },
-        result: 'success',
-        complianceImpact: ComplianceImpact.HIGH
+        details: { request_type: "subject_access_request" },
+        result: "success",
+        complianceImpact: ComplianceImpact.HIGH,
       });
 
       const dataSubject = this.dataSubjects.get(dataSubjectId);
       if (!dataSubject) {
-        throw new Error('Data subject not found');
+        throw new Error("Data subject not found");
       }
 
       const personalData = await this.collectPersonalData(dataSubjectId);
-      const processingActivities = await this.getProcessingActivities(dataSubjectId);
+      const processingActivities =
+        await this.getProcessingActivities(dataSubjectId);
       const thirdPartySharing = await this.getThirdPartySharing(dataSubjectId);
       const dataRetention = await this.getDataRetentionInfo(dataSubjectId);
 
@@ -229,33 +258,36 @@ export class GDPRComplianceAutomationService {
         third_party_sharing: thirdPartySharing,
         retention_information: dataRetention,
         data_sources: await this.getDataSources(dataSubjectId),
-        automated_decision_making: await this.getAutomatedDecisions(dataSubjectId),
+        automated_decision_making:
+          await this.getAutomatedDecisions(dataSubjectId),
         request_metadata: {
           request_id: requestId,
           processed_at: new Date(),
-          response_format: 'structured_data',
-          verification_status: 'verified'
-        }
+          response_format: "structured_data",
+          verification_status: "verified",
+        },
       };
 
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       await this.logAuditEvent({
         action: AuditAction.ACCESS,
-        resourceType: 'data_access_request',
+        resourceType: "data_access_request",
         resourceId: requestId,
         dataSubjectId,
-        details: { error: error instanceof Error ? error.message : 'Unknown error' },
-        result: 'failure',
-        complianceImpact: ComplianceImpact.HIGH
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        result: "failure",
+        complianceImpact: ComplianceImpact.HIGH,
       });
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Access request failed'
+        error: error instanceof Error ? error.message : "Access request failed",
       };
     }
   }
@@ -264,32 +296,38 @@ export class GDPRComplianceAutomationService {
   async processErasureRequest(
     dataSubjectId: string,
     requestId: string,
-    grounds: ErasureGrounds[]
+    grounds: ErasureGrounds[],
   ): Promise<ComplianceServiceResponse<ErasureResponse>> {
     try {
-      const validationResult = await this.validateErasureRequest(dataSubjectId, grounds);
-      
+      const validationResult = await this.validateErasureRequest(
+        dataSubjectId,
+        grounds,
+      );
+
       if (!validationResult.valid) {
         return {
           success: false,
-          error: `Erasure request denied: ${validationResult.reasons.join(', ')}`
+          error: `Erasure request denied: ${validationResult.reasons.join(", ")}`,
         };
       }
 
-      const erasureResult = await this.executeDataErasure(dataSubjectId, validationResult.scope);
+      const erasureResult = await this.executeDataErasure(
+        dataSubjectId,
+        validationResult.scope,
+      );
 
       await this.logAuditEvent({
         action: AuditAction.DELETE,
-        resourceType: 'data_erasure',
+        resourceType: "data_erasure",
         resourceId: requestId,
         dataSubjectId,
-        details: { 
+        details: {
           grounds,
           records_erased: erasureResult.recordsErased,
-          systems_affected: erasureResult.systemsAffected
+          systems_affected: erasureResult.systemsAffected,
         },
-        result: 'success',
-        complianceImpact: ComplianceImpact.HIGH
+        result: "success",
+        complianceImpact: ComplianceImpact.HIGH,
       });
 
       return {
@@ -300,13 +338,17 @@ export class GDPRComplianceAutomationService {
           systems_affected: erasureResult.systemsAffected,
           completion_time: new Date(),
           verification_hash: erasureResult.verificationHash,
-          third_party_notifications: await this.notifyThirdParties(dataSubjectId, erasureResult)
-        }
+          third_party_notifications: await this.notifyThirdParties(
+            dataSubjectId,
+            erasureResult,
+          ),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Erasure request failed'
+        error:
+          error instanceof Error ? error.message : "Erasure request failed",
       };
     }
   }
@@ -315,15 +357,16 @@ export class GDPRComplianceAutomationService {
   async processPortabilityRequest(
     dataSubjectId: string,
     requestId: string,
-    format: 'json' | 'xml' | 'csv'
+    format: "json" | "xml" | "csv",
   ): Promise<ComplianceServiceResponse<PortabilityResponse>> {
     try {
-      const eligibilityCheck = await this.checkPortabilityEligibility(dataSubjectId);
-      
+      const eligibilityCheck =
+        await this.checkPortabilityEligibility(dataSubjectId);
+
       if (!eligibilityCheck.eligible) {
         return {
           success: false,
-          error: `Data portability not applicable: ${eligibilityCheck.reasons.join(', ')}`
+          error: `Data portability not applicable: ${eligibilityCheck.reasons.join(", ")}`,
         };
       }
 
@@ -332,16 +375,16 @@ export class GDPRComplianceAutomationService {
 
       await this.logAuditEvent({
         action: AuditAction.EXPORT,
-        resourceType: 'data_portability',
+        resourceType: "data_portability",
         resourceId: requestId,
         dataSubjectId,
-        details: { 
+        details: {
           format,
           record_count: portableData.length,
-          file_size: formattedData.size
+          file_size: formattedData.size,
         },
-        result: 'success',
-        complianceImpact: ComplianceImpact.MEDIUM
+        result: "success",
+        complianceImpact: ComplianceImpact.MEDIUM,
       });
 
       return {
@@ -353,14 +396,15 @@ export class GDPRComplianceAutomationService {
             export_date: new Date(),
             record_count: portableData.length,
             checksum: formattedData.checksum,
-            schema_version: '1.0'
-          }
-        }
+            schema_version: "1.0",
+          },
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Portability request failed'
+        error:
+          error instanceof Error ? error.message : "Portability request failed",
       };
     }
   }
@@ -368,72 +412,86 @@ export class GDPRComplianceAutomationService {
   // Article 25 - Data protection by design and by default
   async assessDataProtectionByDesign(
     systemId: string,
-    processingActivities: DataProcessingPurpose[]
+    processingActivities: DataProcessingPurpose[],
   ): Promise<ComplianceServiceResponse<DataProtectionByDesignAssessment>> {
     try {
       const assessment: DataProtectionByDesignAssessment = {
         system_id: systemId,
-        privacy_by_design_principles: await this.assessPrivacyByDesignPrinciples(systemId),
-        privacy_by_default_settings: await this.assessPrivacyByDefaultSettings(systemId),
+        privacy_by_design_principles:
+          await this.assessPrivacyByDesignPrinciples(systemId),
+        privacy_by_default_settings:
+          await this.assessPrivacyByDefaultSettings(systemId),
         technical_measures: await this.assessTechnicalMeasures(systemId),
-        organizational_measures: await this.assessOrganizationalMeasures(systemId),
-        risk_assessment: await this.conductPrivacyRiskAssessment(systemId, processingActivities),
-        recommendations: await this.generatePrivacyEnhancementRecommendations(systemId),
+        organizational_measures:
+          await this.assessOrganizationalMeasures(systemId),
+        risk_assessment: await this.conductPrivacyRiskAssessment(
+          systemId,
+          processingActivities,
+        ),
+        recommendations:
+          await this.generatePrivacyEnhancementRecommendations(systemId),
         compliance_score: 0,
-        assessment_date: new Date()
+        assessment_date: new Date(),
       };
 
       assessment.compliance_score = this.calculateComplianceScore(assessment);
 
       return {
         success: true,
-        data: assessment
+        data: assessment,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Assessment failed'
+        error: error instanceof Error ? error.message : "Assessment failed",
       };
     }
   }
 
   // Article 32 - Security of processing
   async assessSecurityOfProcessing(
-    processingActivityId: string
+    processingActivityId: string,
   ): Promise<ComplianceServiceResponse<SecurityAssessment>> {
     try {
       const assessment: SecurityAssessment = {
         activity_id: processingActivityId,
-        pseudonymisation: await this.assessPseudonymisation(processingActivityId),
+        pseudonymisation:
+          await this.assessPseudonymisation(processingActivityId),
         encryption: await this.assessEncryption(processingActivityId),
         confidentiality: await this.assessConfidentiality(processingActivityId),
         integrity: await this.assessIntegrity(processingActivityId),
         availability: await this.assessAvailability(processingActivityId),
         resilience: await this.assessResilience(processingActivityId),
-        testing_procedures: await this.assessTestingProcedures(processingActivityId),
+        testing_procedures:
+          await this.assessTestingProcedures(processingActivityId),
         risk_level: RiskLevel.MEDIUM,
         recommendations: [],
-        compliance_status: 'compliant'
+        compliance_status: "compliant",
       };
 
       assessment.risk_level = this.calculateSecurityRiskLevel(assessment);
-      assessment.recommendations = this.generateSecurityRecommendations(assessment);
-      assessment.compliance_status = this.determineSecurityComplianceStatus(assessment);
+      assessment.recommendations =
+        this.generateSecurityRecommendations(assessment);
+      assessment.compliance_status =
+        this.determineSecurityComplianceStatus(assessment);
 
       return {
         success: true,
-        data: assessment
+        data: assessment,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Security assessment failed'
+        error:
+          error instanceof Error ? error.message : "Security assessment failed",
       };
     }
   }
 
   // Automated compliance monitoring
-  async runComplianceHealthCheck(): Promise<ComplianceServiceResponse<ComplianceHealthReport>> {
+  async runComplianceHealthCheck(): Promise<
+    ComplianceServiceResponse<ComplianceHealthReport>
+  > {
     try {
       const report: ComplianceHealthReport = {
         overall_score: 0,
@@ -444,25 +502,27 @@ export class GDPRComplianceAutomationService {
           data_retention: await this.assessDataRetentionCompliance(),
           security_measures: await this.assessSecurityCompliance(),
           documentation: await this.assessDocumentationCompliance(),
-          training: await this.assessTrainingCompliance()
+          training: await this.assessTrainingCompliance(),
         },
         critical_issues: [],
         recommendations: [],
-        next_assessment: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+        next_assessment: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       };
 
       report.overall_score = this.calculateOverallComplianceScore(report.areas);
       report.critical_issues = this.identifyCriticalIssues(report.areas);
-      report.recommendations = this.generateComplianceRecommendations(report.areas);
+      report.recommendations = this.generateComplianceRecommendations(
+        report.areas,
+      );
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Health check failed'
+        error: error instanceof Error ? error.message : "Health check failed",
       };
     }
   }
@@ -472,18 +532,18 @@ export class GDPRComplianceAutomationService {
     const auditEntry: AuditTrailEntry = {
       id: this.generateId(),
       timestamp: new Date(),
-      userId: event.userId || 'system',
+      userId: event.userId || "system",
       action: event.action!,
       resourceType: event.resourceType!,
       resourceId: event.resourceId!,
       dataSubjectId: event.dataSubjectId,
       details: event.details || {},
-      ipAddress: event.ipAddress || '127.0.0.1',
-      userAgent: event.userAgent || 'GDPR-Service',
-      sessionId: event.sessionId || 'system-session',
+      ipAddress: event.ipAddress || "127.0.0.1",
+      userAgent: event.userAgent || "GDPR-Service",
+      sessionId: event.sessionId || "system-session",
       result: event.result!,
       complianceImpact: event.complianceImpact!,
-      metadata: this.createMetadata()
+      metadata: this.createMetadata(),
     };
 
     this.auditTrail.push(auditEntry);
@@ -500,49 +560,99 @@ export class GDPRComplianceAutomationService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'gdpr-service',
-      updatedBy: 'gdpr-service',
-      tags: ['gdpr', 'automated'],
-      classification: DataClassification.CONFIDENTIAL
+      createdBy: "gdpr-service",
+      updatedBy: "gdpr-service",
+      tags: ["gdpr", "automated"],
+      classification: DataClassification.CONFIDENTIAL,
     };
   }
 
-  private async validateLawfulness(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Legal basis identified', recommendations: [] };
+  private async validateLawfulness(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Legal basis identified",
+      recommendations: [],
+    };
   }
 
-  private async validateFairness(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Processing is fair', recommendations: [] };
+  private async validateFairness(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Processing is fair",
+      recommendations: [],
+    };
   }
 
-  private async validateTransparency(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Transparent processing', recommendations: [] };
+  private async validateTransparency(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Transparent processing",
+      recommendations: [],
+    };
   }
 
-  private async validatePurposeLimitation(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Purpose is specific and legitimate', recommendations: [] };
+  private async validatePurposeLimitation(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Purpose is specific and legitimate",
+      recommendations: [],
+    };
   }
 
-  private async validateDataMinimisation(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Data is adequate and relevant', recommendations: [] };
+  private async validateDataMinimisation(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Data is adequate and relevant",
+      recommendations: [],
+    };
   }
 
-  private async validateAccuracy(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Data accuracy measures in place', recommendations: [] };
+  private async validateAccuracy(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Data accuracy measures in place",
+      recommendations: [],
+    };
   }
 
-  private async validateStorageLimitation(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Retention period defined', recommendations: [] };
+  private async validateStorageLimitation(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Retention period defined",
+      recommendations: [],
+    };
   }
 
-  private async validateSecurityIntegrity(request: DataProcessingRequest): Promise<ComplianceCheck> {
-    return { compliant: true, details: 'Security measures implemented', recommendations: [] };
+  private async validateSecurityIntegrity(
+    request: DataProcessingRequest,
+  ): Promise<ComplianceCheck> {
+    return {
+      compliant: true,
+      details: "Security measures implemented",
+      recommendations: [],
+    };
   }
 
-  private calculateOverallComplianceScore(areas: Record<string, number>): number {
+  private calculateOverallComplianceScore(
+    areas: Record<string, number>,
+  ): number {
     const scores = Object.values(areas);
     return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   }
@@ -553,7 +663,9 @@ export class GDPRComplianceAutomationService {
       .map(([area, _]) => `Critical compliance issue in ${area}`);
   }
 
-  private generateComplianceRecommendations(areas: Record<string, number>): string[] {
+  private generateComplianceRecommendations(
+    areas: Record<string, number>,
+  ): string[] {
     return Object.entries(areas)
       .filter(([_, score]) => score < 90)
       .map(([area, _]) => `Improve ${area} compliance processes`);
@@ -721,10 +833,10 @@ export interface ComplianceHealthReport {
 }
 
 export enum ErasureGrounds {
-  NO_LONGER_NECESSARY = 'no_longer_necessary',
-  CONSENT_WITHDRAWN = 'consent_withdrawn',
-  OBJECTION = 'objection',
-  UNLAWFUL_PROCESSING = 'unlawful_processing',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  CHILD_CONSENT = 'child_consent'
+  NO_LONGER_NECESSARY = "no_longer_necessary",
+  CONSENT_WITHDRAWN = "consent_withdrawn",
+  OBJECTION = "objection",
+  UNLAWFUL_PROCESSING = "unlawful_processing",
+  LEGAL_OBLIGATION = "legal_obligation",
+  CHILD_CONSENT = "child_consent",
 }

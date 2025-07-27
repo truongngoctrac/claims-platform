@@ -9,6 +9,7 @@ This module provides a comprehensive suite of security and compliance features f
 ### Core Compliance Services
 
 #### 1. GDPR Compliance Automation (4.3.16) ✅
+
 - **File**: `GDPRComplianceAutomation.ts`
 - **Features**:
   - Article 5: Data processing principles validation
@@ -23,6 +24,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Automated compliance health checks
 
 #### 2. Data Privacy Controls (4.3.17) ✅
+
 - **File**: `DataPrivacyControls.ts`
 - **Features**:
   - Data classification and inventory management
@@ -36,6 +38,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Cross-border data transfer controls
 
 #### 3. Right to be Forgotten (4.3.18) ✅
+
 - **File**: `RightToBeForgotten.ts`
 - **Features**:
   - GDPR Article 17 implementation
@@ -48,6 +51,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Third-party notification management
 
 #### 4. Data Anonymization Tools (4.3.19) ✅
+
 - **File**: `DataAnonymizationTools.ts`
 - **Features**:
   - K-Anonymity implementation
@@ -63,6 +67,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Automated anonymization recommendations
 
 #### 5. Consent Management System (4.3.20) ✅
+
 - **File**: `ConsentManagementSystem.ts`
 - **Features**:
   - Consent collection and recording
@@ -77,6 +82,7 @@ This module provides a comprehensive suite of security and compliance features f
   - GDPR-compliant consent tracking
 
 #### 6. Audit Trail Automation (4.3.21) ✅
+
 - **File**: `AuditTrailAutomation.ts`
 - **Features**:
   - Comprehensive audit logging
@@ -91,6 +97,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Audit retention management
 
 #### 7. Compliance Reporting (4.3.22) ✅
+
 - **File**: `ComplianceReporting.ts`
 - **Features**:
   - Automated compliance report generation
@@ -105,6 +112,7 @@ This module provides a comprehensive suite of security and compliance features f
   - Custom report templates
 
 #### 8. Data Retention Policies (4.3.24) ✅
+
 - **File**: `DataRetentionPolicies.ts`
 - **Features**:
   - Retention policy creation and management
@@ -121,42 +129,49 @@ This module provides a comprehensive suite of security and compliance features f
 ### Planned Services (To Be Implemented)
 
 #### 9. Regulatory Change Management (4.3.23)
+
 - Regulatory update monitoring
 - Impact assessment automation
 - Change implementation tracking
 - Compliance gap analysis
 
 #### 10. Privacy Impact Assessments (4.3.25)
+
 - Automated PIA workflows
 - Risk assessment templates
 - Stakeholder consultation management
 - Compliance validation
 
 #### 11. Cross-Border Data Transfer (4.3.26)
+
 - Adequacy decision validation
 - Standard contractual clauses management
 - Transfer risk assessment
 - Documentation automation
 
 #### 12. Data Classification System (4.3.27)
+
 - Automated data discovery
 - ML-based classification
 - Sensitivity scoring
 - Handling requirement assignment
 
 #### 13. Compliance Monitoring (4.3.28)
+
 - Real-time compliance dashboards
 - Risk indicator tracking
 - Automated alerting
 - Performance metrics
 
 #### 14. Legal Hold Procedures (4.3.29)
+
 - Legal hold notifications
 - Data preservation workflows
 - Hold release procedures
 - Compliance tracking
 
 #### 15. Compliance Training Programs (4.3.30)
+
 - Training content management
 - Progress tracking
 - Assessment automation
@@ -165,6 +180,7 @@ This module provides a comprehensive suite of security and compliance features f
 ## Architecture
 
 ### Service Layer
+
 ```typescript
 // Main orchestration service
 ComplianceManager
@@ -179,6 +195,7 @@ ComplianceManager
 ```
 
 ### Data Flow
+
 1. **Data Ingestion**: Compliance events and data are captured
 2. **Processing**: Services apply policies and rules
 3. **Storage**: Audit trails and compliance records are maintained
@@ -189,12 +206,17 @@ ComplianceManager
 ## Usage
 
 ### Basic Setup
+
 ```typescript
-import { ComplianceManager } from './security/compliance-implementation';
+import { ComplianceManager } from "./security/compliance-implementation";
 
 const complianceManager = new ComplianceManager({
-  gdpr: { /* GDPR configuration */ },
-  privacyControls: { /* Privacy controls configuration */ },
+  gdpr: {
+    /* GDPR configuration */
+  },
+  privacyControls: {
+    /* Privacy controls configuration */
+  },
   // ... other service configurations
   logger: console,
   dataMapper: dataMapperService,
@@ -203,6 +225,7 @@ const complianceManager = new ComplianceManager({
 ```
 
 ### GDPR Compliance
+
 ```typescript
 // Validate data processing request
 const result = await complianceManager
@@ -216,12 +239,13 @@ const accessResult = await complianceManager
 ```
 
 ### Consent Management
+
 ```typescript
 // Record new consent
 const consentResult = await complianceManager
   .getConsentService()
   .recordConsent({
-    dataSubjectId: 'user123',
+    dataSubjectId: "user123",
     purpose: DataProcessingPurpose.HEALTHCARE_SERVICES,
     method: ConsentMethod.DIGITAL_SIGNATURE,
     // ... other consent details
@@ -234,6 +258,7 @@ const validationResult = await complianceManager
 ```
 
 ### Data Anonymization
+
 ```typescript
 // Apply K-anonymity
 const anonymizationResult = await complianceManager
@@ -247,33 +272,34 @@ const recommendations = await complianceManager
 ```
 
 ### Right to be Forgotten
+
 ```typescript
 // Process erasure request
 const erasureResult = await complianceManager
   .getRightToBeForgottenService()
   .processErasureRequest({
-    dataSubjectId: 'user123',
+    dataSubjectId: "user123",
     grounds: [ErasureGrounds.CONSENT_WITHDRAWN],
-    scope: 'all'
+    scope: "all",
   });
 ```
 
 ### Audit Trail
+
 ```typescript
 // Log compliance event
-const auditResult = await complianceManager
-  .getAuditService()
-  .logAuditEvent({
-    userId: 'admin123',
-    action: AuditAction.DATA_ACCESS,
-    resourceType: 'patient_data',
-    resourceId: 'patient456',
-    result: 'success',
-    complianceImpact: ComplianceImpact.HIGH
-  });
+const auditResult = await complianceManager.getAuditService().logAuditEvent({
+  userId: "admin123",
+  action: AuditAction.DATA_ACCESS,
+  resourceType: "patient_data",
+  resourceId: "patient456",
+  result: "success",
+  complianceImpact: ComplianceImpact.HIGH,
+});
 ```
 
 ### Compliance Reporting
+
 ```typescript
 // Generate GDPR compliance report
 const report = await complianceManager
@@ -282,13 +308,14 @@ const report = await complianceManager
     type: ComplianceReportType.GDPR_COMPLIANCE,
     framework: RegulatoryFramework.GDPR,
     period: { start: startDate, end: endDate },
-    scope: reportScope
+    scope: reportScope,
   });
 ```
 
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 # Compliance Configuration
 COMPLIANCE_RETENTION_DAYS=2555  # 7 years for healthcare data
@@ -307,23 +334,24 @@ RETENTION_AUTO_DISPOSAL_ENABLED=false
 ```
 
 ### Service Configuration
+
 ```typescript
 const config: ComplianceManagerConfig = {
   gdpr: {
     dataController: {
       name: "Healthcare Claims Company",
       address: "123 Health St, Ho Chi Minh City",
-      contact: "privacy@company.com"
+      contact: "privacy@company.com",
     },
     dpoContact: {
       name: "Data Protection Officer",
       email: "dpo@company.com",
-      phone: "+84-xxx-xxx-xxxx"
+      phone: "+84-xxx-xxx-xxxx",
     },
     retentionPolicies: {
       [DataProcessingPurpose.HEALTHCARE_SERVICES]: 2555, // 7 years in days
-      [DataProcessingPurpose.CLAIMS_PROCESSING]: 2555
-    }
+      [DataProcessingPurpose.CLAIMS_PROCESSING]: 2555,
+    },
   },
   // ... other configurations
 };
@@ -332,40 +360,42 @@ const config: ComplianceManagerConfig = {
 ## Data Types and Enums
 
 ### Key Enums
+
 ```typescript
 // Data processing purposes
 enum DataProcessingPurpose {
-  HEALTHCARE_SERVICES = 'healthcare_services',
-  CLAIMS_PROCESSING = 'claims_processing',
-  FRAUD_PREVENTION = 'fraud_prevention',
-  ANALYTICS = 'analytics',
-  CUSTOMER_SUPPORT = 'customer_support'
+  HEALTHCARE_SERVICES = "healthcare_services",
+  CLAIMS_PROCESSING = "claims_processing",
+  FRAUD_PREVENTION = "fraud_prevention",
+  ANALYTICS = "analytics",
+  CUSTOMER_SUPPORT = "customer_support",
 }
 
 // Data classifications
 enum DataClassification {
-  PUBLIC = 'public',
-  INTERNAL = 'internal',
-  CONFIDENTIAL = 'confidential',
-  RESTRICTED = 'restricted',
-  SENSITIVE_PERSONAL = 'sensitive_personal',
-  SPECIAL_CATEGORY = 'special_category'
+  PUBLIC = "public",
+  INTERNAL = "internal",
+  CONFIDENTIAL = "confidential",
+  RESTRICTED = "restricted",
+  SENSITIVE_PERSONAL = "sensitive_personal",
+  SPECIAL_CATEGORY = "special_category",
 }
 
 // Legal basis for processing
 enum LegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests'
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_TASK = "public_task",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 ```
 
 ## Compliance Frameworks Supported
 
 ### GDPR (General Data Protection Regulation)
+
 - Full Article implementation
 - Automated compliance checking
 - Data subject rights automation
@@ -373,12 +403,14 @@ enum LegalBasis {
 - Data breach notification
 
 ### Healthcare Regulations
+
 - Vietnam Cybersecurity Law compliance
 - Healthcare data retention requirements
 - Patient privacy protection
 - Medical record handling
 
 ### Additional Frameworks (Planned)
+
 - HIPAA (Health Insurance Portability and Accountability Act)
 - SOX (Sarbanes-Oxley Act)
 - PCI DSS (Payment Card Industry Data Security Standard)
@@ -387,6 +419,7 @@ enum LegalBasis {
 ## Security Features
 
 ### Data Protection
+
 - End-to-end encryption
 - Access control enforcement
 - Data classification and labeling
@@ -394,6 +427,7 @@ enum LegalBasis {
 - Audit trail protection
 
 ### Privacy Engineering
+
 - Privacy by design implementation
 - Data minimization enforcement
 - Purpose limitation controls
@@ -401,6 +435,7 @@ enum LegalBasis {
 - Automated anonymization
 
 ### Monitoring and Alerting
+
 - Real-time compliance monitoring
 - Automated risk detection
 - Policy violation alerts
@@ -410,16 +445,19 @@ enum LegalBasis {
 ## Testing
 
 ### Unit Tests
+
 ```bash
 npm test -- --grep "compliance"
 ```
 
 ### Integration Tests
+
 ```bash
 npm run test:integration -- compliance
 ```
 
 ### Compliance Tests
+
 ```bash
 npm run test:compliance
 ```
@@ -427,6 +465,7 @@ npm run test:compliance
 ## Monitoring and Observability
 
 ### Health Checks
+
 The compliance system provides comprehensive health monitoring:
 
 ```typescript
@@ -434,11 +473,16 @@ The compliance system provides comprehensive health monitoring:
 const healthCheck = await complianceManager.performComplianceHealthCheck();
 
 // Service-specific health checks
-const gdprHealth = await complianceManager.getGDPRService().runComplianceHealthCheck();
-const consentHealth = await complianceManager.getConsentService().monitorConsentCompliance();
+const gdprHealth = await complianceManager
+  .getGDPRService()
+  .runComplianceHealthCheck();
+const consentHealth = await complianceManager
+  .getConsentService()
+  .monitorConsentCompliance();
 ```
 
 ### Metrics and KPIs
+
 - Compliance score (0-100)
 - Data subject request response times
 - Consent rates by purpose
@@ -447,7 +491,9 @@ const consentHealth = await complianceManager.getConsentService().monitorConsent
 - Data retention compliance
 
 ### Dashboards
+
 Real-time compliance dashboards provide:
+
 - Overall compliance status
 - Service health indicators
 - Key performance metrics
@@ -457,6 +503,7 @@ Real-time compliance dashboards provide:
 ## Deployment
 
 ### Docker
+
 ```dockerfile
 FROM node:18-alpine
 COPY package*.json ./
@@ -468,6 +515,7 @@ CMD ["npm", "start"]
 ```
 
 ### Environment Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -485,6 +533,7 @@ npm run compliance:start
 ## Best Practices
 
 ### Data Handling
+
 1. Always classify data before processing
 2. Apply principle of least privilege
 3. Implement data minimization
@@ -492,6 +541,7 @@ npm run compliance:start
 5. Maintain comprehensive audit trails
 
 ### Consent Management
+
 1. Obtain explicit consent for sensitive data
 2. Provide granular consent options
 3. Make withdrawal easy and accessible
@@ -499,6 +549,7 @@ npm run compliance:start
 5. Document consent evidence thoroughly
 
 ### Compliance Monitoring
+
 1. Set up automated compliance checks
 2. Regular policy reviews and updates
 3. Train staff on compliance procedures
@@ -510,33 +561,38 @@ npm run compliance:start
 ### Common Issues
 
 #### Consent Validation Failures
+
 ```typescript
 // Check consent status
 const validation = await consentService.validateConsent(dataSubjectId, purpose);
 if (!validation.data?.isValid) {
-  console.log('Consent issues:', validation.data?.validationChecks);
+  console.log("Consent issues:", validation.data?.validationChecks);
 }
 ```
 
 #### Data Erasure Failures
+
 ```typescript
 // Check erasure constraints
 const mapping = await rtbfService.mapDataForErasure(dataSubjectId, scope);
 if (mapping.data?.constraints) {
-  console.log('Erasure constraints:', mapping.data.constraints);
+  console.log("Erasure constraints:", mapping.data.constraints);
 }
 ```
 
 #### Audit Trail Issues
+
 ```typescript
 // Verify audit integrity
 const verification = await auditService.verifyAuditIntegrity({
-  verificationLevel: 'comprehensive'
+  verificationLevel: "comprehensive",
 });
 ```
 
 ### Support
+
 For technical support and compliance questions:
+
 - Email: compliance-support@company.com
 - Documentation: https://docs.company.com/compliance
 - Issues: https://github.com/company/compliance/issues
@@ -544,6 +600,7 @@ For technical support and compliance questions:
 ## Contributing
 
 ### Development Guidelines
+
 1. Follow TypeScript best practices
 2. Implement comprehensive error handling
 3. Add unit tests for all features
@@ -551,6 +608,7 @@ For technical support and compliance questions:
 5. Follow security coding standards
 
 ### Code Review Process
+
 1. All changes require peer review
 2. Security team review for compliance features
 3. Legal team review for regulatory implementations

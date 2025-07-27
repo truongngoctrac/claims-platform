@@ -8,8 +8,8 @@ import {
   AuditAction,
   ComplianceImpact,
   RiskLevel,
-  DataRegion
-} from './types';
+  DataRegion,
+} from "./types";
 
 export class DataPrivacyControlsService {
   private privacyPolicies: Map<string, PrivacyPolicy> = new Map();
@@ -20,19 +20,25 @@ export class DataPrivacyControlsService {
   constructor(
     private config: PrivacyControlsConfig,
     private logger: any,
-    private auditService: any
+    private auditService: any,
   ) {}
 
   // Data Classification and Inventory Management
   async classifyData(
     dataId: string,
     content: any,
-    context: DataContext
+    context: DataContext,
   ): Promise<ComplianceServiceResponse<DataClassificationResult>> {
     try {
-      const classification = await this.performDataClassification(content, context);
+      const classification = await this.performDataClassification(
+        content,
+        context,
+      );
       const sensitivity = await this.assessDataSensitivity(content, context);
-      const handling = await this.determineHandlingRequirements(classification, sensitivity);
+      const handling = await this.determineHandlingRequirements(
+        classification,
+        sensitivity,
+      );
 
       const inventoryItem: DataInventoryItem = {
         id: dataId,
@@ -45,18 +51,22 @@ export class DataPrivacyControlsService {
         reviewSchedule: this.calculateReviewSchedule(classification),
         retention: await this.determineRetentionPeriod(classification, context),
         disposal: await this.determineDisposalMethod(classification),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       this.dataInventory.set(dataId, inventoryItem);
 
       await this.auditService.log({
         action: AuditAction.CREATE,
-        resourceType: 'data_classification',
+        resourceType: "data_classification",
         resourceId: dataId,
-        details: { classification, sensitivity, dataTypes: inventoryItem.dataTypes },
-        result: 'success',
-        complianceImpact: ComplianceImpact.MEDIUM
+        details: {
+          classification,
+          sensitivity,
+          dataTypes: inventoryItem.dataTypes,
+        },
+        result: "success",
+        complianceImpact: ComplianceImpact.MEDIUM,
       });
 
       return {
@@ -65,13 +75,14 @@ export class DataPrivacyControlsService {
           classification,
           sensitivity,
           handling_requirements: handling,
-          inventory_item: inventoryItem
-        }
+          inventory_item: inventoryItem,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data classification failed'
+        error:
+          error instanceof Error ? error.message : "Data classification failed",
       };
     }
   }
@@ -81,18 +92,23 @@ export class DataPrivacyControlsService {
     userId: string,
     resourceId: string,
     action: string,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<ComplianceServiceResponse<AccessDecision>> {
     try {
       const user = await this.getUserProfile(userId);
       const resource = this.dataInventory.get(resourceId);
-      
+
       if (!resource) {
-        throw new Error('Resource not found in data inventory');
+        throw new Error("Resource not found in data inventory");
       }
 
-      const decision = await this.evaluateAccess(user, resource, action, context);
-      
+      const decision = await this.evaluateAccess(
+        user,
+        resource,
+        action,
+        context,
+      );
+
       if (decision.granted) {
         await this.applyAccessRestrictions(decision);
         await this.logDataAccess(userId, resourceId, action, context, decision);
@@ -100,26 +116,28 @@ export class DataPrivacyControlsService {
 
       await this.auditService.log({
         action: AuditAction.ACCESS,
-        resourceType: 'data_access_control',
+        resourceType: "data_access_control",
         resourceId,
-        details: { 
+        details: {
           user_id: userId,
           action,
           decision: decision.granted,
-          restrictions: decision.restrictions
+          restrictions: decision.restrictions,
         },
-        result: decision.granted ? 'success' : 'failure',
-        complianceImpact: this.assessAccessComplianceImpact(resource.classification)
+        result: decision.granted ? "success" : "failure",
+        complianceImpact: this.assessAccessComplianceImpact(
+          resource.classification,
+        ),
       });
 
       return {
         success: true,
-        data: decision
+        data: decision,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Access control failed'
+        error: error instanceof Error ? error.message : "Access control failed",
       };
     }
   }
@@ -127,71 +145,99 @@ export class DataPrivacyControlsService {
   // Privacy-by-Design Implementation
   async implementPrivacyByDesign(
     systemId: string,
-    designSpecification: SystemDesignSpec
+    designSpecification: SystemDesignSpec,
   ): Promise<ComplianceServiceResponse<PrivacyByDesignResult>> {
     try {
       const analysis = await this.analyzeSystemDesign(designSpecification);
-      const recommendations = await this.generatePrivacyRecommendations(analysis);
-      const implementation = await this.applyPrivacyByDesignPrinciples(designSpecification, recommendations);
+      const recommendations =
+        await this.generatePrivacyRecommendations(analysis);
+      const implementation = await this.applyPrivacyByDesignPrinciples(
+        designSpecification,
+        recommendations,
+      );
 
       const result: PrivacyByDesignResult = {
         system_id: systemId,
         principles_assessment: {
           proactive: await this.assessProactivePrivacy(designSpecification),
-          privacy_as_default: await this.assessPrivacyAsDefault(designSpecification),
-          privacy_embedded: await this.assessPrivacyEmbedded(designSpecification),
-          full_functionality: await this.assessFullFunctionality(designSpecification),
-          end_to_end_security: await this.assessEndToEndSecurity(designSpecification),
-          visibility_transparency: await this.assessVisibilityTransparency(designSpecification),
-          respect_user_privacy: await this.assessRespectUserPrivacy(designSpecification)
+          privacy_as_default:
+            await this.assessPrivacyAsDefault(designSpecification),
+          privacy_embedded:
+            await this.assessPrivacyEmbedded(designSpecification),
+          full_functionality:
+            await this.assessFullFunctionality(designSpecification),
+          end_to_end_security:
+            await this.assessEndToEndSecurity(designSpecification),
+          visibility_transparency:
+            await this.assessVisibilityTransparency(designSpecification),
+          respect_user_privacy:
+            await this.assessRespectUserPrivacy(designSpecification),
         },
         recommendations,
         implementation_plan: implementation,
         compliance_score: 0,
-        risk_assessment: await this.conductPrivacyRiskAssessment(designSpecification)
+        risk_assessment:
+          await this.conductPrivacyRiskAssessment(designSpecification),
       };
 
-      result.compliance_score = this.calculatePrivacyByDesignScore(result.principles_assessment);
+      result.compliance_score = this.calculatePrivacyByDesignScore(
+        result.principles_assessment,
+      );
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Privacy by design implementation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Privacy by design implementation failed",
       };
     }
   }
 
   // Data Minimization
   async enforceDataMinimization(
-    dataCollectionRequest: DataCollectionRequest
+    dataCollectionRequest: DataCollectionRequest,
   ): Promise<ComplianceServiceResponse<DataMinimizationResult>> {
     try {
       const analysis = await this.analyzeDataNecessity(dataCollectionRequest);
-      const minimizedDataSet = await this.minimizeDataCollection(dataCollectionRequest, analysis);
-      const alternatives = await this.identifyDataAlternatives(dataCollectionRequest);
+      const minimizedDataSet = await this.minimizeDataCollection(
+        dataCollectionRequest,
+        analysis,
+      );
+      const alternatives = await this.identifyDataAlternatives(
+        dataCollectionRequest,
+      );
 
       const result: DataMinimizationResult = {
         original_data_points: dataCollectionRequest.dataFields.length,
         minimized_data_points: minimizedDataSet.length,
-        reduction_percentage: ((dataCollectionRequest.dataFields.length - minimizedDataSet.length) / dataCollectionRequest.dataFields.length) * 100,
+        reduction_percentage:
+          ((dataCollectionRequest.dataFields.length - minimizedDataSet.length) /
+            dataCollectionRequest.dataFields.length) *
+          100,
         necessity_analysis: analysis,
         minimized_dataset: minimizedDataSet,
         alternatives: alternatives,
-        compliance_assessment: await this.assessMinimizationCompliance(minimizedDataSet, dataCollectionRequest.purpose)
+        compliance_assessment: await this.assessMinimizationCompliance(
+          minimizedDataSet,
+          dataCollectionRequest.purpose,
+        ),
       };
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data minimization failed'
+        error:
+          error instanceof Error ? error.message : "Data minimization failed",
       };
     }
   }
@@ -199,7 +245,7 @@ export class DataPrivacyControlsService {
   // Privacy Impact Assessment
   async conductPrivacyImpactAssessment(
     projectId: string,
-    assessmentRequest: PIARequest
+    assessmentRequest: PIARequest,
   ): Promise<ComplianceServiceResponse<PrivacyImpactAssessmentResult>> {
     try {
       const pia: PrivacyImpactAssessmentResult = {
@@ -210,12 +256,14 @@ export class DataPrivacyControlsService {
         data_flows: await this.mapDataFlows(assessmentRequest),
         privacy_risks: await this.identifyPrivacyRisks(assessmentRequest),
         risk_mitigation: await this.developRiskMitigation(assessmentRequest),
-        stakeholder_consultation: await this.consultStakeholders(assessmentRequest),
-        compliance_check: await this.checkComplianceRequirements(assessmentRequest),
+        stakeholder_consultation:
+          await this.consultStakeholders(assessmentRequest),
+        compliance_check:
+          await this.checkComplianceRequirements(assessmentRequest),
         recommendations: [],
-        approval_status: 'pending',
+        approval_status: "pending",
         review_schedule: this.calculatePIAReviewSchedule(),
-        monitoring_plan: await this.developMonitoringPlan(assessmentRequest)
+        monitoring_plan: await this.developMonitoringPlan(assessmentRequest),
       };
 
       pia.recommendations = this.generatePIARecommendations(pia);
@@ -223,57 +271,69 @@ export class DataPrivacyControlsService {
 
       return {
         success: true,
-        data: pia
+        data: pia,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Privacy impact assessment failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Privacy impact assessment failed",
       };
     }
   }
 
   // Purpose Limitation Enforcement
   async enforcePurposeLimitation(
-    dataUsageRequest: DataUsageRequest
+    dataUsageRequest: DataUsageRequest,
   ): Promise<ComplianceServiceResponse<PurposeLimitationResult>> {
     try {
-      const originalPurposes = await this.getOriginalDataPurposes(dataUsageRequest.dataId);
-      const compatibilityCheck = await this.checkPurposeCompatibility(originalPurposes, dataUsageRequest.newPurpose);
-      
+      const originalPurposes = await this.getOriginalDataPurposes(
+        dataUsageRequest.dataId,
+      );
+      const compatibilityCheck = await this.checkPurposeCompatibility(
+        originalPurposes,
+        dataUsageRequest.newPurpose,
+      );
+
       const result: PurposeLimitationResult = {
         original_purposes: originalPurposes,
         requested_purpose: dataUsageRequest.newPurpose,
         compatibility_assessment: compatibilityCheck,
         additional_consent_required: compatibilityCheck.requires_new_consent,
-        legal_analysis: await this.analyzeLegalBasisForNewPurpose(dataUsageRequest),
+        legal_analysis:
+          await this.analyzeLegalBasisForNewPurpose(dataUsageRequest),
         permitted: compatibilityCheck.compatible,
-        conditions: compatibilityCheck.conditions
+        conditions: compatibilityCheck.conditions,
       };
 
       if (!result.permitted) {
         await this.auditService.log({
           action: AuditAction.READ,
-          resourceType: 'purpose_limitation_violation',
+          resourceType: "purpose_limitation_violation",
           resourceId: dataUsageRequest.dataId,
-          details: { 
+          details: {
             original_purposes: originalPurposes,
             requested_purpose: dataUsageRequest.newPurpose,
-            reason: 'Purpose incompatibility'
+            reason: "Purpose incompatibility",
           },
-          result: 'failure',
-          complianceImpact: ComplianceImpact.HIGH
+          result: "failure",
+          complianceImpact: ComplianceImpact.HIGH,
         });
       }
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Purpose limitation check failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Purpose limitation check failed",
       };
     }
   }
@@ -281,15 +341,15 @@ export class DataPrivacyControlsService {
   // Data Subject Rights Management
   async manageDataSubjectRights(
     requestType: DataSubjectRightType,
-    request: DataSubjectRightRequest
+    request: DataSubjectRightRequest,
   ): Promise<ComplianceServiceResponse<DataSubjectRightResponse>> {
     try {
       const validation = await this.validateDataSubjectRequest(request);
-      
+
       if (!validation.valid) {
         return {
           success: false,
-          error: `Invalid request: ${validation.errors.join(', ')}`
+          error: `Invalid request: ${validation.errors.join(", ")}`,
         };
       }
 
@@ -320,12 +380,15 @@ export class DataPrivacyControlsService {
 
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data subject right request failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Data subject right request failed",
       };
     }
   }
@@ -333,17 +396,21 @@ export class DataPrivacyControlsService {
   // Privacy Settings Management
   async updatePrivacySettings(
     userId: string,
-    settings: PrivacySettingsUpdate
+    settings: PrivacySettingsUpdate,
   ): Promise<ComplianceServiceResponse<PrivacySettings>> {
     try {
-      const currentSettings = this.privacySettings.get(userId) || this.getDefaultPrivacySettings();
-      const updatedSettings = await this.mergePrivacySettings(currentSettings, settings);
-      
+      const currentSettings =
+        this.privacySettings.get(userId) || this.getDefaultPrivacySettings();
+      const updatedSettings = await this.mergePrivacySettings(
+        currentSettings,
+        settings,
+      );
+
       const validation = await this.validatePrivacySettings(updatedSettings);
       if (!validation.valid) {
         return {
           success: false,
-          error: `Invalid privacy settings: ${validation.errors.join(', ')}`
+          error: `Invalid privacy settings: ${validation.errors.join(", ")}`,
         };
       }
 
@@ -351,37 +418,46 @@ export class DataPrivacyControlsService {
 
       await this.auditService.log({
         action: AuditAction.UPDATE,
-        resourceType: 'privacy_settings',
+        resourceType: "privacy_settings",
         resourceId: userId,
-        details: { 
+        details: {
           previous: currentSettings,
           updated: updatedSettings,
-          changes: this.calculateSettingsChanges(currentSettings, updatedSettings)
+          changes: this.calculateSettingsChanges(
+            currentSettings,
+            updatedSettings,
+          ),
         },
-        result: 'success',
-        complianceImpact: ComplianceImpact.MEDIUM
+        result: "success",
+        complianceImpact: ComplianceImpact.MEDIUM,
       });
 
       return {
         success: true,
-        data: updatedSettings
+        data: updatedSettings,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Privacy settings update failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Privacy settings update failed",
       };
     }
   }
 
   // Cross-Border Data Transfer Controls
   async validateCrossBorderTransfer(
-    transferRequest: CrossBorderTransferRequest
+    transferRequest: CrossBorderTransferRequest,
   ): Promise<ComplianceServiceResponse<TransferValidationResult>> {
     try {
-      const adequacyCheck = await this.checkAdequacyDecision(transferRequest.destinationCountry);
+      const adequacyCheck = await this.checkAdequacyDecision(
+        transferRequest.destinationCountry,
+      );
       const safeguardsCheck = await this.validateSafeguards(transferRequest);
-      const legalBasisCheck = await this.validateTransferLegalBasis(transferRequest);
+      const legalBasisCheck =
+        await this.validateTransferLegalBasis(transferRequest);
 
       const result: TransferValidationResult = {
         permitted: false,
@@ -390,32 +466,45 @@ export class DataPrivacyControlsService {
         legal_basis: legalBasisCheck,
         additional_requirements: [],
         risk_assessment: await this.assessTransferRisk(transferRequest),
-        monitoring_requirements: []
+        monitoring_requirements: [],
       };
 
       result.permitted = this.determineTransferPermission(result);
-      result.additional_requirements = this.identifyAdditionalRequirements(result);
-      result.monitoring_requirements = this.defineMonitoringRequirements(transferRequest, result);
+      result.additional_requirements =
+        this.identifyAdditionalRequirements(result);
+      result.monitoring_requirements = this.defineMonitoringRequirements(
+        transferRequest,
+        result,
+      );
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Cross-border transfer validation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Cross-border transfer validation failed",
       };
     }
   }
 
   // Private helper methods
-  private async performDataClassification(content: any, context: DataContext): Promise<DataClassification> {
+  private async performDataClassification(
+    content: any,
+    context: DataContext,
+  ): Promise<DataClassification> {
     // Implement ML-based data classification logic
     return DataClassification.CONFIDENTIAL;
   }
 
-  private async assessDataSensitivity(content: any, context: DataContext): Promise<SensitivityLevel> {
+  private async assessDataSensitivity(
+    content: any,
+    context: DataContext,
+  ): Promise<SensitivityLevel> {
     // Implement sensitivity assessment logic
     return SensitivityLevel.HIGH;
   }
@@ -429,9 +518,9 @@ export class DataPrivacyControlsService {
     // Implement user profile retrieval
     return {
       id: userId,
-      roles: ['user'],
-      clearanceLevel: 'standard',
-      department: 'general'
+      roles: ["user"],
+      clearanceLevel: "standard",
+      department: "general",
     };
   }
 
@@ -439,18 +528,20 @@ export class DataPrivacyControlsService {
     user: UserProfile,
     resource: DataInventoryItem,
     action: string,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<AccessDecision> {
     // Implement access control decision logic
     return {
       granted: true,
       restrictions: [],
       conditions: [],
-      rationale: 'User has appropriate access level'
+      rationale: "User has appropriate access level",
     };
   }
 
-  private calculatePrivacyByDesignScore(principles: Record<string, any>): number {
+  private calculatePrivacyByDesignScore(
+    principles: Record<string, any>,
+  ): number {
     // Calculate compliance score based on privacy by design principles
     return 85;
   }
@@ -458,13 +549,13 @@ export class DataPrivacyControlsService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'privacy-controls-service',
-      updatedBy: 'privacy-controls-service',
-      tags: ['privacy', 'automated'],
-      classification: DataClassification.CONFIDENTIAL
+      createdBy: "privacy-controls-service",
+      updatedBy: "privacy-controls-service",
+      tags: ["privacy", "automated"],
+      classification: DataClassification.CONFIDENTIAL,
     };
   }
 
@@ -474,21 +565,23 @@ export class DataPrivacyControlsService {
 
   private getDefaultPrivacySettings(): PrivacySettings {
     return {
-      dataCollection: 'minimal',
+      dataCollection: "minimal",
       marketingCommunications: false,
       dataSharing: false,
       profilingOptOut: true,
-      cookieSettings: 'essential_only',
-      dataRetention: 'minimum_required',
+      cookieSettings: "essential_only",
+      dataRetention: "minimum_required",
       notifications: {
         dataUsage: true,
         policyChanges: true,
-        securityIncidents: true
-      }
+        securityIncidents: true,
+      },
     };
   }
 
-  private assessAccessComplianceImpact(classification: DataClassification): ComplianceImpact {
+  private assessAccessComplianceImpact(
+    classification: DataClassification,
+  ): ComplianceImpact {
     switch (classification) {
       case DataClassification.SPECIAL_CATEGORY:
       case DataClassification.RESTRICTED:
@@ -644,20 +737,20 @@ export interface CrossBorderTransferRequest {
 }
 
 export enum SensitivityLevel {
-  PUBLIC = 'public',
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  PUBLIC = "public",
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export enum DataSubjectRightType {
-  ACCESS = 'access',
-  RECTIFICATION = 'rectification',
-  ERASURE = 'erasure',
-  RESTRICTION = 'restriction',
-  PORTABILITY = 'portability',
-  OBJECTION = 'objection'
+  ACCESS = "access",
+  RECTIFICATION = "rectification",
+  ERASURE = "erasure",
+  RESTRICTION = "restriction",
+  PORTABILITY = "portability",
+  OBJECTION = "objection",
 }
 
 export interface DataSubjectRightRequest {
@@ -665,12 +758,12 @@ export interface DataSubjectRightRequest {
   dataSubjectId: string;
   requestDetails: any;
   verification: IdentityVerification;
-  urgency: 'normal' | 'urgent';
+  urgency: "normal" | "urgent";
 }
 
 export interface DataSubjectRightResponse {
   requestId: string;
-  status: 'completed' | 'pending' | 'rejected';
+  status: "completed" | "pending" | "rejected";
   responseData?: any;
   timeline: Date;
   nextSteps?: string[];
@@ -780,7 +873,7 @@ export interface AccessPolicy {
 
 export interface AccessRule {
   condition: string;
-  action: 'allow' | 'deny';
+  action: "allow" | "deny";
   restrictions: string[];
 }
 
@@ -799,13 +892,13 @@ export interface RetentionPolicy {
 }
 
 export interface DisposalMethod {
-  type: 'secure_deletion' | 'anonymization' | 'archival';
+  type: "secure_deletion" | "anonymization" | "archival";
   procedure: string;
   verification: boolean;
 }
 
 export interface ReviewSchedule {
-  frequency: 'monthly' | 'quarterly' | 'annually';
+  frequency: "monthly" | "quarterly" | "annually";
   nextReview: Date;
   responsible: string;
 }

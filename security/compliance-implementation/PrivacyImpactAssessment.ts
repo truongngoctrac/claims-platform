@@ -9,8 +9,8 @@ import {
   PIAMonitoring,
   ComplianceServiceResponse,
   ComplianceMetadata,
-  DataClassification
-} from './types';
+  DataClassification,
+} from "./types";
 
 export class PrivacyImpactAssessmentService {
   private assessments: Map<string, PrivacyImpactAssessment> = new Map();
@@ -20,7 +20,7 @@ export class PrivacyImpactAssessmentService {
 
   constructor(
     private config: PIAConfig,
-    private logger: any
+    private logger: any,
   ) {
     this.initializePIATemplates();
     this.initializeRiskRegistry();
@@ -28,14 +28,14 @@ export class PrivacyImpactAssessmentService {
 
   // Create Privacy Impact Assessment following Vietnamese and GDPR requirements
   async createPrivacyImpactAssessment(
-    request: PIARequest
+    request: PIARequest,
   ): Promise<ComplianceServiceResponse<PrivacyImpactAssessment>> {
     try {
       const piaId = this.generatePIAId();
-      
+
       // Determine if PIA is mandatory based on Vietnamese and GDPR criteria
       const piaRequirement = await this.assessPIARequirement(request);
-      
+
       const pia: PrivacyImpactAssessment = {
         id: piaId,
         projectName: request.projectName,
@@ -52,25 +52,25 @@ export class PrivacyImpactAssessmentService {
         risks: [],
         mitigations: [],
         monitoring: {
-          reviewSchedule: 'annually',
+          reviewSchedule: "annually",
           nextReviewDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
           keyIndicators: [],
-          monitoringPlan: '',
-          escalationProcedure: ''
+          monitoringPlan: "",
+          escalationProcedure: "",
         },
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       // Populate assessment based on Vietnamese requirements
       await this.populateVietnameseRequirements(pia, request);
-      
+
       // Populate assessment based on GDPR requirements
       await this.populateGDPRRequirements(pia, request);
-      
+
       // Perform initial risk assessment
       pia.risks = await this.conductInitialRiskAssessment(pia, request);
       pia.riskLevel = this.calculateOverallRiskLevel(pia.risks);
-      
+
       // Generate initial mitigations
       pia.mitigations = await this.generateInitialMitigations(pia.risks);
 
@@ -78,33 +78,33 @@ export class PrivacyImpactAssessmentService {
 
       return {
         success: true,
-        data: pia
+        data: pia,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'PIA creation failed'
+        error: error instanceof Error ? error.message : "PIA creation failed",
       };
     }
   }
 
   // Conduct comprehensive privacy risk assessment
   async conductPrivacyRiskAssessment(
-    piaId: string
+    piaId: string,
   ): Promise<ComplianceServiceResponse<PrivacyRiskAssessmentResult>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
       const riskAssessment: PrivacyRiskAssessmentResult = {
         pia_id: piaId,
         assessment_date: new Date(),
-        risk_methodology: 'Vietnamese_GDPR_Combined',
+        risk_methodology: "Vietnamese_GDPR_Combined",
         identified_risks: [],
         risk_matrix: await this.generateRiskMatrix(pia),
         high_priority_risks: [],
@@ -116,29 +116,39 @@ export class PrivacyImpactAssessmentService {
         operational_risks: await this.assessOperationalRisks(pia),
         reputational_risks: await this.assessReputationalRisks(pia),
         overall_risk_score: 0,
-        recommendations: []
+        recommendations: [],
       };
 
       // Conduct detailed risk analysis
       riskAssessment.identified_risks = await this.identifyAllPrivacyRisks(pia);
-      riskAssessment.high_priority_risks = riskAssessment.identified_risks
-        .filter(risk => risk.overallRisk === RiskLevel.HIGH || risk.overallRisk === RiskLevel.VERY_HIGH);
-      
-      riskAssessment.overall_risk_score = this.calculateOverallRiskScore(riskAssessment.identified_risks);
-      riskAssessment.recommendations = await this.generateRiskRecommendations(riskAssessment);
+      riskAssessment.high_priority_risks =
+        riskAssessment.identified_risks.filter(
+          (risk) =>
+            risk.overallRisk === RiskLevel.HIGH ||
+            risk.overallRisk === RiskLevel.VERY_HIGH,
+        );
+
+      riskAssessment.overall_risk_score = this.calculateOverallRiskScore(
+        riskAssessment.identified_risks,
+      );
+      riskAssessment.recommendations =
+        await this.generateRiskRecommendations(riskAssessment);
 
       // Update PIA with detailed risks
       pia.risks = riskAssessment.identified_risks;
-      pia.riskLevel = this.mapScoreToRiskLevel(riskAssessment.overall_risk_score);
+      pia.riskLevel = this.mapScoreToRiskLevel(
+        riskAssessment.overall_risk_score,
+      );
 
       return {
         success: true,
-        data: riskAssessment
+        data: riskAssessment,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Risk assessment failed'
+        error:
+          error instanceof Error ? error.message : "Risk assessment failed",
       };
     }
   }
@@ -146,14 +156,14 @@ export class PrivacyImpactAssessmentService {
   // Stakeholder consultation process
   async conductStakeholderConsultation(
     piaId: string,
-    consultationRequest: StakeholderConsultationRequest
+    consultationRequest: StakeholderConsultationRequest,
   ): Promise<ComplianceServiceResponse<StakeholderConsultationResult>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
@@ -162,38 +172,48 @@ export class PrivacyImpactAssessmentService {
         consultation_date: new Date(),
         stakeholders_consulted: consultationRequest.stakeholders,
         consultation_methods: consultationRequest.methods,
-        feedback_summary: await this.collectStakeholderFeedback(consultationRequest),
-        concerns_raised: await this.identifyStakeholderConcerns(consultationRequest),
-        suggestions_received: await this.collectStakeholderSuggestions(consultationRequest),
+        feedback_summary:
+          await this.collectStakeholderFeedback(consultationRequest),
+        concerns_raised:
+          await this.identifyStakeholderConcerns(consultationRequest),
+        suggestions_received:
+          await this.collectStakeholderSuggestions(consultationRequest),
         consensus_areas: await this.identifyConsensusAreas(consultationRequest),
-        disagreement_areas: await this.identifyDisagreementAreas(consultationRequest),
-        follow_up_actions: await this.defineFollowUpActions(consultationRequest),
-        consultation_effectiveness: await this.assessConsultationEffectiveness(consultationRequest),
-        documentation: await this.generateConsultationDocumentation(consultationRequest)
+        disagreement_areas:
+          await this.identifyDisagreementAreas(consultationRequest),
+        follow_up_actions:
+          await this.defineFollowUpActions(consultationRequest),
+        consultation_effectiveness:
+          await this.assessConsultationEffectiveness(consultationRequest),
+        documentation:
+          await this.generateConsultationDocumentation(consultationRequest),
       };
 
       return {
         success: true,
-        data: consultation
+        data: consultation,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Stakeholder consultation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Stakeholder consultation failed",
       };
     }
   }
 
   // Data flow mapping for PIA
   async mapDataFlows(
-    piaId: string
+    piaId: string,
   ): Promise<ComplianceServiceResponse<DataFlowMappingResult>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
@@ -211,17 +231,18 @@ export class PrivacyImpactAssessmentService {
         access_controls: await this.mapAccessControls(pia),
         data_lifecycle: await this.mapDataLifecycle(pia),
         integration_points: await this.identifyIntegrationPoints(pia),
-        security_controls: await this.mapSecurityControls(pia)
+        security_controls: await this.mapSecurityControls(pia),
       };
 
       return {
         success: true,
-        data: dataFlowMapping
+        data: dataFlowMapping,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data flow mapping failed'
+        error:
+          error instanceof Error ? error.message : "Data flow mapping failed",
       };
     }
   }
@@ -229,14 +250,14 @@ export class PrivacyImpactAssessmentService {
   // Mitigation planning and implementation
   async developMitigationPlan(
     piaId: string,
-    mitigationRequest: MitigationPlanRequest
+    mitigationRequest: MitigationPlanRequest,
   ): Promise<ComplianceServiceResponse<MitigationPlan>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
@@ -247,26 +268,38 @@ export class PrivacyImpactAssessmentService {
         description: mitigationRequest.description,
         created_date: new Date(),
         target_risks: mitigationRequest.targetRisks,
-        mitigation_strategies: await this.developMitigationStrategies(pia, mitigationRequest),
-        implementation_timeline: await this.createImplementationTimeline(mitigationRequest),
-        resource_requirements: await this.assessResourceRequirements(mitigationRequest),
+        mitigation_strategies: await this.developMitigationStrategies(
+          pia,
+          mitigationRequest,
+        ),
+        implementation_timeline:
+          await this.createImplementationTimeline(mitigationRequest),
+        resource_requirements:
+          await this.assessResourceRequirements(mitigationRequest),
         success_metrics: await this.defineMitigationMetrics(mitigationRequest),
-        monitoring_plan: await this.createMitigationMonitoringPlan(mitigationRequest),
-        contingency_plans: await this.developContingencyPlans(mitigationRequest),
-        stakeholder_responsibilities: await this.assignStakeholderResponsibilities(mitigationRequest),
+        monitoring_plan:
+          await this.createMitigationMonitoringPlan(mitigationRequest),
+        contingency_plans:
+          await this.developContingencyPlans(mitigationRequest),
+        stakeholder_responsibilities:
+          await this.assignStakeholderResponsibilities(mitigationRequest),
         budget_estimate: await this.estimateMitigationBudget(mitigationRequest),
-        approval_workflow: await this.defineMitigationApprovalWorkflow(mitigationRequest),
-        status: 'draft'
+        approval_workflow:
+          await this.defineMitigationApprovalWorkflow(mitigationRequest),
+        status: "draft",
       };
 
       return {
         success: true,
-        data: mitigationPlan
+        data: mitigationPlan,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Mitigation plan development failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Mitigation plan development failed",
       };
     }
   }
@@ -274,14 +307,14 @@ export class PrivacyImpactAssessmentService {
   // PIA approval workflow
   async submitForApproval(
     piaId: string,
-    submissionRequest: PIASubmissionRequest
+    submissionRequest: PIASubmissionRequest,
   ): Promise<ComplianceServiceResponse<PIAApprovalResult>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
@@ -290,16 +323,16 @@ export class PrivacyImpactAssessmentService {
       if (!validation.isComplete) {
         return {
           success: false,
-          error: `PIA is incomplete: ${validation.missingElements.join(', ')}`
+          error: `PIA is incomplete: ${validation.missingElements.join(", ")}`,
         };
       }
 
       // Vietnamese DPO review (if applicable)
       const dpoReview = await this.conductDPOReview(pia);
-      
+
       // Legal review
       const legalReview = await this.conductLegalReview(pia);
-      
+
       // Technical review
       const technicalReview = await this.conductTechnicalReview(pia);
 
@@ -310,11 +343,19 @@ export class PrivacyImpactAssessmentService {
         dpo_review: dpoReview,
         legal_review: legalReview,
         technical_review: technicalReview,
-        overall_recommendation: await this.generateOverallRecommendation(dpoReview, legalReview, technicalReview),
-        approval_status: 'pending',
-        conditions: await this.identifyApprovalConditions(dpoReview, legalReview, technicalReview),
+        overall_recommendation: await this.generateOverallRecommendation(
+          dpoReview,
+          legalReview,
+          technicalReview,
+        ),
+        approval_status: "pending",
+        conditions: await this.identifyApprovalConditions(
+          dpoReview,
+          legalReview,
+          technicalReview,
+        ),
         next_steps: await this.defineApprovalNextSteps(pia),
-        estimated_approval_date: await this.estimateApprovalDate()
+        estimated_approval_date: await this.estimateApprovalDate(),
       };
 
       // Update PIA status
@@ -322,12 +363,12 @@ export class PrivacyImpactAssessmentService {
 
       return {
         success: true,
-        data: approvalResult
+        data: approvalResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'PIA submission failed'
+        error: error instanceof Error ? error.message : "PIA submission failed",
       };
     }
   }
@@ -335,14 +376,14 @@ export class PrivacyImpactAssessmentService {
   // Monitoring and review
   async schedulePeriodicReview(
     piaId: string,
-    reviewSchedule: PIAReviewSchedule
+    reviewSchedule: PIAReviewSchedule,
   ): Promise<ComplianceServiceResponse<PIAReviewScheduleResult>> {
     try {
       const pia = this.assessments.get(piaId);
       if (!pia) {
         return {
           success: false,
-          error: 'PIA not found'
+          error: "PIA not found",
         };
       }
 
@@ -350,13 +391,17 @@ export class PrivacyImpactAssessmentService {
         pia_id: piaId,
         schedule_created: new Date(),
         review_frequency: reviewSchedule.frequency,
-        next_review_date: this.calculateNextReviewDate(reviewSchedule.frequency),
+        next_review_date: this.calculateNextReviewDate(
+          reviewSchedule.frequency,
+        ),
         review_triggers: await this.defineReviewTriggers(pia, reviewSchedule),
         monitoring_indicators: await this.defineMonitoringIndicators(pia),
         automated_checks: await this.setupAutomatedChecks(pia),
-        notification_schedule: await this.setupNotificationSchedule(reviewSchedule),
+        notification_schedule:
+          await this.setupNotificationSchedule(reviewSchedule),
         escalation_procedures: await this.defineEscalationProcedures(pia),
-        review_responsibilities: await this.assignReviewResponsibilities(reviewSchedule)
+        review_responsibilities:
+          await this.assignReviewResponsibilities(reviewSchedule),
       };
 
       // Update PIA monitoring plan
@@ -364,18 +409,21 @@ export class PrivacyImpactAssessmentService {
         reviewSchedule: reviewSchedule.frequency,
         nextReviewDate: scheduleResult.next_review_date,
         keyIndicators: scheduleResult.monitoring_indicators,
-        monitoringPlan: 'Automated monitoring with periodic reviews',
-        escalationProcedure: JSON.stringify(scheduleResult.escalation_procedures)
+        monitoringPlan: "Automated monitoring with periodic reviews",
+        escalationProcedure: JSON.stringify(
+          scheduleResult.escalation_procedures,
+        ),
       };
 
       return {
         success: true,
-        data: scheduleResult
+        data: scheduleResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Review scheduling failed'
+        error:
+          error instanceof Error ? error.message : "Review scheduling failed",
       };
     }
   }
@@ -383,28 +431,40 @@ export class PrivacyImpactAssessmentService {
   // Vietnamese-specific PIA requirements
   private async populateVietnameseRequirements(
     pia: PrivacyImpactAssessment,
-    request: PIARequest
+    request: PIARequest,
   ): Promise<void> {
     // Apply Vietnamese Cybersecurity Law requirements
     const vietnameseRequirements: VietnameseVNSpecificRequirements = {
-      cybersecurity_law_compliance: await this.assessCybersecurityLawCompliance(request),
-      data_localization_requirements: await this.assessDataLocalizationRequirements(request),
-      cross_border_transfer_approval: await this.assessCrossBorderTransferRequirements(request),
-      government_agency_notification: await this.assessGovernmentNotificationRequirements(request),
-      vietnamese_dpo_requirements: await this.assessVietnameseDPORequirements(request),
-      healthcare_specific_requirements: await this.assessHealthcareSpecificRequirements(request),
-      ministry_of_health_guidelines: await this.applyMinistryOfHealthGuidelines(request),
-      vietnam_social_security_requirements: await this.assessVietnamSocialSecurityRequirements(request)
+      cybersecurity_law_compliance:
+        await this.assessCybersecurityLawCompliance(request),
+      data_localization_requirements:
+        await this.assessDataLocalizationRequirements(request),
+      cross_border_transfer_approval:
+        await this.assessCrossBorderTransferRequirements(request),
+      government_agency_notification:
+        await this.assessGovernmentNotificationRequirements(request),
+      vietnamese_dpo_requirements:
+        await this.assessVietnameseDPORequirements(request),
+      healthcare_specific_requirements:
+        await this.assessHealthcareSpecificRequirements(request),
+      ministry_of_health_guidelines:
+        await this.applyMinistryOfHealthGuidelines(request),
+      vietnam_social_security_requirements:
+        await this.assessVietnamSocialSecurityRequirements(request),
     };
 
     // Extend PIA metadata with Vietnamese requirements
-    pia.metadata.tags.push('vietnam_cybersecurity_law', 'vietnam_healthcare', 'ministry_of_health');
+    pia.metadata.tags.push(
+      "vietnam_cybersecurity_law",
+      "vietnam_healthcare",
+      "ministry_of_health",
+    );
   }
 
   // GDPR-specific PIA requirements
   private async populateGDPRRequirements(
     pia: PrivacyImpactAssessment,
-    request: PIARequest
+    request: PIARequest,
   ): Promise<void> {
     // Apply GDPR Article 35 requirements
     const gdprRequirements: GDPRSpecificRequirements = {
@@ -412,215 +472,295 @@ export class PrivacyImpactAssessmentService {
       systematic_monitoring: await this.assessSystematicMonitoring(request),
       large_scale_processing: await this.assessLargeScaleProcessing(request),
       special_category_data: await this.assessSpecialCategoryData(request),
-      automated_decision_making: await this.assessAutomatedDecisionMaking(request),
-      data_subject_rights_impact: await this.assessDataSubjectRightsImpact(request),
-      supervisory_authority_consultation: await this.assessSupervisoryAuthorityConsultation(request)
+      automated_decision_making:
+        await this.assessAutomatedDecisionMaking(request),
+      data_subject_rights_impact:
+        await this.assessDataSubjectRightsImpact(request),
+      supervisory_authority_consultation:
+        await this.assessSupervisoryAuthorityConsultation(request),
     };
 
     // Extend PIA metadata with GDPR requirements
-    pia.metadata.tags.push('gdpr_article_35', 'european_data_protection');
+    pia.metadata.tags.push("gdpr_article_35", "european_data_protection");
   }
 
   // Initialize PIA templates for different scenarios
   private initializePIATemplates(): void {
     // Vietnamese Healthcare PIA Template
-    this.piaTemplates.set('vietnam_healthcare', {
-      id: 'vietnam_healthcare',
-      name: 'Vietnam Healthcare PIA Template',
-      description: 'PIA template for Vietnamese healthcare organizations',
-      applicable_frameworks: ['vietnam_cybersecurity_law', 'vietnam_data_protection_decree', 'gdpr'],
+    this.piaTemplates.set("vietnam_healthcare", {
+      id: "vietnam_healthcare",
+      name: "Vietnam Healthcare PIA Template",
+      description: "PIA template for Vietnamese healthcare organizations",
+      applicable_frameworks: [
+        "vietnam_cybersecurity_law",
+        "vietnam_data_protection_decree",
+        "gdpr",
+      ],
       sections: [
         {
-          id: 'project_overview',
-          title: 'Tổng quan dự án',
-          required_fields: ['project_name', 'description', 'data_controller', 'data_processor'],
-          vietnamese_specific: true
+          id: "project_overview",
+          title: "Tổng quan dự án",
+          required_fields: [
+            "project_name",
+            "description",
+            "data_controller",
+            "data_processor",
+          ],
+          vietnamese_specific: true,
         },
         {
-          id: 'data_mapping',
-          title: 'Sơ đồ dữ liệu',
-          required_fields: ['data_types', 'data_sources', 'processing_purposes'],
-          vietnamese_specific: false
+          id: "data_mapping",
+          title: "Sơ đồ dữ liệu",
+          required_fields: [
+            "data_types",
+            "data_sources",
+            "processing_purposes",
+          ],
+          vietnamese_specific: false,
         },
         {
-          id: 'legal_compliance',
-          title: 'Tuân thủ pháp lý',
-          required_fields: ['legal_basis', 'cybersecurity_law_compliance'],
-          vietnamese_specific: true
+          id: "legal_compliance",
+          title: "Tuân thủ pháp lý",
+          required_fields: ["legal_basis", "cybersecurity_law_compliance"],
+          vietnamese_specific: true,
         },
         {
-          id: 'risk_assessment',
-          title: 'Đánh giá rủi ro',
-          required_fields: ['privacy_risks', 'security_risks', 'compliance_risks'],
-          vietnamese_specific: false
+          id: "risk_assessment",
+          title: "Đánh giá rủi ro",
+          required_fields: [
+            "privacy_risks",
+            "security_risks",
+            "compliance_risks",
+          ],
+          vietnamese_specific: false,
         },
         {
-          id: 'mitigation_measures',
-          title: 'Biện pháp giảm thiểu',
-          required_fields: ['technical_measures', 'organizational_measures'],
-          vietnamese_specific: false
+          id: "mitigation_measures",
+          title: "Biện pháp giảm thiểu",
+          required_fields: ["technical_measures", "organizational_measures"],
+          vietnamese_specific: false,
         },
         {
-          id: 'monitoring_plan',
-          title: 'Kế hoạch giám sát',
-          required_fields: ['monitoring_indicators', 'review_schedule'],
-          vietnamese_specific: true
-        }
+          id: "monitoring_plan",
+          title: "Kế hoạch giám sát",
+          required_fields: ["monitoring_indicators", "review_schedule"],
+          vietnamese_specific: true,
+        },
       ],
       risk_categories: [
-        'unauthorized_access',
-        'data_breach',
-        'cross_border_transfer',
-        'government_compliance',
-        'patient_privacy',
-        'insurance_fraud'
-      ]
+        "unauthorized_access",
+        "data_breach",
+        "cross_border_transfer",
+        "government_compliance",
+        "patient_privacy",
+        "insurance_fraud",
+      ],
     });
 
     // International GDPR PIA Template
-    this.piaTemplates.set('gdpr_standard', {
-      id: 'gdpr_standard',
-      name: 'GDPR Standard PIA Template',
-      description: 'Standard GDPR Article 35 PIA template',
-      applicable_frameworks: ['gdpr'],
+    this.piaTemplates.set("gdpr_standard", {
+      id: "gdpr_standard",
+      name: "GDPR Standard PIA Template",
+      description: "Standard GDPR Article 35 PIA template",
+      applicable_frameworks: ["gdpr"],
       sections: [
         {
-          id: 'processing_description',
-          title: 'Description of Processing',
-          required_fields: ['processing_purposes', 'data_categories', 'recipients'],
-          vietnamese_specific: false
+          id: "processing_description",
+          title: "Description of Processing",
+          required_fields: [
+            "processing_purposes",
+            "data_categories",
+            "recipients",
+          ],
+          vietnamese_specific: false,
         },
         {
-          id: 'necessity_assessment',
-          title: 'Necessity and Proportionality Assessment',
-          required_fields: ['legitimate_interests', 'necessity_test', 'proportionality_test'],
-          vietnamese_specific: false
+          id: "necessity_assessment",
+          title: "Necessity and Proportionality Assessment",
+          required_fields: [
+            "legitimate_interests",
+            "necessity_test",
+            "proportionality_test",
+          ],
+          vietnamese_specific: false,
         },
         {
-          id: 'risk_assessment',
-          title: 'Risk Assessment',
-          required_fields: ['privacy_risks', 'likelihood', 'severity'],
-          vietnamese_specific: false
+          id: "risk_assessment",
+          title: "Risk Assessment",
+          required_fields: ["privacy_risks", "likelihood", "severity"],
+          vietnamese_specific: false,
         },
         {
-          id: 'consultation',
-          title: 'Consultation Process',
-          required_fields: ['stakeholder_consultation', 'data_subject_consultation'],
-          vietnamese_specific: false
-        }
+          id: "consultation",
+          title: "Consultation Process",
+          required_fields: [
+            "stakeholder_consultation",
+            "data_subject_consultation",
+          ],
+          vietnamese_specific: false,
+        },
       ],
       risk_categories: [
-        'discrimination',
-        'identity_theft',
-        'financial_loss',
-        'reputational_damage',
-        'loss_of_control',
-        'limitation_of_rights'
-      ]
+        "discrimination",
+        "identity_theft",
+        "financial_loss",
+        "reputational_damage",
+        "loss_of_control",
+        "limitation_of_rights",
+      ],
     });
   }
 
   // Initialize privacy risk registry
   private initializeRiskRegistry(): void {
     // Vietnamese healthcare-specific risks
-    this.riskRegistry.set('patient_data_breach', {
-      id: 'patient_data_breach',
-      category: 'data_security',
-      title: 'Vi phạm dữ liệu bệnh nhân',
-      description: 'Rủi ro rò rỉ thông tin y tế cá nhân của bệnh nhân',
-      applicable_contexts: ['healthcare', 'insurance'],
+    this.riskRegistry.set("patient_data_breach", {
+      id: "patient_data_breach",
+      category: "data_security",
+      title: "Vi phạm dữ liệu bệnh nhân",
+      description: "Rủi ro rò rỉ thông tin y tế cá nhân của bệnh nhân",
+      applicable_contexts: ["healthcare", "insurance"],
       vietnamese_specific: true,
-      severity_factors: ['data_sensitivity', 'number_of_subjects', 'disclosure_scope'],
-      regulatory_impact: ['vietnam_cybersecurity_law', 'ministry_of_health_regulations']
+      severity_factors: [
+        "data_sensitivity",
+        "number_of_subjects",
+        "disclosure_scope",
+      ],
+      regulatory_impact: [
+        "vietnam_cybersecurity_law",
+        "ministry_of_health_regulations",
+      ],
     });
 
-    this.riskRegistry.set('cross_border_transfer_violation', {
-      id: 'cross_border_transfer_violation',
-      category: 'data_transfer',
-      title: 'Vi phạm quy định chuyển giao dữ liệu qua biên giới',
-      description: 'Rủi ro vi phạm quy định chuyển dữ liệu ra nước ngoài',
-      applicable_contexts: ['international_processing', 'cloud_services'],
+    this.riskRegistry.set("cross_border_transfer_violation", {
+      id: "cross_border_transfer_violation",
+      category: "data_transfer",
+      title: "Vi phạm quy định chuyển giao dữ liệu qua biên giới",
+      description: "Rủi ro vi phạm quy định chuyển dữ liệu ra nước ngoài",
+      applicable_contexts: ["international_processing", "cloud_services"],
       vietnamese_specific: true,
-      severity_factors: ['destination_country', 'data_sensitivity', 'transfer_volume'],
-      regulatory_impact: ['vietnam_cybersecurity_law', 'data_protection_decree']
+      severity_factors: [
+        "destination_country",
+        "data_sensitivity",
+        "transfer_volume",
+      ],
+      regulatory_impact: [
+        "vietnam_cybersecurity_law",
+        "data_protection_decree",
+      ],
     });
 
     // International privacy risks
-    this.riskRegistry.set('gdpr_non_compliance', {
-      id: 'gdpr_non_compliance',
-      category: 'regulatory_compliance',
-      title: 'GDPR Non-compliance',
-      description: 'Risk of violating GDPR requirements',
-      applicable_contexts: ['eu_processing', 'international_business'],
+    this.riskRegistry.set("gdpr_non_compliance", {
+      id: "gdpr_non_compliance",
+      category: "regulatory_compliance",
+      title: "GDPR Non-compliance",
+      description: "Risk of violating GDPR requirements",
+      applicable_contexts: ["eu_processing", "international_business"],
       vietnamese_specific: false,
-      severity_factors: ['violation_type', 'systematic_nature', 'data_subject_count'],
-      regulatory_impact: ['gdpr']
+      severity_factors: [
+        "violation_type",
+        "systematic_nature",
+        "data_subject_count",
+      ],
+      regulatory_impact: ["gdpr"],
     });
   }
 
   // Helper methods for PIA assessment
-  private async assessPIARequirement(request: PIARequest): Promise<PIARequirementAssessment> {
-    const vietnameseRequirement = await this.assessVietnamesePIARequirement(request);
+  private async assessPIARequirement(
+    request: PIARequest,
+  ): Promise<PIARequirementAssessment> {
+    const vietnameseRequirement =
+      await this.assessVietnamesePIARequirement(request);
     const gdprRequirement = await this.assessGDPRPIARequirement(request);
 
     return {
       vietnamese_mandatory: vietnameseRequirement.mandatory,
       gdpr_mandatory: gdprRequirement.mandatory,
-      overall_mandatory: vietnameseRequirement.mandatory || gdprRequirement.mandatory,
+      overall_mandatory:
+        vietnameseRequirement.mandatory || gdprRequirement.mandatory,
       rationale: [
         ...vietnameseRequirement.rationale,
-        ...gdprRequirement.rationale
+        ...gdprRequirement.rationale,
       ],
       applicable_frameworks: [
-        ...(vietnameseRequirement.mandatory ? ['vietnam_cybersecurity_law'] : []),
-        ...(gdprRequirement.mandatory ? ['gdpr'] : [])
-      ]
+        ...(vietnameseRequirement.mandatory
+          ? ["vietnam_cybersecurity_law"]
+          : []),
+        ...(gdprRequirement.mandatory ? ["gdpr"] : []),
+      ],
     };
   }
 
-  private async assessVietnamesePIARequirement(request: PIARequest): Promise<RequirementAssessment> {
+  private async assessVietnamesePIARequirement(
+    request: PIARequest,
+  ): Promise<RequirementAssessment> {
     const factors = {
       healthcare_data: request.dataTypes.includes(DataType.HEALTH_DATA),
       large_scale: request.estimatedDataSubjects > 10000,
-      sensitive_processing: request.dataTypes.some(type => 
-        [DataType.HEALTH_DATA, DataType.BIOMETRIC_DATA, DataType.FINANCIAL_DATA].includes(type)
+      sensitive_processing: request.dataTypes.some((type) =>
+        [
+          DataType.HEALTH_DATA,
+          DataType.BIOMETRIC_DATA,
+          DataType.FINANCIAL_DATA,
+        ].includes(type),
       ),
       cross_border_transfer: request.internationalTransfers,
-      automated_decision_making: request.automatedDecisionMaking
+      automated_decision_making: request.automatedDecisionMaking,
     };
 
-    const mandatory = factors.healthcare_data || factors.large_scale || factors.sensitive_processing;
+    const mandatory =
+      factors.healthcare_data ||
+      factors.large_scale ||
+      factors.sensitive_processing;
 
     return {
       mandatory,
       rationale: [
-        ...(factors.healthcare_data ? ['Processing healthcare data requires PIA under Vietnamese law'] : []),
-        ...(factors.large_scale ? ['Large-scale processing requires PIA'] : []),
-        ...(factors.sensitive_processing ? ['Sensitive data processing requires enhanced protection'] : [])
-      ]
+        ...(factors.healthcare_data
+          ? ["Processing healthcare data requires PIA under Vietnamese law"]
+          : []),
+        ...(factors.large_scale ? ["Large-scale processing requires PIA"] : []),
+        ...(factors.sensitive_processing
+          ? ["Sensitive data processing requires enhanced protection"]
+          : []),
+      ],
     };
   }
 
-  private async assessGDPRPIARequirement(request: PIARequest): Promise<RequirementAssessment> {
+  private async assessGDPRPIARequirement(
+    request: PIARequest,
+  ): Promise<RequirementAssessment> {
     const factors = {
       systematic_monitoring: request.systematicMonitoring,
-      large_scale_special_categories: request.largeScaleProcessing && request.dataTypes.some(type =>
-        [DataType.HEALTH_DATA, DataType.BIOMETRIC_DATA].includes(type)
-      ),
+      large_scale_special_categories:
+        request.largeScaleProcessing &&
+        request.dataTypes.some((type) =>
+          [DataType.HEALTH_DATA, DataType.BIOMETRIC_DATA].includes(type),
+        ),
       automated_decision_making: request.automatedDecisionMaking,
-      new_technology: request.newTechnologies
+      new_technology: request.newTechnologies,
     };
 
-    const mandatory = Object.values(factors).some(factor => factor);
+    const mandatory = Object.values(factors).some((factor) => factor);
 
     return {
       mandatory,
       rationale: [
-        ...(factors.systematic_monitoring ? ['Systematic monitoring requires DPIA under GDPR Article 35'] : []),
-        ...(factors.large_scale_special_categories ? ['Large-scale processing of special categories requires DPIA'] : []),
-        ...(factors.automated_decision_making ? ['Automated decision-making requires DPIA'] : []),
-        ...(factors.new_technology ? ['Use of new technologies requires DPIA'] : [])
-      ]
+        ...(factors.systematic_monitoring
+          ? ["Systematic monitoring requires DPIA under GDPR Article 35"]
+          : []),
+        ...(factors.large_scale_special_categories
+          ? ["Large-scale processing of special categories requires DPIA"]
+          : []),
+        ...(factors.automated_decision_making
+          ? ["Automated decision-making requires DPIA"]
+          : []),
+        ...(factors.new_technology
+          ? ["Use of new technologies requires DPIA"]
+          : []),
+      ],
     };
   }
 
@@ -635,18 +775,21 @@ export class PrivacyImpactAssessmentService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'pia-service',
-      updatedBy: 'pia-service',
-      tags: ['pia', 'privacy_impact_assessment'],
-      classification: DataClassification.CONFIDENTIAL
+      createdBy: "pia-service",
+      updatedBy: "pia-service",
+      tags: ["pia", "privacy_impact_assessment"],
+      classification: DataClassification.CONFIDENTIAL,
     };
   }
 
   // Placeholder implementations for complex assessment methods
-  private async conductInitialRiskAssessment(pia: PrivacyImpactAssessment, request: PIARequest): Promise<PrivacyRisk[]> {
+  private async conductInitialRiskAssessment(
+    pia: PrivacyImpactAssessment,
+    request: PIARequest,
+  ): Promise<PrivacyRisk[]> {
     return []; // Placeholder
   }
 
@@ -654,7 +797,9 @@ export class PrivacyImpactAssessmentService {
     return RiskLevel.MEDIUM; // Placeholder
   }
 
-  private async generateInitialMitigations(risks: PrivacyRisk[]): Promise<RiskMitigation[]> {
+  private async generateInitialMitigations(
+    risks: PrivacyRisk[],
+  ): Promise<RiskMitigation[]> {
     return []; // Placeholder
   }
 
@@ -669,11 +814,11 @@ export class PrivacyImpactAssessmentService {
   private calculateNextReviewDate(frequency: string): Date {
     const now = new Date();
     switch (frequency) {
-      case 'quarterly':
+      case "quarterly":
         return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
-      case 'annually':
+      case "annually":
         return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-      case 'biannually':
+      case "biannually":
         return new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
       default:
         return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
@@ -755,7 +900,7 @@ export interface ContactInformation {
 export interface ConsultationPreferences {
   preferred_methods: string[];
   availability: string;
-  language: 'vietnamese' | 'english';
+  language: "vietnamese" | "english";
 }
 
 export interface VietnameseVNSpecificRequirements {
@@ -921,8 +1066,8 @@ export interface Suggestion {
   stakeholder: string;
   category: string;
   description: string;
-  feasibility: 'high' | 'medium' | 'low';
-  implementation_effort: 'low' | 'medium' | 'high';
+  feasibility: "high" | "medium" | "low";
+  implementation_effort: "low" | "medium" | "high";
 }
 
 export interface ConsultationDocumentation {
@@ -1191,7 +1336,7 @@ export interface PIASubmissionRequest {
   submittedBy: string;
   submission_notes: string;
   supporting_documents: string[];
-  urgency: 'normal' | 'urgent';
+  urgency: "normal" | "urgent";
 }
 
 export interface PIAApprovalResult {
@@ -1211,14 +1356,18 @@ export interface PIAApprovalResult {
 export interface ReviewResult {
   reviewer: string;
   review_date: Date;
-  recommendation: 'approve' | 'approve_with_conditions' | 'reject' | 'request_changes';
+  recommendation:
+    | "approve"
+    | "approve_with_conditions"
+    | "reject"
+    | "request_changes";
   comments: string;
   conditions: string[];
   risk_assessment: RiskLevel;
 }
 
 export interface PIAReviewSchedule {
-  frequency: 'quarterly' | 'annually' | 'biannually';
+  frequency: "quarterly" | "annually" | "biannually";
   stakeholders: string[];
   scope: string[];
 }

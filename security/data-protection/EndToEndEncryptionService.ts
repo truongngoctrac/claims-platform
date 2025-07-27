@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from "crypto";
+import { EventEmitter } from "events";
 
 export interface EncryptionConfig {
   algorithm: string;
@@ -46,13 +46,13 @@ export class EndToEndEncryptionService extends EventEmitter {
   constructor(config?: Partial<EncryptionConfig>) {
     super();
     this.config = {
-      algorithm: 'aes-256-gcm',
+      algorithm: "aes-256-gcm",
       keySize: 32,
       ivSize: 16,
       saltSize: 32,
       iterations: 100000,
-      digestAlgorithm: 'sha512',
-      ...config
+      digestAlgorithm: "sha512",
+      ...config,
     };
     this.keyPairs = new Map();
     this.metrics = {
@@ -61,7 +61,7 @@ export class EndToEndEncryptionService extends EventEmitter {
       keyRotations: 0,
       failedOperations: 0,
       averageEncryptionTime: 0,
-      averageDecryptionTime: 0
+      averageDecryptionTime: 0,
     };
   }
 
@@ -72,31 +72,34 @@ export class EndToEndEncryptionService extends EventEmitter {
       }
 
       // Generate master key pair
-      await this.generateKeyPair('master');
-      
+      await this.generateKeyPair("master");
+
       // Start key rotation schedule
       this.scheduleKeyRotation();
-      
+
       this.isInitialized = true;
-      this.emit('initialized');
+      this.emit("initialized");
     } catch (error) {
-      this.emit('error', error);
+      this.emit("error", error);
       throw error;
     }
   }
 
-  async generateKeyPair(keyId: string, expirationDays?: number): Promise<EncryptionKeyPair> {
+  async generateKeyPair(
+    keyId: string,
+    expirationDays?: number,
+  ): Promise<EncryptionKeyPair> {
     try {
-      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
         modulusLength: 4096,
         publicKeyEncoding: {
-          type: 'spki',
-          format: 'pem'
+          type: "spki",
+          format: "pem",
         },
         privateKeyEncoding: {
-          type: 'pkcs8',
-          format: 'pem'
-        }
+          type: "pkcs8",
+          format: "pem",
+        },
       });
 
       const keyPair: EncryptionKeyPair = {
@@ -104,13 +107,15 @@ export class EndToEndEncryptionService extends EventEmitter {
         privateKey,
         keyId,
         createdAt: new Date(),
-        expiresAt: expirationDays ? new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000) : undefined
+        expiresAt: expirationDays
+          ? new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000)
+          : undefined,
       };
 
       this.keyPairs.set(keyId, keyPair);
       this.metrics.keyRotations++;
-      
-      this.emit('keyGenerated', { keyId, timestamp: new Date() });
+
+      this.emit("keyGenerated", { keyId, timestamp: new Date() });
       return keyPair;
     } catch (error) {
       this.metrics.failedOperations++;
@@ -118,9 +123,12 @@ export class EndToEndEncryptionService extends EventEmitter {
     }
   }
 
-  async encryptData(data: string, keyId: string = 'master'): Promise<EncryptedData> {
+  async encryptData(
+    data: string,
+    keyId: string = "master",
+  ): Promise<EncryptedData> {
     const startTime = Date.now();
-    
+
     try {
       const keyPair = this.keyPairs.get(keyId);
       if (!keyPair) {
@@ -130,51 +138,55 @@ export class EndToEndEncryptionService extends EventEmitter {
       // Generate random salt and IV
       const salt = crypto.randomBytes(this.config.saltSize);
       const iv = crypto.randomBytes(this.config.ivSize);
-      
+
       // Derive key from password using PBKDF2
       const key = crypto.pbkdf2Sync(
         keyPair.privateKey,
         salt,
         this.config.iterations,
         this.config.keySize,
-        this.config.digestAlgorithm
+        this.config.digestAlgorithm,
       );
 
       // Create cipher
       const cipher = crypto.createCipherGCM(this.config.algorithm, key, iv);
-      
+
       // Encrypt data
-      let encrypted = cipher.update(data, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      
+      let encrypted = cipher.update(data, "utf8", "hex");
+      encrypted += cipher.final("hex");
+
       // Get authentication tag
       const tag = cipher.getAuthTag();
 
       const encryptedData: EncryptedData = {
         data: encrypted,
-        iv: iv.toString('hex'),
-        salt: salt.toString('hex'),
-        tag: tag.toString('hex'),
+        iv: iv.toString("hex"),
+        salt: salt.toString("hex"),
+        tag: tag.toString("hex"),
         keyId,
         algorithm: this.config.algorithm,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       this.metrics.encryptionOperations++;
-      this.updateAverageTime('encryption', Date.now() - startTime);
-      
-      this.emit('dataEncrypted', { keyId, dataSize: data.length, timestamp: new Date() });
+      this.updateAverageTime("encryption", Date.now() - startTime);
+
+      this.emit("dataEncrypted", {
+        keyId,
+        dataSize: data.length,
+        timestamp: new Date(),
+      });
       return encryptedData;
     } catch (error) {
       this.metrics.failedOperations++;
-      this.emit('encryptionError', error);
+      this.emit("encryptionError", error);
       throw error;
     }
   }
 
   async decryptData(encryptedData: EncryptedData): Promise<string> {
     const startTime = Date.now();
-    
+
     try {
       const keyPair = this.keyPairs.get(encryptedData.keyId);
       if (!keyPair) {
@@ -182,57 +194,70 @@ export class EndToEndEncryptionService extends EventEmitter {
       }
 
       // Convert hex strings back to buffers
-      const salt = Buffer.from(encryptedData.salt, 'hex');
-      const iv = Buffer.from(encryptedData.iv, 'hex');
-      const tag = Buffer.from(encryptedData.tag, 'hex');
-      
+      const salt = Buffer.from(encryptedData.salt, "hex");
+      const iv = Buffer.from(encryptedData.iv, "hex");
+      const tag = Buffer.from(encryptedData.tag, "hex");
+
       // Derive key from password using PBKDF2
       const key = crypto.pbkdf2Sync(
         keyPair.privateKey,
         salt,
         this.config.iterations,
         this.config.keySize,
-        this.config.digestAlgorithm
+        this.config.digestAlgorithm,
       );
 
       // Create decipher
-      const decipher = crypto.createDecipherGCM(encryptedData.algorithm, key, iv);
+      const decipher = crypto.createDecipherGCM(
+        encryptedData.algorithm,
+        key,
+        iv,
+      );
       decipher.setAuthTag(tag);
-      
+
       // Decrypt data
-      let decrypted = decipher.update(encryptedData.data, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encryptedData.data, "hex", "utf8");
+      decrypted += decipher.final("utf8");
 
       this.metrics.decryptionOperations++;
-      this.updateAverageTime('decryption', Date.now() - startTime);
-      
-      this.emit('dataDecrypted', { keyId: encryptedData.keyId, timestamp: new Date() });
+      this.updateAverageTime("decryption", Date.now() - startTime);
+
+      this.emit("dataDecrypted", {
+        keyId: encryptedData.keyId,
+        timestamp: new Date(),
+      });
       return decrypted;
     } catch (error) {
       this.metrics.failedOperations++;
-      this.emit('decryptionError', error);
+      this.emit("decryptionError", error);
       throw error;
     }
   }
 
-  async encryptFile(filePath: string, keyId: string = 'master'): Promise<EncryptedData> {
+  async encryptFile(
+    filePath: string,
+    keyId: string = "master",
+  ): Promise<EncryptedData> {
     try {
-      const fs = await import('fs');
-      const fileData = fs.readFileSync(filePath, 'utf8');
+      const fs = await import("fs");
+      const fileData = fs.readFileSync(filePath, "utf8");
       return await this.encryptData(fileData, keyId);
     } catch (error) {
-      this.emit('fileEncryptionError', error);
+      this.emit("fileEncryptionError", error);
       throw error;
     }
   }
 
-  async decryptToFile(encryptedData: EncryptedData, outputPath: string): Promise<void> {
+  async decryptToFile(
+    encryptedData: EncryptedData,
+    outputPath: string,
+  ): Promise<void> {
     try {
-      const fs = await import('fs');
+      const fs = await import("fs");
       const decryptedData = await this.decryptData(encryptedData);
-      fs.writeFileSync(outputPath, decryptedData, 'utf8');
+      fs.writeFileSync(outputPath, decryptedData, "utf8");
     } catch (error) {
-      this.emit('fileDecryptionError', error);
+      this.emit("fileDecryptionError", error);
       throw error;
     }
   }
@@ -246,11 +271,11 @@ export class EndToEndEncryptionService extends EventEmitter {
       }
 
       const newKeyPair = await this.generateKeyPair(keyId);
-      this.emit('keyRotated', { keyId, timestamp: new Date() });
-      
+      this.emit("keyRotated", { keyId, timestamp: new Date() });
+
       return newKeyPair;
     } catch (error) {
-      this.emit('keyRotationError', error);
+      this.emit("keyRotationError", error);
       throw error;
     }
   }
@@ -259,11 +284,16 @@ export class EndToEndEncryptionService extends EventEmitter {
     try {
       // Attempt to decrypt and re-encrypt to verify integrity
       const decrypted = await this.decryptData(encryptedData);
-      const reEncrypted = await this.encryptData(decrypted, encryptedData.keyId);
-      
+      const reEncrypted = await this.encryptData(
+        decrypted,
+        encryptedData.keyId,
+      );
+
       // Compare algorithm and keyId (data will differ due to new salt/iv)
-      return encryptedData.algorithm === reEncrypted.algorithm &&
-             encryptedData.keyId === reEncrypted.keyId;
+      return (
+        encryptedData.algorithm === reEncrypted.algorithm &&
+        encryptedData.keyId === reEncrypted.keyId
+      );
     } catch (error) {
       return false;
     }
@@ -273,7 +303,7 @@ export class EndToEndEncryptionService extends EventEmitter {
     return { ...this.metrics };
   }
 
-  getKeyInfo(keyId: string): Omit<EncryptionKeyPair, 'privateKey'> | null {
+  getKeyInfo(keyId: string): Omit<EncryptionKeyPair, "privateKey"> | null {
     const keyPair = this.keyPairs.get(keyId);
     if (!keyPair) return null;
 
@@ -281,7 +311,7 @@ export class EndToEndEncryptionService extends EventEmitter {
       publicKey: keyPair.publicKey,
       keyId: keyPair.keyId,
       createdAt: keyPair.createdAt,
-      expiresAt: keyPair.expiresAt
+      expiresAt: keyPair.expiresAt,
     };
   }
 
@@ -309,36 +339,46 @@ export class EndToEndEncryptionService extends EventEmitter {
 
     for (const keyId of expiredKeys) {
       this.keyPairs.delete(keyId);
-      this.emit('keyExpired', { keyId, timestamp: now });
+      this.emit("keyExpired", { keyId, timestamp: now });
     }
   }
 
   private scheduleKeyRotation(): void {
     // Rotate keys every 30 days
-    setInterval(async () => {
-      try {
-        await this.clearExpiredKeys();
-        await this.rotateKeys('master');
-      } catch (error) {
-        this.emit('scheduledRotationError', error);
-      }
-    }, 30 * 24 * 60 * 60 * 1000);
+    setInterval(
+      async () => {
+        try {
+          await this.clearExpiredKeys();
+          await this.rotateKeys("master");
+        } catch (error) {
+          this.emit("scheduledRotationError", error);
+        }
+      },
+      30 * 24 * 60 * 60 * 1000,
+    );
   }
 
-  private updateAverageTime(operation: 'encryption' | 'decryption', time: number): void {
-    if (operation === 'encryption') {
-      this.metrics.averageEncryptionTime = 
-        (this.metrics.averageEncryptionTime * (this.metrics.encryptionOperations - 1) + time) / 
+  private updateAverageTime(
+    operation: "encryption" | "decryption",
+    time: number,
+  ): void {
+    if (operation === "encryption") {
+      this.metrics.averageEncryptionTime =
+        (this.metrics.averageEncryptionTime *
+          (this.metrics.encryptionOperations - 1) +
+          time) /
         this.metrics.encryptionOperations;
     } else {
-      this.metrics.averageDecryptionTime = 
-        (this.metrics.averageDecryptionTime * (this.metrics.decryptionOperations - 1) + time) / 
+      this.metrics.averageDecryptionTime =
+        (this.metrics.averageDecryptionTime *
+          (this.metrics.decryptionOperations - 1) +
+          time) /
         this.metrics.decryptionOperations;
     }
   }
 
   async shutdown(): Promise<void> {
-    this.emit('shutdown');
+    this.emit("shutdown");
     this.removeAllListeners();
   }
 }

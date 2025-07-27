@@ -1,11 +1,11 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from "crypto";
+import { EventEmitter } from "events";
 
 export interface AccessPolicy {
   policyId: string;
   name: string;
   description: string;
-  effect: 'allow' | 'deny';
+  effect: "allow" | "deny";
   resources: string[];
   actions: string[];
   principals: string[];
@@ -18,8 +18,15 @@ export interface AccessPolicy {
 }
 
 export interface AccessCondition {
-  type: 'time' | 'location' | 'device' | 'mfa' | 'risk_score' | 'custom';
-  operator: 'equals' | 'not_equals' | 'in' | 'not_in' | 'greater_than' | 'less_than' | 'contains';
+  type: "time" | "location" | "device" | "mfa" | "risk_score" | "custom";
+  operator:
+    | "equals"
+    | "not_equals"
+    | "in"
+    | "not_in"
+    | "greater_than"
+    | "less_than"
+    | "contains";
   key: string;
   value: any;
   description?: string;
@@ -41,7 +48,7 @@ export interface Permission {
   resource: string;
   actions: string[];
   conditions?: AccessCondition[];
-  effect: 'allow' | 'deny';
+  effect: "allow" | "deny";
 }
 
 export interface UserAccessProfile {
@@ -49,7 +56,7 @@ export interface UserAccessProfile {
   roles: string[];
   directPermissions: Permission[];
   temporaryAccess: TemporaryAccess[];
-  accessLevel: 'minimal' | 'standard' | 'elevated' | 'administrative';
+  accessLevel: "minimal" | "standard" | "elevated" | "administrative";
   lastAccess: Date;
   failedAttempts: number;
   isLocked: boolean;
@@ -82,7 +89,7 @@ export interface AccessAuditLog {
   userId: string;
   resource: string;
   action: string;
-  decision: 'allow' | 'deny';
+  decision: "allow" | "deny";
   timestamp: Date;
   sourceIP: string;
   userAgent: string;
@@ -124,7 +131,7 @@ export class AccessControlOptimizer extends EventEmitter {
       topAccessedResources: new Map(),
       failedLoginAttempts: 0,
       lockedAccounts: 0,
-      policiesEvaluated: 0
+      policiesEvaluated: 0,
     };
   }
 
@@ -136,11 +143,11 @@ export class AccessControlOptimizer extends EventEmitter {
       await this.setupDefaultPolicies();
       this.startMetricsCollection();
       this.startCleanupSchedule();
-      
+
       this.isInitialized = true;
-      this.emit('initialized');
+      this.emit("initialized");
     } catch (error) {
-      this.emit('initializationError', error);
+      this.emit("initializationError", error);
       throw error;
     }
   }
@@ -148,88 +155,88 @@ export class AccessControlOptimizer extends EventEmitter {
   private async setupDefaultRoles(): Promise<void> {
     const defaultRoles: RoleDefinition[] = [
       {
-        roleId: 'patient',
-        name: 'Patient',
-        description: 'Basic patient access to their own health records',
+        roleId: "patient",
+        name: "Patient",
+        description: "Basic patient access to their own health records",
         permissions: [
           {
-            resource: '/patient/profile/*',
-            actions: ['read', 'update'],
-            effect: 'allow'
+            resource: "/patient/profile/*",
+            actions: ["read", "update"],
+            effect: "allow",
           },
           {
-            resource: '/patient/claims/*',
-            actions: ['read', 'create'],
-            effect: 'allow'
-          }
+            resource: "/patient/claims/*",
+            actions: ["read", "create"],
+            effect: "allow",
+          },
         ],
         inheritedRoles: [],
         isBuiltIn: true,
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        roleId: 'healthcare_provider',
-        name: 'Healthcare Provider',
-        description: 'Healthcare professional with patient data access',
+        roleId: "healthcare_provider",
+        name: "Healthcare Provider",
+        description: "Healthcare professional with patient data access",
         permissions: [
           {
-            resource: '/patient/medical-records/*',
-            actions: ['read', 'create', 'update'],
-            effect: 'allow'
+            resource: "/patient/medical-records/*",
+            actions: ["read", "create", "update"],
+            effect: "allow",
           },
           {
-            resource: '/claims/medical/*',
-            actions: ['read', 'create', 'update'],
-            effect: 'allow'
-          }
+            resource: "/claims/medical/*",
+            actions: ["read", "create", "update"],
+            effect: "allow",
+          },
         ],
         inheritedRoles: [],
         isBuiltIn: true,
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        roleId: 'claims_adjuster',
-        name: 'Claims Adjuster',
-        description: 'Insurance claims processing specialist',
+        roleId: "claims_adjuster",
+        name: "Claims Adjuster",
+        description: "Insurance claims processing specialist",
         permissions: [
           {
-            resource: '/claims/*',
-            actions: ['read', 'update', 'approve', 'deny'],
-            effect: 'allow'
+            resource: "/claims/*",
+            actions: ["read", "update", "approve", "deny"],
+            effect: "allow",
           },
           {
-            resource: '/patient/basic-info/*',
-            actions: ['read'],
-            effect: 'allow'
-          }
+            resource: "/patient/basic-info/*",
+            actions: ["read"],
+            effect: "allow",
+          },
         ],
         inheritedRoles: [],
         isBuiltIn: true,
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
-        roleId: 'system_admin',
-        name: 'System Administrator',
-        description: 'Full system administration access',
+        roleId: "system_admin",
+        name: "System Administrator",
+        description: "Full system administration access",
         permissions: [
           {
-            resource: '*',
-            actions: ['*'],
-            effect: 'allow'
-          }
+            resource: "*",
+            actions: ["*"],
+            effect: "allow",
+          },
         ],
         inheritedRoles: [],
         isBuiltIn: true,
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
 
     for (const role of defaultRoles) {
@@ -240,81 +247,81 @@ export class AccessControlOptimizer extends EventEmitter {
   private async setupDefaultPolicies(): Promise<void> {
     const defaultPolicies: AccessPolicy[] = [
       {
-        policyId: 'hipaa_compliance',
-        name: 'HIPAA Compliance Policy',
-        description: 'Ensures HIPAA compliance for patient data access',
-        effect: 'allow',
-        resources: ['/patient/medical-records/*', '/patient/phi/*'],
-        actions: ['read', 'create', 'update'],
-        principals: ['healthcare_provider', 'claims_adjuster'],
+        policyId: "hipaa_compliance",
+        name: "HIPAA Compliance Policy",
+        description: "Ensures HIPAA compliance for patient data access",
+        effect: "allow",
+        resources: ["/patient/medical-records/*", "/patient/phi/*"],
+        actions: ["read", "create", "update"],
+        principals: ["healthcare_provider", "claims_adjuster"],
         conditions: [
           {
-            type: 'mfa',
-            operator: 'equals',
-            key: 'mfa_enabled',
+            type: "mfa",
+            operator: "equals",
+            key: "mfa_enabled",
             value: true,
-            description: 'Multi-factor authentication required'
+            description: "Multi-factor authentication required",
           },
           {
-            type: 'time',
-            operator: 'in',
-            key: 'business_hours',
-            value: ['08:00-18:00'],
-            description: 'Access only during business hours'
-          }
+            type: "time",
+            operator: "in",
+            key: "business_hours",
+            value: ["08:00-18:00"],
+            description: "Access only during business hours",
+          },
         ],
         priority: 100,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'system'
+        createdBy: "system",
       },
       {
-        policyId: 'emergency_access',
-        name: 'Emergency Access Policy',
-        description: 'Emergency access to critical patient data',
-        effect: 'allow',
-        resources: ['/patient/emergency-info/*', '/patient/critical-alerts/*'],
-        actions: ['read'],
-        principals: ['healthcare_provider'],
+        policyId: "emergency_access",
+        name: "Emergency Access Policy",
+        description: "Emergency access to critical patient data",
+        effect: "allow",
+        resources: ["/patient/emergency-info/*", "/patient/critical-alerts/*"],
+        actions: ["read"],
+        principals: ["healthcare_provider"],
         conditions: [
           {
-            type: 'custom',
-            operator: 'equals',
-            key: 'emergency_flag',
+            type: "custom",
+            operator: "equals",
+            key: "emergency_flag",
             value: true,
-            description: 'Emergency access flag must be set'
-          }
+            description: "Emergency access flag must be set",
+          },
         ],
         priority: 200,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'system'
+        createdBy: "system",
       },
       {
-        policyId: 'data_retention',
-        name: 'Data Retention Policy',
-        description: 'Restricts access to archived data',
-        effect: 'deny',
-        resources: ['/patient/archived-records/*'],
-        actions: ['delete'],
-        principals: ['*'],
+        policyId: "data_retention",
+        name: "Data Retention Policy",
+        description: "Restricts access to archived data",
+        effect: "deny",
+        resources: ["/patient/archived-records/*"],
+        actions: ["delete"],
+        principals: ["*"],
         conditions: [
           {
-            type: 'time',
-            operator: 'less_than',
-            key: 'retention_period',
+            type: "time",
+            operator: "less_than",
+            key: "retention_period",
             value: 7,
-            description: 'Cannot delete data within retention period'
-          }
+            description: "Cannot delete data within retention period",
+          },
         ],
         priority: 50,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'system'
-      }
+        createdBy: "system",
+      },
     ];
 
     for (const policy of defaultPolicies) {
@@ -326,7 +333,7 @@ export class AccessControlOptimizer extends EventEmitter {
     userId: string,
     resource: string,
     action: string,
-    context?: any
+    context?: any,
   ): Promise<AccessDecision> {
     const startTime = Date.now();
 
@@ -335,31 +342,36 @@ export class AccessControlOptimizer extends EventEmitter {
 
       const userProfile = this.userProfiles.get(userId);
       if (!userProfile) {
-        this.logAccess(userId, resource, action, 'deny', startTime, context);
+        this.logAccess(userId, resource, action, "deny", startTime, context);
         return {
           allowed: false,
-          reason: 'User profile not found',
+          reason: "User profile not found",
           matchedPolicies: [],
           evaluationTime: Date.now() - startTime,
           riskScore: 100,
-          recommendations: ['Verify user exists in the system']
+          recommendations: ["Verify user exists in the system"],
         };
       }
 
       if (userProfile.isLocked) {
-        this.logAccess(userId, resource, action, 'deny', startTime, context);
+        this.logAccess(userId, resource, action, "deny", startTime, context);
         return {
           allowed: false,
-          reason: 'User account is locked',
+          reason: "User account is locked",
           matchedPolicies: [],
           evaluationTime: Date.now() - startTime,
           riskScore: 100,
-          recommendations: ['Contact administrator to unlock account']
+          recommendations: ["Contact administrator to unlock account"],
         };
       }
 
       // Calculate risk score
-      const riskScore = await this.calculateRiskScore(userId, resource, action, context);
+      const riskScore = await this.calculateRiskScore(
+        userId,
+        resource,
+        action,
+        context,
+      );
 
       // Evaluate policies
       const { allowed, matchedPolicies, reason } = await this.evaluatePolicies(
@@ -367,7 +379,7 @@ export class AccessControlOptimizer extends EventEmitter {
         resource,
         action,
         context,
-        riskScore
+        riskScore,
       );
 
       // Update metrics
@@ -381,7 +393,14 @@ export class AccessControlOptimizer extends EventEmitter {
       this.updateEvaluationTime(Date.now() - startTime);
 
       // Log access attempt
-      this.logAccess(userId, resource, action, allowed ? 'allow' : 'deny', startTime, context);
+      this.logAccess(
+        userId,
+        resource,
+        action,
+        allowed ? "allow" : "deny",
+        startTime,
+        context,
+      );
 
       return {
         allowed,
@@ -389,19 +408,23 @@ export class AccessControlOptimizer extends EventEmitter {
         matchedPolicies,
         evaluationTime: Date.now() - startTime,
         riskScore,
-        recommendations: this.generateRecommendations(allowed, reason, riskScore)
+        recommendations: this.generateRecommendations(
+          allowed,
+          reason,
+          riskScore,
+        ),
       };
     } catch (error) {
-      this.emit('accessEvaluationError', { userId, resource, action, error });
-      this.logAccess(userId, resource, action, 'deny', startTime, context);
-      
+      this.emit("accessEvaluationError", { userId, resource, action, error });
+      this.logAccess(userId, resource, action, "deny", startTime, context);
+
       return {
         allowed: false,
-        reason: 'Access evaluation failed',
+        reason: "Access evaluation failed",
         matchedPolicies: [],
         evaluationTime: Date.now() - startTime,
         riskScore: 100,
-        recommendations: ['Contact system administrator']
+        recommendations: ["Contact system administrator"],
       };
     }
   }
@@ -411,9 +434,8 @@ export class AccessControlOptimizer extends EventEmitter {
     resource: string,
     action: string,
     context: any,
-    riskScore: number
+    riskScore: number,
   ): Promise<{ allowed: boolean; matchedPolicies: string[]; reason: string }> {
-    
     const applicablePolicies: AccessPolicy[] = [];
     const matchedPolicies: string[] = [];
 
@@ -422,7 +444,10 @@ export class AccessControlOptimizer extends EventEmitter {
       if (!policy.isActive) continue;
 
       // Check if policy applies to user's roles or direct assignment
-      const hasAccess = this.checkPrincipalAccess(userProfile, policy.principals);
+      const hasAccess = this.checkPrincipalAccess(
+        userProfile,
+        policy.principals,
+      );
       if (!hasAccess) continue;
 
       // Check if policy applies to resource
@@ -430,11 +455,16 @@ export class AccessControlOptimizer extends EventEmitter {
       if (!resourceMatches) continue;
 
       // Check if policy applies to action
-      const actionMatches = policy.actions.includes('*') || policy.actions.includes(action);
+      const actionMatches =
+        policy.actions.includes("*") || policy.actions.includes(action);
       if (!actionMatches) continue;
 
       // Evaluate conditions
-      const conditionsPass = await this.evaluateConditions(policy.conditions || [], context, riskScore);
+      const conditionsPass = await this.evaluateConditions(
+        policy.conditions || [],
+        context,
+        riskScore,
+      );
       if (!conditionsPass) continue;
 
       applicablePolicies.push(policy);
@@ -449,9 +479,9 @@ export class AccessControlOptimizer extends EventEmitter {
     if (applicablePolicies.length > 0) {
       const topPolicy = applicablePolicies[0];
       return {
-        allowed: topPolicy.effect === 'allow',
+        allowed: topPolicy.effect === "allow",
         matchedPolicies,
-        reason: `${topPolicy.effect} by policy: ${topPolicy.name}`
+        reason: `${topPolicy.effect} by policy: ${topPolicy.name}`,
       };
     }
 
@@ -459,13 +489,16 @@ export class AccessControlOptimizer extends EventEmitter {
     return {
       allowed: false,
       matchedPolicies,
-      reason: 'No applicable policies found - default deny'
+      reason: "No applicable policies found - default deny",
     };
   }
 
-  private checkPrincipalAccess(userProfile: UserAccessProfile, principals: string[]): boolean {
+  private checkPrincipalAccess(
+    userProfile: UserAccessProfile,
+    principals: string[],
+  ): boolean {
     // Check for wildcard
-    if (principals.includes('*')) return true;
+    if (principals.includes("*")) return true;
 
     // Check user roles
     for (const roleId of userProfile.roles) {
@@ -480,10 +513,10 @@ export class AccessControlOptimizer extends EventEmitter {
 
   private matchResource(resource: string, policyResources: string[]): boolean {
     for (const policyResource of policyResources) {
-      if (policyResource === '*') return true;
-      
+      if (policyResource === "*") return true;
+
       // Handle wildcard patterns
-      if (policyResource.endsWith('/*')) {
+      if (policyResource.endsWith("/*")) {
         const prefix = policyResource.slice(0, -2);
         if (resource.startsWith(prefix)) return true;
       } else if (policyResource === resource) {
@@ -496,66 +529,81 @@ export class AccessControlOptimizer extends EventEmitter {
   private async evaluateConditions(
     conditions: AccessCondition[],
     context: any,
-    riskScore: number
+    riskScore: number,
   ): Promise<boolean> {
-    
     for (const condition of conditions) {
-      const conditionMet = await this.evaluateCondition(condition, context, riskScore);
+      const conditionMet = await this.evaluateCondition(
+        condition,
+        context,
+        riskScore,
+      );
       if (!conditionMet) return false;
     }
-    
+
     return true;
   }
 
   private async evaluateCondition(
     condition: AccessCondition,
     context: any,
-    riskScore: number
+    riskScore: number,
   ): Promise<boolean> {
-    
     let contextValue: any;
 
     switch (condition.type) {
-      case 'time':
+      case "time":
         contextValue = this.getCurrentTimeContext();
         break;
-      case 'location':
+      case "location":
         contextValue = context?.location || context?.sourceIP;
         break;
-      case 'device':
+      case "device":
         contextValue = context?.userAgent || context?.deviceId;
         break;
-      case 'mfa':
+      case "mfa":
         contextValue = context?.mfaVerified || false;
         break;
-      case 'risk_score':
+      case "risk_score":
         contextValue = riskScore;
         break;
-      case 'custom':
+      case "custom":
         contextValue = context?.[condition.key];
         break;
       default:
         contextValue = context?.[condition.key];
     }
 
-    return this.evaluateConditionOperator(condition.operator, contextValue, condition.value);
+    return this.evaluateConditionOperator(
+      condition.operator,
+      contextValue,
+      condition.value,
+    );
   }
 
-  private evaluateConditionOperator(operator: string, contextValue: any, conditionValue: any): boolean {
+  private evaluateConditionOperator(
+    operator: string,
+    contextValue: any,
+    conditionValue: any,
+  ): boolean {
     switch (operator) {
-      case 'equals':
+      case "equals":
         return contextValue === conditionValue;
-      case 'not_equals':
+      case "not_equals":
         return contextValue !== conditionValue;
-      case 'in':
-        return Array.isArray(conditionValue) && conditionValue.includes(contextValue);
-      case 'not_in':
-        return Array.isArray(conditionValue) && !conditionValue.includes(contextValue);
-      case 'greater_than':
+      case "in":
+        return (
+          Array.isArray(conditionValue) && conditionValue.includes(contextValue)
+        );
+      case "not_in":
+        return (
+          Array.isArray(conditionValue) &&
+          !conditionValue.includes(contextValue)
+        );
+      case "greater_than":
         return Number(contextValue) > Number(conditionValue);
-      case 'less_than':
+      case "less_than":
         return Number(contextValue) < Number(conditionValue);
-      case 'contains':
+      case "contains":
         return String(contextValue).includes(String(conditionValue));
       default:
         return false;
@@ -564,21 +612,21 @@ export class AccessControlOptimizer extends EventEmitter {
 
   private getCurrentTimeContext(): any {
     const now = new Date();
-    const hour = now.getHours().toString().padStart(2, '0');
-    const minute = now.getMinutes().toString().padStart(2, '0');
+    const hour = now.getHours().toString().padStart(2, "0");
+    const minute = now.getMinutes().toString().padStart(2, "0");
     const currentTime = `${hour}:${minute}`;
-    
+
     return {
       current_time: currentTime,
       day_of_week: now.getDay(),
-      is_business_hours: this.isBusinessHours(now)
+      is_business_hours: this.isBusinessHours(now),
     };
   }
 
   private isBusinessHours(date: Date): boolean {
     const hour = date.getHours();
     const day = date.getDay();
-    
+
     // Monday to Friday, 8 AM to 6 PM
     return day >= 1 && day <= 5 && hour >= 8 && hour < 18;
   }
@@ -587,7 +635,7 @@ export class AccessControlOptimizer extends EventEmitter {
     userId: string,
     resource: string,
     action: string,
-    context: any
+    context: any,
   ): Promise<number> {
     let riskScore = 0;
 
@@ -611,12 +659,12 @@ export class AccessControlOptimizer extends EventEmitter {
     }
 
     // Resource sensitivity
-    if (resource.includes('medical-records') || resource.includes('phi')) {
+    if (resource.includes("medical-records") || resource.includes("phi")) {
       riskScore += 20;
     }
 
     // Action risk
-    if (['delete', 'admin', 'export'].includes(action)) {
+    if (["delete", "admin", "export"].includes(action)) {
       riskScore += 25;
     }
 
@@ -630,27 +678,37 @@ export class AccessControlOptimizer extends EventEmitter {
 
   private isTrustedIP(ip: string): boolean {
     // Simplified trusted IP check
-    const trustedRanges = ['192.168.', '10.0.', '172.16.'];
-    return trustedRanges.some(range => ip.startsWith(range));
+    const trustedRanges = ["192.168.", "10.0.", "172.16."];
+    return trustedRanges.some((range) => ip.startsWith(range));
   }
 
-  private generateRecommendations(allowed: boolean, reason: string, riskScore: number): string[] {
+  private generateRecommendations(
+    allowed: boolean,
+    reason: string,
+    riskScore: number,
+  ): string[] {
     const recommendations: string[] = [];
 
     if (!allowed) {
-      recommendations.push('Contact your administrator if you believe this is an error');
-      
-      if (reason.includes('locked')) {
-        recommendations.push('Account may be locked due to security concerns');
+      recommendations.push(
+        "Contact your administrator if you believe this is an error",
+      );
+
+      if (reason.includes("locked")) {
+        recommendations.push("Account may be locked due to security concerns");
       }
-      
+
       if (riskScore > 70) {
-        recommendations.push('High risk score detected - ensure you are accessing from a trusted location');
+        recommendations.push(
+          "High risk score detected - ensure you are accessing from a trusted location",
+        );
       }
     }
 
     if (riskScore > 50) {
-      recommendations.push('Consider enabling multi-factor authentication for enhanced security');
+      recommendations.push(
+        "Consider enabling multi-factor authentication for enhanced security",
+      );
     }
 
     return recommendations;
@@ -660,11 +718,10 @@ export class AccessControlOptimizer extends EventEmitter {
     userId: string,
     resource: string,
     action: string,
-    decision: 'allow' | 'deny',
+    decision: "allow" | "deny",
     startTime: number,
-    context: any
+    context: any,
   ): void {
-    
     const auditLog: AccessAuditLog = {
       logId: crypto.randomUUID(),
       userId,
@@ -672,21 +729,21 @@ export class AccessControlOptimizer extends EventEmitter {
       action,
       decision,
       timestamp: new Date(),
-      sourceIP: context?.sourceIP || 'unknown',
-      userAgent: context?.userAgent || 'unknown',
-      sessionId: context?.sessionId || 'unknown',
+      sourceIP: context?.sourceIP || "unknown",
+      userAgent: context?.userAgent || "unknown",
+      sessionId: context?.sessionId || "unknown",
       riskScore: context?.riskScore || 0,
-      additionalContext: context
+      additionalContext: context,
     };
 
     this.auditLogs.push(auditLog);
-    
+
     // Limit audit log size
     if (this.auditLogs.length > 100000) {
       this.auditLogs = this.auditLogs.slice(-50000);
     }
 
-    this.emit('accessLogged', auditLog);
+    this.emit("accessLogged", auditLog);
   }
 
   private updateResourceMetrics(resource: string): void {
@@ -696,26 +753,33 @@ export class AccessControlOptimizer extends EventEmitter {
 
   private updateEvaluationTime(time: number): void {
     this.metrics.averageEvaluationTime =
-      (this.metrics.averageEvaluationTime * (this.metrics.totalAccessRequests - 1) + time) /
+      (this.metrics.averageEvaluationTime *
+        (this.metrics.totalAccessRequests - 1) +
+        time) /
       this.metrics.totalAccessRequests;
   }
 
-  async createPolicy(policy: Omit<AccessPolicy, 'policyId' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async createPolicy(
+    policy: Omit<AccessPolicy, "policyId" | "createdAt" | "updatedAt">,
+  ): Promise<string> {
     const policyId = crypto.randomUUID();
     const newPolicy: AccessPolicy = {
       ...policy,
       policyId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.policies.set(policyId, newPolicy);
-    this.emit('policyCreated', { policyId, policy: newPolicy });
-    
+    this.emit("policyCreated", { policyId, policy: newPolicy });
+
     return policyId;
   }
 
-  async updatePolicy(policyId: string, updates: Partial<AccessPolicy>): Promise<void> {
+  async updatePolicy(
+    policyId: string,
+    updates: Partial<AccessPolicy>,
+  ): Promise<void> {
     const policy = this.policies.get(policyId);
     if (!policy) {
       throw new Error(`Policy not found: ${policyId}`);
@@ -724,23 +788,28 @@ export class AccessControlOptimizer extends EventEmitter {
     const updatedPolicy = {
       ...policy,
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.policies.set(policyId, updatedPolicy);
-    this.emit('policyUpdated', { policyId, policy: updatedPolicy });
+    this.emit("policyUpdated", { policyId, policy: updatedPolicy });
   }
 
-  async createUserProfile(profile: Omit<UserAccessProfile, 'lastAccess' | 'failedAttempts' | 'isLocked'>): Promise<void> {
+  async createUserProfile(
+    profile: Omit<
+      UserAccessProfile,
+      "lastAccess" | "failedAttempts" | "isLocked"
+    >,
+  ): Promise<void> {
     const userProfile: UserAccessProfile = {
       ...profile,
       lastAccess: new Date(),
       failedAttempts: 0,
-      isLocked: false
+      isLocked: false,
     };
 
     this.userProfiles.set(profile.userId, userProfile);
-    this.emit('userProfileCreated', { userId: profile.userId });
+    this.emit("userProfileCreated", { userId: profile.userId });
   }
 
   async grantTemporaryAccess(
@@ -749,9 +818,8 @@ export class AccessControlOptimizer extends EventEmitter {
     actions: string[],
     expiresInHours: number,
     grantedBy: string,
-    reason: string
+    reason: string,
   ): Promise<string> {
-    
     const userProfile = this.userProfiles.get(userId);
     if (!userProfile) {
       throw new Error(`User profile not found: ${userId}`);
@@ -765,41 +833,44 @@ export class AccessControlOptimizer extends EventEmitter {
       grantedAt: new Date(),
       expiresAt: new Date(Date.now() + expiresInHours * 60 * 60 * 1000),
       reason,
-      isActive: true
+      isActive: true,
     };
 
     userProfile.temporaryAccess.push(tempAccess);
-    this.emit('temporaryAccessGranted', { userId, tempAccess });
-    
+    this.emit("temporaryAccessGranted", { userId, tempAccess });
+
     return tempAccess.id;
   }
 
   private startMetricsCollection(): void {
     setInterval(() => {
-      this.emit('metricsReport', this.getMetrics());
+      this.emit("metricsReport", this.getMetrics());
     }, 60000); // Every minute
   }
 
   private startCleanupSchedule(): void {
     // Clean up old audit logs and expired temporary access
-    setInterval(() => {
-      this.cleanupExpiredData();
-    }, 24 * 60 * 60 * 1000); // Daily
+    setInterval(
+      () => {
+        this.cleanupExpiredData();
+      },
+      24 * 60 * 60 * 1000,
+    ); // Daily
   }
 
   private cleanupExpiredData(): void {
     // Remove old audit logs (keep last 30 days)
     const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    this.auditLogs = this.auditLogs.filter(log => log.timestamp > cutoffDate);
+    this.auditLogs = this.auditLogs.filter((log) => log.timestamp > cutoffDate);
 
     // Remove expired temporary access
     for (const userProfile of this.userProfiles.values()) {
       userProfile.temporaryAccess = userProfile.temporaryAccess.filter(
-        access => access.expiresAt > new Date()
+        (access) => access.expiresAt > new Date(),
       );
     }
 
-    this.emit('expiredDataCleaned', { timestamp: new Date() });
+    this.emit("expiredDataCleaned", { timestamp: new Date() });
   }
 
   getMetrics(): AccessMetrics {
@@ -811,7 +882,7 @@ export class AccessControlOptimizer extends EventEmitter {
       topAccessedResources: new Map(this.metrics.topAccessedResources),
       failedLoginAttempts: this.metrics.failedLoginAttempts,
       lockedAccounts: this.metrics.lockedAccounts,
-      policiesEvaluated: this.metrics.policiesEvaluated
+      policiesEvaluated: this.metrics.policiesEvaluated,
     };
   }
 
@@ -820,16 +891,17 @@ export class AccessControlOptimizer extends EventEmitter {
     resource?: string;
     startDate?: Date;
     endDate?: Date;
-    decision?: 'allow' | 'deny';
+    decision?: "allow" | "deny";
   }): AccessAuditLog[] {
-    
     let logs = this.auditLogs;
 
     if (filters) {
-      logs = logs.filter(log => {
+      logs = logs.filter((log) => {
         if (filters.userId && log.userId !== filters.userId) return false;
-        if (filters.resource && !log.resource.includes(filters.resource)) return false;
-        if (filters.startDate && log.timestamp < filters.startDate) return false;
+        if (filters.resource && !log.resource.includes(filters.resource))
+          return false;
+        if (filters.startDate && log.timestamp < filters.startDate)
+          return false;
         if (filters.endDate && log.timestamp > filters.endDate) return false;
         if (filters.decision && log.decision !== filters.decision) return false;
         return true;
@@ -840,7 +912,7 @@ export class AccessControlOptimizer extends EventEmitter {
   }
 
   async shutdown(): Promise<void> {
-    this.emit('shutdown');
+    this.emit("shutdown");
     this.removeAllListeners();
   }
 }

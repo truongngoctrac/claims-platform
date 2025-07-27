@@ -4,8 +4,8 @@ import {
   ComplianceMetadata,
   DataAnonymizationResult,
   RiskLevel,
-  DataClassification
-} from './types';
+  DataClassification,
+} from "./types";
 
 export class DataAnonymizationToolsService {
   private anonymizationProfiles: Map<string, AnonymizationProfile> = new Map();
@@ -15,21 +15,27 @@ export class DataAnonymizationToolsService {
   constructor(
     private config: AnonymizationConfig,
     private logger: any,
-    private riskAssessment: RiskAssessmentService
+    private riskAssessment: RiskAssessmentService,
   ) {}
 
   // K-Anonymity Implementation
   async applyKAnonymity(
     dataset: Dataset,
     k: number,
-    quasiIdentifiers: string[]
+    quasiIdentifiers: string[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const anonymizer = new KAnonymityAnonymizer(k, quasiIdentifiers);
       const result = await anonymizer.anonymize(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessReidentificationRisk(result.dataset, k);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessReidentificationRisk(
+        result.dataset,
+        k,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -41,19 +47,22 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'K-anonymity application failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "K-anonymity application failed",
       };
     }
   }
@@ -63,14 +72,24 @@ export class DataAnonymizationToolsService {
     dataset: Dataset,
     l: number,
     sensitiveAttributes: string[],
-    quasiIdentifiers: string[]
+    quasiIdentifiers: string[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
-      const anonymizer = new LDiversityAnonymizer(l, sensitiveAttributes, quasiIdentifiers);
+      const anonymizer = new LDiversityAnonymizer(
+        l,
+        sensitiveAttributes,
+        quasiIdentifiers,
+      );
       const result = await anonymizer.anonymize(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessAttributeDisclosureRisk(result.dataset, sensitiveAttributes);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessAttributeDisclosureRisk(
+        result.dataset,
+        sensitiveAttributes,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -82,19 +101,22 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'L-diversity application failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "L-diversity application failed",
       };
     }
   }
@@ -104,14 +126,24 @@ export class DataAnonymizationToolsService {
     dataset: Dataset,
     t: number,
     sensitiveAttributes: string[],
-    quasiIdentifiers: string[]
+    quasiIdentifiers: string[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
-      const anonymizer = new TClosenessAnonymizer(t, sensitiveAttributes, quasiIdentifiers);
+      const anonymizer = new TClosenessAnonymizer(
+        t,
+        sensitiveAttributes,
+        quasiIdentifiers,
+      );
       const result = await anonymizer.anonymize(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessDistributionDisclosureRisk(result.dataset, sensitiveAttributes);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessDistributionDisclosureRisk(
+        result.dataset,
+        sensitiveAttributes,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -123,19 +155,22 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'T-closeness application failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "T-closeness application failed",
       };
     }
   }
@@ -144,14 +179,20 @@ export class DataAnonymizationToolsService {
   async applyDifferentialPrivacy(
     dataset: Dataset,
     epsilon: number,
-    queries: PrivacyQuery[]
+    queries: PrivacyQuery[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const mechanism = new DifferentialPrivacyMechanism(epsilon);
       const result = await mechanism.applyToDataset(dataset, queries);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessDifferentialPrivacyRisk(epsilon, queries);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessDifferentialPrivacyRisk(
+        epsilon,
+        queries,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -163,19 +204,22 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Differential privacy application failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Differential privacy application failed",
       };
     }
   }
@@ -183,14 +227,20 @@ export class DataAnonymizationToolsService {
   // Data Suppression
   async applySuppression(
     dataset: Dataset,
-    suppressionRules: SuppressionRule[]
+    suppressionRules: SuppressionRule[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const suppressor = new DataSuppressor(suppressionRules);
       const result = await suppressor.suppress(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessSuppressionRisk(result.dataset, suppressionRules);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessSuppressionRisk(
+        result.dataset,
+        suppressionRules,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -202,19 +252,20 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data suppression failed'
+        error:
+          error instanceof Error ? error.message : "Data suppression failed",
       };
     }
   }
@@ -222,14 +273,20 @@ export class DataAnonymizationToolsService {
   // Data Generalization
   async applyGeneralization(
     dataset: Dataset,
-    generalizationHierarchies: GeneralizationHierarchy[]
+    generalizationHierarchies: GeneralizationHierarchy[],
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const generalizer = new DataGeneralizer(generalizationHierarchies);
       const result = await generalizer.generalize(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessGeneralizationRisk(result.dataset, generalizationHierarchies);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessGeneralizationRisk(
+        result.dataset,
+        generalizationHierarchies,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -241,19 +298,20 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data generalization failed'
+        error:
+          error instanceof Error ? error.message : "Data generalization failed",
       };
     }
   }
@@ -261,14 +319,20 @@ export class DataAnonymizationToolsService {
   // Data Perturbation
   async applyPerturbation(
     dataset: Dataset,
-    perturbationConfig: PerturbationConfig
+    perturbationConfig: PerturbationConfig,
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const perturbator = new DataPerturbator(perturbationConfig);
       const result = await perturbator.perturb(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessPerturbationRisk(result.dataset, perturbationConfig);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessPerturbationRisk(
+        result.dataset,
+        perturbationConfig,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -280,19 +344,20 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Data perturbation failed'
+        error:
+          error instanceof Error ? error.message : "Data perturbation failed",
       };
     }
   }
@@ -300,14 +365,20 @@ export class DataAnonymizationToolsService {
   // Pseudonymization
   async applyPseudonymization(
     dataset: Dataset,
-    pseudonymizationConfig: PseudonymizationConfig
+    pseudonymizationConfig: PseudonymizationConfig,
   ): Promise<ComplianceServiceResponse<AnonymizationResult>> {
     try {
       const pseudonymizer = new Pseudonymizer(pseudonymizationConfig);
       const result = await pseudonymizer.pseudonymize(dataset);
-      
-      const qualityAssessment = await this.assessAnonymizationQuality(dataset, result.dataset);
-      const riskAssessment = await this.assessPseudonymizationRisk(result.dataset, pseudonymizationConfig);
+
+      const qualityAssessment = await this.assessAnonymizationQuality(
+        dataset,
+        result.dataset,
+      );
+      const riskAssessment = await this.assessPseudonymizationRisk(
+        result.dataset,
+        pseudonymizationConfig,
+      );
 
       const anonymizationResult: AnonymizationResult = {
         id: this.generateId(),
@@ -319,19 +390,20 @@ export class DataAnonymizationToolsService {
         risk: riskAssessment,
         statistics: result.statistics,
         timestamp: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
       await this.recordAnonymization(anonymizationResult);
 
       return {
         success: true,
-        data: anonymizationResult
+        data: anonymizationResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Pseudonymization failed'
+        error:
+          error instanceof Error ? error.message : "Pseudonymization failed",
       };
     }
   }
@@ -339,7 +411,7 @@ export class DataAnonymizationToolsService {
   // Multi-technique Anonymization
   async applyMultiTechniqueAnonymization(
     dataset: Dataset,
-    anonymizationPlan: AnonymizationPlan
+    anonymizationPlan: AnonymizationPlan,
   ): Promise<ComplianceServiceResponse<MultiTechniqueResult>> {
     try {
       const results: AnonymizationResult[] = [];
@@ -350,31 +422,63 @@ export class DataAnonymizationToolsService {
 
         switch (step.technique) {
           case AnonymizationTechnique.K_ANONYMITY:
-            stepResult = await this.applyKAnonymity(currentDataset, step.parameters.k, step.parameters.quasiIdentifiers);
+            stepResult = await this.applyKAnonymity(
+              currentDataset,
+              step.parameters.k,
+              step.parameters.quasiIdentifiers,
+            );
             break;
           case AnonymizationTechnique.L_DIVERSITY:
-            stepResult = await this.applyLDiversity(currentDataset, step.parameters.l, step.parameters.sensitiveAttributes, step.parameters.quasiIdentifiers);
+            stepResult = await this.applyLDiversity(
+              currentDataset,
+              step.parameters.l,
+              step.parameters.sensitiveAttributes,
+              step.parameters.quasiIdentifiers,
+            );
             break;
           case AnonymizationTechnique.T_CLOSENESS:
-            stepResult = await this.applyTCloseness(currentDataset, step.parameters.t, step.parameters.sensitiveAttributes, step.parameters.quasiIdentifiers);
+            stepResult = await this.applyTCloseness(
+              currentDataset,
+              step.parameters.t,
+              step.parameters.sensitiveAttributes,
+              step.parameters.quasiIdentifiers,
+            );
             break;
           case AnonymizationTechnique.DIFFERENTIAL_PRIVACY:
-            stepResult = await this.applyDifferentialPrivacy(currentDataset, step.parameters.epsilon, step.parameters.queries);
+            stepResult = await this.applyDifferentialPrivacy(
+              currentDataset,
+              step.parameters.epsilon,
+              step.parameters.queries,
+            );
             break;
           case AnonymizationTechnique.SUPPRESSION:
-            stepResult = await this.applySuppression(currentDataset, step.parameters.suppressionRules);
+            stepResult = await this.applySuppression(
+              currentDataset,
+              step.parameters.suppressionRules,
+            );
             break;
           case AnonymizationTechnique.GENERALIZATION:
-            stepResult = await this.applyGeneralization(currentDataset, step.parameters.generalizationHierarchies);
+            stepResult = await this.applyGeneralization(
+              currentDataset,
+              step.parameters.generalizationHierarchies,
+            );
             break;
           case AnonymizationTechnique.PERTURBATION:
-            stepResult = await this.applyPerturbation(currentDataset, step.parameters);
+            stepResult = await this.applyPerturbation(
+              currentDataset,
+              step.parameters,
+            );
             break;
           case AnonymizationTechnique.PSEUDONYMIZATION:
-            stepResult = await this.applyPseudonymization(currentDataset, step.parameters);
+            stepResult = await this.applyPseudonymization(
+              currentDataset,
+              step.parameters,
+            );
             break;
           default:
-            throw new Error(`Unsupported anonymization technique: ${step.technique}`);
+            throw new Error(
+              `Unsupported anonymization technique: ${step.technique}`,
+            );
         }
 
         if (!stepResult.success) {
@@ -382,11 +486,20 @@ export class DataAnonymizationToolsService {
         }
 
         results.push(stepResult.data!);
-        currentDataset = { ...currentDataset, data: stepResult.data!.anonymizedDataset };
+        currentDataset = {
+          ...currentDataset,
+          data: stepResult.data!.anonymizedDataset,
+        };
       }
 
-      const finalQuality = await this.assessOverallQuality(dataset, currentDataset);
-      const finalRisk = await this.assessOverallRisk(currentDataset, anonymizationPlan);
+      const finalQuality = await this.assessOverallQuality(
+        dataset,
+        currentDataset,
+      );
+      const finalRisk = await this.assessOverallRisk(
+        currentDataset,
+        anonymizationPlan,
+      );
 
       const multiTechniqueResult: MultiTechniqueResult = {
         id: this.generateId(),
@@ -396,18 +509,24 @@ export class DataAnonymizationToolsService {
         stepResults: results,
         overallQuality: finalQuality,
         overallRisk: finalRisk,
-        executionTime: results.reduce((sum, r) => sum + (r.statistics?.executionTime || 0), 0),
-        timestamp: new Date()
+        executionTime: results.reduce(
+          (sum, r) => sum + (r.statistics?.executionTime || 0),
+          0,
+        ),
+        timestamp: new Date(),
       };
 
       return {
         success: true,
-        data: multiTechniqueResult
+        data: multiTechniqueResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Multi-technique anonymization failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Multi-technique anonymization failed",
       };
     }
   }
@@ -415,15 +534,27 @@ export class DataAnonymizationToolsService {
   // Quality Assessment
   async assessAnonymizationQuality(
     originalDataset: Dataset,
-    anonymizedDataset: any
+    anonymizedDataset: any,
   ): Promise<QualityAssessment> {
     const metrics = {
-      utility: await this.calculateUtilityScore(originalDataset, anonymizedDataset),
-      informationLoss: await this.calculateInformationLoss(originalDataset, anonymizedDataset),
+      utility: await this.calculateUtilityScore(
+        originalDataset,
+        anonymizedDataset,
+      ),
+      informationLoss: await this.calculateInformationLoss(
+        originalDataset,
+        anonymizedDataset,
+      ),
       dataQuality: await this.calculateDataQuality(anonymizedDataset),
-      completeness: await this.calculateCompleteness(originalDataset, anonymizedDataset),
+      completeness: await this.calculateCompleteness(
+        originalDataset,
+        anonymizedDataset,
+      ),
       consistency: await this.calculateConsistency(anonymizedDataset),
-      accuracy: await this.calculateAccuracy(originalDataset, anonymizedDataset)
+      accuracy: await this.calculateAccuracy(
+        originalDataset,
+        anonymizedDataset,
+      ),
     };
 
     const overallScore = this.calculateOverallQualityScore(metrics);
@@ -433,16 +564,19 @@ export class DataAnonymizationToolsService {
       metrics,
       overallScore,
       recommendations: await this.generateQualityRecommendations(metrics),
-      assessmentDate: new Date()
+      assessmentDate: new Date(),
     };
   }
 
   // Risk Assessment
   async assessReidentificationRisk(
     dataset: any,
-    anonymizationParameters: any
+    anonymizationParameters: any,
   ): Promise<RiskAssessment> {
-    const riskFactors = await this.identifyRiskFactors(dataset, anonymizationParameters);
+    const riskFactors = await this.identifyRiskFactors(
+      dataset,
+      anonymizationParameters,
+    );
     const riskScore = await this.calculateRiskScore(riskFactors);
     const vulnerabilities = await this.identifyVulnerabilities(dataset);
 
@@ -452,14 +586,15 @@ export class DataAnonymizationToolsService {
       riskScore,
       riskFactors,
       vulnerabilities,
-      mitigationRecommendations: await this.generateRiskMitigations(riskFactors),
-      assessmentDate: new Date()
+      mitigationRecommendations:
+        await this.generateRiskMitigations(riskFactors),
+      assessmentDate: new Date(),
     };
   }
 
   // Anonymization Profile Management
   async createAnonymizationProfile(
-    profile: AnonymizationProfileInput
+    profile: AnonymizationProfileInput,
   ): Promise<ComplianceServiceResponse<AnonymizationProfile>> {
     try {
       const anonymizationProfile: AnonymizationProfile = {
@@ -474,19 +609,23 @@ export class DataAnonymizationToolsService {
         reviewSchedule: profile.reviewSchedule,
         createdAt: new Date(),
         updatedAt: new Date(),
-        metadata: this.createMetadata()
+        metadata: this.createMetadata(),
       };
 
-      this.anonymizationProfiles.set(anonymizationProfile.id, anonymizationProfile);
+      this.anonymizationProfiles.set(
+        anonymizationProfile.id,
+        anonymizationProfile,
+      );
 
       return {
         success: true,
-        data: anonymizationProfile
+        data: anonymizationProfile,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Profile creation failed'
+        error:
+          error instanceof Error ? error.message : "Profile creation failed",
       };
     }
   }
@@ -494,34 +633,53 @@ export class DataAnonymizationToolsService {
   // Automated Anonymization Recommendation
   async recommendAnonymizationStrategy(
     dataset: Dataset,
-    requirements: AnonymizationRequirements
+    requirements: AnonymizationRequirements,
   ): Promise<ComplianceServiceResponse<AnonymizationRecommendation>> {
     try {
       const dataAnalysis = await this.analyzeDataset(dataset);
       const riskAnalysis = await this.analyzeRiskRequirements(requirements);
-      const qualityAnalysis = await this.analyzeQualityRequirements(requirements);
+      const qualityAnalysis =
+        await this.analyzeQualityRequirements(requirements);
 
       const recommendation: AnonymizationRecommendation = {
         id: this.generateId(),
         datasetAnalysis: dataAnalysis,
-        recommendedTechniques: await this.selectOptimalTechniques(dataAnalysis, requirements),
-        parameterRecommendations: await this.recommendParameters(dataAnalysis, requirements),
-        executionPlan: await this.createExecutionPlan(dataAnalysis, requirements),
+        recommendedTechniques: await this.selectOptimalTechniques(
+          dataAnalysis,
+          requirements,
+        ),
+        parameterRecommendations: await this.recommendParameters(
+          dataAnalysis,
+          requirements,
+        ),
+        executionPlan: await this.createExecutionPlan(
+          dataAnalysis,
+          requirements,
+        ),
         expectedQuality: await this.predictQuality(dataAnalysis, requirements),
         expectedRisk: await this.predictRisk(dataAnalysis, requirements),
-        alternatives: await this.generateAlternatives(dataAnalysis, requirements),
-        confidence: await this.calculateRecommendationConfidence(dataAnalysis, requirements),
-        timestamp: new Date()
+        alternatives: await this.generateAlternatives(
+          dataAnalysis,
+          requirements,
+        ),
+        confidence: await this.calculateRecommendationConfidence(
+          dataAnalysis,
+          requirements,
+        ),
+        timestamp: new Date(),
       };
 
       return {
         success: true,
-        data: recommendation
+        data: recommendation,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Recommendation generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Recommendation generation failed",
       };
     }
   }
@@ -534,17 +692,19 @@ export class DataAnonymizationToolsService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'anonymization-service',
-      updatedBy: 'anonymization-service',
-      tags: ['anonymization', 'privacy'],
-      classification: DataClassification.CONFIDENTIAL
+      createdBy: "anonymization-service",
+      updatedBy: "anonymization-service",
+      tags: ["anonymization", "privacy"],
+      classification: DataClassification.CONFIDENTIAL,
     };
   }
 
-  private async recordAnonymization(result: AnonymizationResult): Promise<void> {
+  private async recordAnonymization(
+    result: AnonymizationResult,
+  ): Promise<void> {
     const history = this.anonymizationHistory.get(result.originalDataset) || [];
     const record: AnonymizationRecord = {
       id: result.id,
@@ -552,7 +712,7 @@ export class DataAnonymizationToolsService {
       timestamp: result.timestamp,
       quality: result.quality,
       risk: result.risk,
-      parameters: result.parameters
+      parameters: result.parameters,
     };
     history.push(record);
     this.anonymizationHistory.set(result.originalDataset, history);
@@ -565,11 +725,11 @@ export class DataAnonymizationToolsService {
       dataQuality: 0.2,
       completeness: 0.1,
       consistency: 0.1,
-      accuracy: 0.1
+      accuracy: 0.1,
     };
 
     return Object.entries(metrics).reduce((score, [metric, value]) => {
-      return score + (value * (weights[metric as keyof QualityMetrics] || 0));
+      return score + value * (weights[metric as keyof QualityMetrics] || 0);
     }, 0);
   }
 
@@ -582,11 +742,17 @@ export class DataAnonymizationToolsService {
   }
 
   // Placeholder implementations for complex calculations
-  private async calculateUtilityScore(original: Dataset, anonymized: any): Promise<number> {
+  private async calculateUtilityScore(
+    original: Dataset,
+    anonymized: any,
+  ): Promise<number> {
     return 0.85; // Placeholder
   }
 
-  private async calculateInformationLoss(original: Dataset, anonymized: any): Promise<number> {
+  private async calculateInformationLoss(
+    original: Dataset,
+    anonymized: any,
+  ): Promise<number> {
     return 0.15; // Placeholder
   }
 
@@ -594,7 +760,10 @@ export class DataAnonymizationToolsService {
     return 0.9; // Placeholder
   }
 
-  private async calculateCompleteness(original: Dataset, anonymized: any): Promise<number> {
+  private async calculateCompleteness(
+    original: Dataset,
+    anonymized: any,
+  ): Promise<number> {
     return 0.95; // Placeholder
   }
 
@@ -602,11 +771,17 @@ export class DataAnonymizationToolsService {
     return 0.92; // Placeholder
   }
 
-  private async calculateAccuracy(original: Dataset, anonymized: any): Promise<number> {
+  private async calculateAccuracy(
+    original: Dataset,
+    anonymized: any,
+  ): Promise<number> {
     return 0.88; // Placeholder
   }
 
-  private async identifyRiskFactors(dataset: any, parameters: any): Promise<RiskFactor[]> {
+  private async identifyRiskFactors(
+    dataset: any,
+    parameters: any,
+  ): Promise<RiskFactor[]> {
     return []; // Placeholder
   }
 
@@ -614,28 +789,42 @@ export class DataAnonymizationToolsService {
     return 0.3; // Placeholder
   }
 
-  private async identifyVulnerabilities(dataset: any): Promise<Vulnerability[]> {
+  private async identifyVulnerabilities(
+    dataset: any,
+  ): Promise<Vulnerability[]> {
     return []; // Placeholder
   }
 
-  private async generateQualityRecommendations(metrics: QualityMetrics): Promise<string[]> {
-    return ['Improve data quality through better preprocessing']; // Placeholder
+  private async generateQualityRecommendations(
+    metrics: QualityMetrics,
+  ): Promise<string[]> {
+    return ["Improve data quality through better preprocessing"]; // Placeholder
   }
 
-  private async generateRiskMitigations(factors: RiskFactor[]): Promise<string[]> {
-    return ['Apply additional anonymization techniques']; // Placeholder
+  private async generateRiskMitigations(
+    factors: RiskFactor[],
+  ): Promise<string[]> {
+    return ["Apply additional anonymization techniques"]; // Placeholder
   }
 }
 
 // Anonymization technique implementations
 class KAnonymityAnonymizer {
-  constructor(private k: number, private quasiIdentifiers: string[]) {}
+  constructor(
+    private k: number,
+    private quasiIdentifiers: string[],
+  ) {}
 
-  async anonymize(dataset: Dataset): Promise<{ dataset: any; statistics: any }> {
+  async anonymize(
+    dataset: Dataset,
+  ): Promise<{ dataset: any; statistics: any }> {
     // K-anonymity implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 1000, recordsProcessed: dataset.data.length }
+      statistics: {
+        executionTime: 1000,
+        recordsProcessed: dataset.data.length,
+      },
     };
   }
 }
@@ -644,14 +833,19 @@ class LDiversityAnonymizer {
   constructor(
     private l: number,
     private sensitiveAttributes: string[],
-    private quasiIdentifiers: string[]
+    private quasiIdentifiers: string[],
   ) {}
 
-  async anonymize(dataset: Dataset): Promise<{ dataset: any; statistics: any }> {
+  async anonymize(
+    dataset: Dataset,
+  ): Promise<{ dataset: any; statistics: any }> {
     // L-diversity implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 1200, recordsProcessed: dataset.data.length }
+      statistics: {
+        executionTime: 1200,
+        recordsProcessed: dataset.data.length,
+      },
     };
   }
 }
@@ -660,14 +854,19 @@ class TClosenessAnonymizer {
   constructor(
     private t: number,
     private sensitiveAttributes: string[],
-    private quasiIdentifiers: string[]
+    private quasiIdentifiers: string[],
   ) {}
 
-  async anonymize(dataset: Dataset): Promise<{ dataset: any; statistics: any }> {
+  async anonymize(
+    dataset: Dataset,
+  ): Promise<{ dataset: any; statistics: any }> {
     // T-closeness implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 1500, recordsProcessed: dataset.data.length }
+      statistics: {
+        executionTime: 1500,
+        recordsProcessed: dataset.data.length,
+      },
     };
   }
 }
@@ -675,11 +874,14 @@ class TClosenessAnonymizer {
 class DifferentialPrivacyMechanism {
   constructor(private epsilon: number) {}
 
-  async applyToDataset(dataset: Dataset, queries: PrivacyQuery[]): Promise<{ dataset: any; statistics: any }> {
+  async applyToDataset(
+    dataset: Dataset,
+    queries: PrivacyQuery[],
+  ): Promise<{ dataset: any; statistics: any }> {
     // Differential privacy implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 800, recordsProcessed: dataset.data.length }
+      statistics: { executionTime: 800, recordsProcessed: dataset.data.length },
     };
   }
 }
@@ -691,7 +893,7 @@ class DataSuppressor {
     // Data suppression implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 300, recordsProcessed: dataset.data.length }
+      statistics: { executionTime: 300, recordsProcessed: dataset.data.length },
     };
   }
 }
@@ -699,11 +901,13 @@ class DataSuppressor {
 class DataGeneralizer {
   constructor(private hierarchies: GeneralizationHierarchy[]) {}
 
-  async generalize(dataset: Dataset): Promise<{ dataset: any; statistics: any }> {
+  async generalize(
+    dataset: Dataset,
+  ): Promise<{ dataset: any; statistics: any }> {
     // Data generalization implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 500, recordsProcessed: dataset.data.length }
+      statistics: { executionTime: 500, recordsProcessed: dataset.data.length },
     };
   }
 }
@@ -715,7 +919,7 @@ class DataPerturbator {
     // Data perturbation implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 400, recordsProcessed: dataset.data.length }
+      statistics: { executionTime: 400, recordsProcessed: dataset.data.length },
     };
   }
 }
@@ -723,11 +927,13 @@ class DataPerturbator {
 class Pseudonymizer {
   constructor(private config: PseudonymizationConfig) {}
 
-  async pseudonymize(dataset: Dataset): Promise<{ dataset: any; statistics: any }> {
+  async pseudonymize(
+    dataset: Dataset,
+  ): Promise<{ dataset: any; statistics: any }> {
     // Pseudonymization implementation
     return {
       dataset: dataset.data, // Placeholder
-      statistics: { executionTime: 200, recordsProcessed: dataset.data.length }
+      statistics: { executionTime: 200, recordsProcessed: dataset.data.length },
     };
   }
 }
@@ -937,7 +1143,7 @@ export interface AnonymizationRecord {
 export interface SuppressionRule {
   field: string;
   condition: string;
-  action: 'remove' | 'replace' | 'mask';
+  action: "remove" | "replace" | "mask";
   replacement?: string;
 }
 
@@ -954,13 +1160,13 @@ export interface GeneralizationLevel {
 
 export interface PerturbationConfig {
   fields: string[];
-  method: 'noise_addition' | 'data_swapping' | 'microaggregation';
+  method: "noise_addition" | "data_swapping" | "microaggregation";
   parameters: any;
 }
 
 export interface PseudonymizationConfig {
   fields: string[];
-  algorithm: 'hash' | 'encryption' | 'tokenization';
+  algorithm: "hash" | "encryption" | "tokenization";
   keyManagement: KeyManagementConfig;
   reversible: boolean;
 }
@@ -990,35 +1196,39 @@ export interface Constraint {
 }
 
 export enum AnonymizationTechnique {
-  K_ANONYMITY = 'k_anonymity',
-  L_DIVERSITY = 'l_diversity',
-  T_CLOSENESS = 't_closeness',
-  DIFFERENTIAL_PRIVACY = 'differential_privacy',
-  SUPPRESSION = 'suppression',
-  GENERALIZATION = 'generalization',
-  PERTURBATION = 'perturbation',
-  PSEUDONYMIZATION = 'pseudonymization'
+  K_ANONYMITY = "k_anonymity",
+  L_DIVERSITY = "l_diversity",
+  T_CLOSENESS = "t_closeness",
+  DIFFERENTIAL_PRIVACY = "differential_privacy",
+  SUPPRESSION = "suppression",
+  GENERALIZATION = "generalization",
+  PERTURBATION = "perturbation",
+  PSEUDONYMIZATION = "pseudonymization",
 }
 
 export enum AutomationLevel {
-  MANUAL = 'manual',
-  SEMI_AUTOMATED = 'semi_automated',
-  FULLY_AUTOMATED = 'fully_automated'
+  MANUAL = "manual",
+  SEMI_AUTOMATED = "semi_automated",
+  FULLY_AUTOMATED = "fully_automated",
 }
 
 export enum Priority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export interface ReviewSchedule {
-  frequency: 'weekly' | 'monthly' | 'quarterly' | 'annually';
+  frequency: "weekly" | "monthly" | "quarterly" | "annually";
   nextReview: Date;
   responsible: string;
 }
 
 export interface RiskAssessmentService {
-  assessRisk(dataset: any, technique: AnonymizationTechnique, parameters: any): Promise<RiskAssessment>;
+  assessRisk(
+    dataset: any,
+    technique: AnonymizationTechnique,
+    parameters: any,
+  ): Promise<RiskAssessment>;
 }

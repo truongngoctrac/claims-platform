@@ -5,8 +5,8 @@ import {
   ComplianceServiceResponse,
   ComplianceMetadata,
   DataType,
-  RiskLevel
-} from './types';
+  RiskLevel,
+} from "./types";
 
 export class AuditTrailAutomationService {
   private auditEntries: Map<string, AuditTrailEntry> = new Map();
@@ -18,52 +18,52 @@ export class AuditTrailAutomationService {
     private config: AuditTrailConfig,
     private logger: any,
     private alertService: any,
-    private storageService: any
+    private storageService: any,
   ) {
     this.initializeAuditRules();
   }
 
   // Core Audit Logging
   async logAuditEvent(
-    auditEvent: AuditEventInput
+    auditEvent: AuditEventInput,
   ): Promise<ComplianceServiceResponse<AuditTrailEntry>> {
     try {
       const auditEntry = await this.createAuditEntry(auditEvent);
-      
+
       // Apply enrichment
       const enrichedEntry = await this.enrichAuditEntry(auditEntry, auditEvent);
-      
+
       // Store the audit entry
       this.auditEntries.set(enrichedEntry.id, enrichedEntry);
-      
+
       // Apply retention policy
       await this.applyRetentionPolicy(enrichedEntry);
-      
+
       // Persist to storage
       await this.persistAuditEntry(enrichedEntry);
-      
+
       // Check for alerts
       await this.checkAlertRules(enrichedEntry);
-      
+
       // Real-time monitoring
       await this.processRealTimeMonitoring(enrichedEntry);
 
       return {
         success: true,
-        data: enrichedEntry
+        data: enrichedEntry,
       };
     } catch (error) {
-      this.logger.error('Audit logging failed:', error);
+      this.logger.error("Audit logging failed:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Audit logging failed'
+        error: error instanceof Error ? error.message : "Audit logging failed",
       };
     }
   }
 
   // Batch Audit Processing
   async processBatchAudit(
-    events: AuditEventInput[]
+    events: AuditEventInput[],
   ): Promise<ComplianceServiceResponse<BatchAuditResult>> {
     try {
       const results: AuditProcessingResult[] = [];
@@ -76,13 +76,13 @@ export class AuditTrailAutomationService {
             event_id: event.eventId || this.generateId(),
             success: result.success,
             audit_id: result.data?.id,
-            error: result.error
+            error: result.error,
           });
         } catch (error) {
           results.push({
             event_id: event.eventId || this.generateId(),
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -91,32 +91,41 @@ export class AuditTrailAutomationService {
         batch_id: batchId,
         processed_at: new Date(),
         total_events: events.length,
-        successful_events: results.filter(r => r.success).length,
-        failed_events: results.filter(r => !r.success).length,
+        successful_events: results.filter((r) => r.success).length,
+        failed_events: results.filter((r) => !r.success).length,
         processing_results: results,
-        batch_metrics: await this.calculateBatchMetrics(results)
+        batch_metrics: await this.calculateBatchMetrics(results),
       };
 
       return {
         success: true,
-        data: batchResult
+        data: batchResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Batch audit processing failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Batch audit processing failed",
       };
     }
   }
 
   // Audit Query and Search
   async queryAuditTrail(
-    query: AuditQuery
+    query: AuditQuery,
   ): Promise<ComplianceServiceResponse<AuditQueryResult>> {
     try {
       const filteredEntries = await this.filterAuditEntries(query);
-      const sortedEntries = await this.sortAuditEntries(filteredEntries, query.sortBy);
-      const paginatedEntries = await this.paginateResults(sortedEntries, query.pagination);
+      const sortedEntries = await this.sortAuditEntries(
+        filteredEntries,
+        query.sortBy,
+      );
+      const paginatedEntries = await this.paginateResults(
+        sortedEntries,
+        query.pagination,
+      );
 
       const queryResult: AuditQueryResult = {
         query_id: this.generateId(),
@@ -124,29 +133,32 @@ export class AuditTrailAutomationService {
         total_matches: filteredEntries.length,
         returned_count: paginatedEntries.length,
         entries: paginatedEntries,
-        aggregations: await this.calculateAggregations(filteredEntries, query.aggregations),
+        aggregations: await this.calculateAggregations(
+          filteredEntries,
+          query.aggregations,
+        ),
         query_metadata: {
           execution_time: Date.now(),
           query_complexity: this.assessQueryComplexity(query),
-          cache_hit: false
-        }
+          cache_hit: false,
+        },
       };
 
       return {
         success: true,
-        data: queryResult
+        data: queryResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Audit query failed'
+        error: error instanceof Error ? error.message : "Audit query failed",
       };
     }
   }
 
   // Real-time Audit Monitoring
   async startRealTimeMonitoring(
-    monitoringRules: MonitoringRule[]
+    monitoringRules: MonitoringRule[],
   ): Promise<ComplianceServiceResponse<MonitoringSession>> {
     try {
       const sessionId = this.generateSessionId();
@@ -154,10 +166,10 @@ export class AuditTrailAutomationService {
         id: sessionId,
         started_at: new Date(),
         rules: monitoringRules,
-        status: 'active',
+        status: "active",
         events_processed: 0,
         alerts_triggered: 0,
-        last_activity: new Date()
+        last_activity: new Date(),
       };
 
       // Initialize monitoring infrastructure
@@ -165,24 +177,27 @@ export class AuditTrailAutomationService {
 
       return {
         success: true,
-        data: session
+        data: session,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Monitoring initialization failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Monitoring initialization failed",
       };
     }
   }
 
   // Compliance Audit Reporting
   async generateComplianceAuditReport(
-    reportRequest: AuditReportRequest
+    reportRequest: AuditReportRequest,
   ): Promise<ComplianceServiceResponse<ComplianceAuditReport>> {
     try {
       const auditEntries = await this.getAuditEntriesForPeriod(
         reportRequest.startDate,
-        reportRequest.endDate
+        reportRequest.endDate,
       );
 
       const report: ComplianceAuditReport = {
@@ -190,39 +205,47 @@ export class AuditTrailAutomationService {
         generated_at: new Date(),
         reporting_period: {
           start: reportRequest.startDate,
-          end: reportRequest.endDate
+          end: reportRequest.endDate,
         },
         total_events: auditEntries.length,
         compliance_summary: await this.generateComplianceSummary(auditEntries),
         risk_analysis: await this.performRiskAnalysis(auditEntries),
         user_activity_analysis: await this.analyzeUserActivity(auditEntries),
-        system_activity_analysis: await this.analyzeSystemActivity(auditEntries),
-        data_access_patterns: await this.analyzeDataAccessPatterns(auditEntries),
+        system_activity_analysis:
+          await this.analyzeSystemActivity(auditEntries),
+        data_access_patterns:
+          await this.analyzeDataAccessPatterns(auditEntries),
         security_incidents: await this.identifySecurityIncidents(auditEntries),
         policy_violations: await this.identifyPolicyViolations(auditEntries),
-        trends_and_anomalies: await this.identifyTrendsAndAnomalies(auditEntries),
+        trends_and_anomalies:
+          await this.identifyTrendsAndAnomalies(auditEntries),
         recommendations: await this.generateRecommendations(auditEntries),
-        regulatory_compliance: await this.assessRegulatoryCompliance(auditEntries)
+        regulatory_compliance:
+          await this.assessRegulatoryCompliance(auditEntries),
       };
 
       return {
         success: true,
-        data: report
+        data: report,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Audit report generation failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Audit report generation failed",
       };
     }
   }
 
   // Audit Data Integrity and Verification
   async verifyAuditIntegrity(
-    verificationRequest: IntegrityVerificationRequest
+    verificationRequest: IntegrityVerificationRequest,
   ): Promise<ComplianceServiceResponse<IntegrityVerificationResult>> {
     try {
-      const entries = await this.getAuditEntriesForVerification(verificationRequest);
+      const entries =
+        await this.getAuditEntriesForVerification(verificationRequest);
       const verificationResults: EntryVerificationResult[] = [];
 
       for (const entry of entries) {
@@ -234,28 +257,33 @@ export class AuditTrailAutomationService {
         verification_id: this.generateId(),
         verified_at: new Date(),
         total_entries: entries.length,
-        verified_entries: verificationResults.filter(r => r.verified).length,
-        corrupted_entries: verificationResults.filter(r => !r.verified).length,
+        verified_entries: verificationResults.filter((r) => r.verified).length,
+        corrupted_entries: verificationResults.filter((r) => !r.verified)
+          .length,
         verification_results: verificationResults,
         integrity_score: this.calculateIntegrityScore(verificationResults),
-        recommendations: await this.generateIntegrityRecommendations(verificationResults)
+        recommendations:
+          await this.generateIntegrityRecommendations(verificationResults),
       };
 
       return {
         success: true,
-        data: overallResult
+        data: overallResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Integrity verification failed'
+        error:
+          error instanceof Error
+            ? error.message
+            : "Integrity verification failed",
       };
     }
   }
 
   // Audit Configuration Management
   async configureAuditRules(
-    rulesConfig: AuditRulesConfiguration
+    rulesConfig: AuditRulesConfiguration,
   ): Promise<ComplianceServiceResponse<AuditRulesResult>> {
     try {
       const results: RuleConfigurationResult[] = [];
@@ -267,16 +295,17 @@ export class AuditTrailAutomationService {
           this.auditRules.set(rule.id, rule);
           results.push({
             rule_id: rule.id,
-            rule_type: 'audit',
+            rule_type: "audit",
             success: true,
-            message: 'Rule configured successfully'
+            message: "Rule configured successfully",
           });
         } catch (error) {
           results.push({
             rule_id: rule.id,
-            rule_type: 'audit',
+            rule_type: "audit",
             success: false,
-            message: error instanceof Error ? error.message : 'Configuration failed'
+            message:
+              error instanceof Error ? error.message : "Configuration failed",
           });
         }
       }
@@ -288,16 +317,17 @@ export class AuditTrailAutomationService {
           this.alertRules.set(rule.id, rule);
           results.push({
             rule_id: rule.id,
-            rule_type: 'alert',
+            rule_type: "alert",
             success: true,
-            message: 'Alert rule configured successfully'
+            message: "Alert rule configured successfully",
           });
         } catch (error) {
           results.push({
             rule_id: rule.id,
-            rule_type: 'alert',
+            rule_type: "alert",
             success: false,
-            message: error instanceof Error ? error.message : 'Configuration failed'
+            message:
+              error instanceof Error ? error.message : "Configuration failed",
           });
         }
       }
@@ -305,31 +335,33 @@ export class AuditTrailAutomationService {
       const configResult: AuditRulesResult = {
         configuration_id: this.generateId(),
         configured_at: new Date(),
-        total_rules: rulesConfig.auditRules.length + rulesConfig.alertRules.length,
-        successful_configurations: results.filter(r => r.success).length,
-        failed_configurations: results.filter(r => !r.success).length,
-        configuration_results: results
+        total_rules:
+          rulesConfig.auditRules.length + rulesConfig.alertRules.length,
+        successful_configurations: results.filter((r) => r.success).length,
+        failed_configurations: results.filter((r) => !r.success).length,
+        configuration_results: results,
       };
 
       return {
         success: true,
-        data: configResult
+        data: configResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Rules configuration failed'
+        error:
+          error instanceof Error ? error.message : "Rules configuration failed",
       };
     }
   }
 
   // Automated Audit Analysis
   async performAutomatedAnalysis(
-    analysisRequest: AutomatedAnalysisRequest
+    analysisRequest: AutomatedAnalysisRequest,
   ): Promise<ComplianceServiceResponse<AutomatedAnalysisResult>> {
     try {
       const auditData = await this.getAuditDataForAnalysis(analysisRequest);
-      
+
       const analysisResult: AutomatedAnalysisResult = {
         analysis_id: this.generateId(),
         performed_at: new Date(),
@@ -338,46 +370,57 @@ export class AuditTrailAutomationService {
         findings: [],
         risk_indicators: [],
         recommendations: [],
-        confidence_score: 0
+        confidence_score: 0,
       };
 
       switch (analysisRequest.analysisType) {
-        case 'anomaly_detection':
-          analysisResult.findings = await this.performAnomalyDetection(auditData);
+        case "anomaly_detection":
+          analysisResult.findings =
+            await this.performAnomalyDetection(auditData);
           break;
-        case 'pattern_analysis':
-          analysisResult.findings = await this.performPatternAnalysis(auditData);
+        case "pattern_analysis":
+          analysisResult.findings =
+            await this.performPatternAnalysis(auditData);
           break;
-        case 'risk_assessment':
-          analysisResult.risk_indicators = await this.performRiskAssessment(auditData);
+        case "risk_assessment":
+          analysisResult.risk_indicators =
+            await this.performRiskAssessment(auditData);
           break;
-        case 'compliance_check':
-          analysisResult.findings = await this.performComplianceCheck(auditData);
+        case "compliance_check":
+          analysisResult.findings =
+            await this.performComplianceCheck(auditData);
           break;
-        case 'fraud_detection':
+        case "fraud_detection":
           analysisResult.findings = await this.performFraudDetection(auditData);
           break;
         default:
-          throw new Error(`Unsupported analysis type: ${analysisRequest.analysisType}`);
+          throw new Error(
+            `Unsupported analysis type: ${analysisRequest.analysisType}`,
+          );
       }
 
-      analysisResult.recommendations = await this.generateAnalysisRecommendations(analysisResult);
-      analysisResult.confidence_score = await this.calculateConfidenceScore(analysisResult);
+      analysisResult.recommendations =
+        await this.generateAnalysisRecommendations(analysisResult);
+      analysisResult.confidence_score =
+        await this.calculateConfidenceScore(analysisResult);
 
       return {
         success: true,
-        data: analysisResult
+        data: analysisResult,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Automated analysis failed'
+        error:
+          error instanceof Error ? error.message : "Automated analysis failed",
       };
     }
   }
 
   // Private helper methods
-  private async createAuditEntry(event: AuditEventInput): Promise<AuditTrailEntry> {
+  private async createAuditEntry(
+    event: AuditEventInput,
+  ): Promise<AuditTrailEntry> {
     const entry: AuditTrailEntry = {
       id: this.generateId(),
       timestamp: new Date(),
@@ -387,12 +430,12 @@ export class AuditTrailAutomationService {
       resourceId: event.resourceId,
       dataSubjectId: event.dataSubjectId,
       details: event.details || {},
-      ipAddress: event.context?.ipAddress || 'unknown',
-      userAgent: event.context?.userAgent || 'unknown',
-      sessionId: event.context?.sessionId || 'unknown',
+      ipAddress: event.context?.ipAddress || "unknown",
+      userAgent: event.context?.userAgent || "unknown",
+      sessionId: event.context?.sessionId || "unknown",
       result: event.result,
       complianceImpact: event.complianceImpact,
-      metadata: this.createMetadata()
+      metadata: this.createMetadata(),
     };
 
     return entry;
@@ -400,10 +443,10 @@ export class AuditTrailAutomationService {
 
   private async enrichAuditEntry(
     entry: AuditTrailEntry,
-    originalEvent: AuditEventInput
+    originalEvent: AuditEventInput,
   ): Promise<AuditTrailEntry> {
     // Add geolocation if available
-    if (entry.ipAddress !== 'unknown') {
+    if (entry.ipAddress !== "unknown") {
       entry.details.geolocation = await this.getGeolocation(entry.ipAddress);
     }
 
@@ -424,7 +467,7 @@ export class AuditTrailAutomationService {
     if (policy) {
       entry.details.retentionPolicy = policy.id;
       entry.details.retentionExpiry = new Date(
-        Date.now() + policy.retentionPeriodDays * 24 * 60 * 60 * 1000
+        Date.now() + policy.retentionPeriodDays * 24 * 60 * 60 * 1000,
       );
     }
   }
@@ -437,31 +480,42 @@ export class AuditTrailAutomationService {
     }
   }
 
-  private async filterAuditEntries(query: AuditQuery): Promise<AuditTrailEntry[]> {
+  private async filterAuditEntries(
+    query: AuditQuery,
+  ): Promise<AuditTrailEntry[]> {
     let entries = Array.from(this.auditEntries.values());
 
     // Apply filters
     if (query.filters.dateRange) {
-      entries = entries.filter(entry => 
-        entry.timestamp >= query.filters.dateRange!.start &&
-        entry.timestamp <= query.filters.dateRange!.end
+      entries = entries.filter(
+        (entry) =>
+          entry.timestamp >= query.filters.dateRange!.start &&
+          entry.timestamp <= query.filters.dateRange!.end,
       );
     }
 
     if (query.filters.userId) {
-      entries = entries.filter(entry => entry.userId === query.filters.userId);
+      entries = entries.filter(
+        (entry) => entry.userId === query.filters.userId,
+      );
     }
 
     if (query.filters.action) {
-      entries = entries.filter(entry => entry.action === query.filters.action);
+      entries = entries.filter(
+        (entry) => entry.action === query.filters.action,
+      );
     }
 
     if (query.filters.resourceType) {
-      entries = entries.filter(entry => entry.resourceType === query.filters.resourceType);
+      entries = entries.filter(
+        (entry) => entry.resourceType === query.filters.resourceType,
+      );
     }
 
     if (query.filters.complianceImpact) {
-      entries = entries.filter(entry => entry.complianceImpact === query.filters.complianceImpact);
+      entries = entries.filter(
+        (entry) => entry.complianceImpact === query.filters.complianceImpact,
+      );
     }
 
     return entries;
@@ -482,13 +536,13 @@ export class AuditTrailAutomationService {
   private createMetadata(): ComplianceMetadata {
     return {
       id: this.generateId(),
-      version: '1.0',
+      version: "1.0",
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: 'audit-trail-service',
-      updatedBy: 'audit-trail-service',
-      tags: ['audit', 'compliance'],
-      classification: 'confidential' as any
+      createdBy: "audit-trail-service",
+      updatedBy: "audit-trail-service",
+      tags: ["audit", "compliance"],
+      classification: "confidential" as any,
     };
   }
 
@@ -496,34 +550,38 @@ export class AuditTrailAutomationService {
     // Initialize default audit rules
     const defaultRules: AuditRule[] = [
       {
-        id: 'default-high-risk',
-        name: 'High Risk Activity Monitor',
-        description: 'Monitor high-risk activities',
+        id: "default-high-risk",
+        name: "High Risk Activity Monitor",
+        description: "Monitor high-risk activities",
         conditions: [
-          { field: 'complianceImpact', operator: 'equals', value: ComplianceImpact.HIGH }
+          {
+            field: "complianceImpact",
+            operator: "equals",
+            value: ComplianceImpact.HIGH,
+          },
         ],
-        actions: ['log', 'alert'],
-        enabled: true
+        actions: ["log", "alert"],
+        enabled: true,
       },
       {
-        id: 'default-data-access',
-        name: 'Sensitive Data Access Monitor',
-        description: 'Monitor access to sensitive data',
+        id: "default-data-access",
+        name: "Sensitive Data Access Monitor",
+        description: "Monitor access to sensitive data",
         conditions: [
-          { field: 'action', operator: 'equals', value: AuditAction.READ },
-          { field: 'resourceType', operator: 'contains', value: 'sensitive' }
+          { field: "action", operator: "equals", value: AuditAction.READ },
+          { field: "resourceType", operator: "contains", value: "sensitive" },
         ],
-        actions: ['log', 'alert'],
-        enabled: true
-      }
+        actions: ["log", "alert"],
+        enabled: true,
+      },
     ];
 
-    defaultRules.forEach(rule => this.auditRules.set(rule.id, rule));
+    defaultRules.forEach((rule) => this.auditRules.set(rule.id, rule));
   }
 
   // Placeholder implementations for complex operations
   private async getGeolocation(ipAddress: string): Promise<any> {
-    return { country: 'Unknown', city: 'Unknown' };
+    return { country: "Unknown", city: "Unknown" };
   }
 
   private async calculateRiskScore(entry: AuditTrailEntry): Promise<number> {
@@ -531,38 +589,49 @@ export class AuditTrailAutomationService {
   }
 
   private async classifyAuditEvent(entry: AuditTrailEntry): Promise<string> {
-    return 'standard'; // Placeholder
+    return "standard"; // Placeholder
   }
 
   private async generateCorrelationId(entry: AuditTrailEntry): Promise<string> {
     return `corr_${entry.userId}_${entry.sessionId}`;
   }
 
-  private getRetentionPolicyForEntry(entry: AuditTrailEntry): AuditRetentionPolicy | undefined {
-    return Array.from(this.retentionPolicies.values()).find(policy => 
-      policy.applicableActions.includes(entry.action) ||
-      policy.applicableResourceTypes.includes(entry.resourceType)
+  private getRetentionPolicyForEntry(
+    entry: AuditTrailEntry,
+  ): AuditRetentionPolicy | undefined {
+    return Array.from(this.retentionPolicies.values()).find(
+      (policy) =>
+        policy.applicableActions.includes(entry.action) ||
+        policy.applicableResourceTypes.includes(entry.resourceType),
     );
   }
 
-  private async evaluateAlertRule(rule: AlertRule, entry: AuditTrailEntry): Promise<boolean> {
-    return rule.conditions.every(condition => 
-      this.evaluateCondition(condition, entry)
+  private async evaluateAlertRule(
+    rule: AlertRule,
+    entry: AuditTrailEntry,
+  ): Promise<boolean> {
+    return rule.conditions.every((condition) =>
+      this.evaluateCondition(condition, entry),
     );
   }
 
-  private evaluateCondition(condition: RuleCondition, entry: AuditTrailEntry): boolean {
+  private evaluateCondition(
+    condition: RuleCondition,
+    entry: AuditTrailEntry,
+  ): boolean {
     const fieldValue = this.getFieldValue(entry, condition.field);
-    
+
     switch (condition.operator) {
-      case 'equals':
+      case "equals":
         return fieldValue === condition.value;
-      case 'contains':
-        return typeof fieldValue === 'string' && fieldValue.includes(condition.value);
-      case 'greater_than':
-        return typeof fieldValue === 'number' && fieldValue > condition.value;
-      case 'less_than':
-        return typeof fieldValue === 'number' && fieldValue < condition.value;
+      case "contains":
+        return (
+          typeof fieldValue === "string" && fieldValue.includes(condition.value)
+        );
+      case "greater_than":
+        return typeof fieldValue === "number" && fieldValue > condition.value;
+      case "less_than":
+        return typeof fieldValue === "number" && fieldValue < condition.value;
       default:
         return false;
     }
@@ -570,20 +639,23 @@ export class AuditTrailAutomationService {
 
   private getFieldValue(entry: AuditTrailEntry, field: string): any {
     switch (field) {
-      case 'action':
+      case "action":
         return entry.action;
-      case 'resourceType':
+      case "resourceType":
         return entry.resourceType;
-      case 'complianceImpact':
+      case "complianceImpact":
         return entry.complianceImpact;
-      case 'userId':
+      case "userId":
         return entry.userId;
       default:
         return entry.details[field];
     }
   }
 
-  private async triggerAlert(rule: AlertRule, entry: AuditTrailEntry): Promise<void> {
+  private async triggerAlert(
+    rule: AlertRule,
+    entry: AuditTrailEntry,
+  ): Promise<void> {
     const alert = {
       rule_id: rule.id,
       rule_name: rule.name,
@@ -591,7 +663,7 @@ export class AuditTrailAutomationService {
       severity: rule.severity,
       message: rule.alertMessage || `Alert triggered by rule: ${rule.name}`,
       timestamp: new Date(),
-      details: entry
+      details: entry,
     };
 
     await this.alertService.sendAlert(alert);
@@ -599,7 +671,7 @@ export class AuditTrailAutomationService {
 
   private calculateIntegrityScore(results: EntryVerificationResult[]): number {
     if (results.length === 0) return 100;
-    const verifiedCount = results.filter(r => r.verified).length;
+    const verifiedCount = results.filter((r) => r.verified).length;
     return (verifiedCount / results.length) * 100;
   }
 }
@@ -621,7 +693,7 @@ export interface AuditEventInput {
   resourceId: string;
   dataSubjectId?: string;
   details?: Record<string, any>;
-  result: 'success' | 'failure' | 'warning';
+  result: "success" | "failure" | "warning";
   complianceImpact: ComplianceImpact;
   context?: AuditContext;
 }
@@ -650,7 +722,7 @@ export interface AlertRule {
   name: string;
   description: string;
   conditions: RuleCondition[];
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   alertMessage?: string;
   enabled: boolean;
   cooldownPeriod?: number;
@@ -658,7 +730,7 @@ export interface AlertRule {
 
 export interface RuleCondition {
   field: string;
-  operator: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'matches';
+  operator: "equals" | "contains" | "greater_than" | "less_than" | "matches";
   value: any;
 }
 
@@ -684,13 +756,13 @@ export interface AuditFilters {
   action?: AuditAction;
   resourceType?: string;
   complianceImpact?: ComplianceImpact;
-  result?: 'success' | 'failure' | 'warning';
+  result?: "success" | "failure" | "warning";
   customFilters?: Record<string, any>;
 }
 
 export interface AuditSortOptions {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface PaginationOptions {
@@ -700,7 +772,7 @@ export interface PaginationOptions {
 
 export interface AggregationOptions {
   field: string;
-  operation: 'count' | 'sum' | 'avg' | 'min' | 'max' | 'group_by';
+  operation: "count" | "sum" | "avg" | "min" | "max" | "group_by";
 }
 
 export interface MonitoringRule {
@@ -718,14 +790,14 @@ export interface AuditReportRequest {
   includeUserActivity: boolean;
   includeSystemActivity: boolean;
   includeSecurityIncidents: boolean;
-  format: 'json' | 'pdf' | 'csv';
+  format: "json" | "pdf" | "csv";
 }
 
 export interface IntegrityVerificationRequest {
   startDate?: Date;
   endDate?: Date;
   entryIds?: string[];
-  verificationLevel: 'basic' | 'comprehensive';
+  verificationLevel: "basic" | "comprehensive";
 }
 
 export interface AuditRulesConfiguration {
@@ -735,7 +807,12 @@ export interface AuditRulesConfiguration {
 }
 
 export interface AutomatedAnalysisRequest {
-  analysisType: 'anomaly_detection' | 'pattern_analysis' | 'risk_assessment' | 'compliance_check' | 'fraud_detection';
+  analysisType:
+    | "anomaly_detection"
+    | "pattern_analysis"
+    | "risk_assessment"
+    | "compliance_check"
+    | "fraud_detection";
   period: { start: Date; end: Date };
   parameters?: Record<string, any>;
 }
@@ -785,7 +862,7 @@ export interface MonitoringSession {
   id: string;
   started_at: Date;
   rules: MonitoringRule[];
-  status: 'active' | 'paused' | 'stopped';
+  status: "active" | "paused" | "stopped";
   events_processed: number;
   alerts_triggered: number;
   last_activity: Date;
@@ -838,7 +915,7 @@ export interface AuditRulesResult {
 
 export interface RuleConfigurationResult {
   rule_id: string;
-  rule_type: 'audit' | 'alert';
+  rule_type: "audit" | "alert";
   success: boolean;
   message: string;
 }

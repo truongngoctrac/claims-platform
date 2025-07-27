@@ -50,7 +50,13 @@ export interface ConsentRecord {
 }
 
 export interface ConsentEvidence {
-  type: 'checkbox' | 'signature' | 'verbal' | 'implicit' | 'opt-in' | 'double-opt-in';
+  type:
+    | "checkbox"
+    | "signature"
+    | "verbal"
+    | "implicit"
+    | "opt-in"
+    | "double-opt-in";
   evidence: string;
   witnessId?: string;
   documentId?: string;
@@ -98,7 +104,7 @@ export interface AuditTrailEntry {
   ipAddress: string;
   userAgent: string;
   sessionId: string;
-  result: 'success' | 'failure' | 'warning';
+  result: "success" | "failure" | "warning";
   complianceImpact: ComplianceImpact;
   metadata: ComplianceMetadata;
 }
@@ -170,168 +176,168 @@ export interface ComplianceTraining {
 
 // Enums and Types
 export enum ConsentStatus {
-  GIVEN = 'given',
-  WITHDRAWN = 'withdrawn',
-  EXPIRED = 'expired',
-  PENDING = 'pending',
-  REJECTED = 'rejected'
+  GIVEN = "given",
+  WITHDRAWN = "withdrawn",
+  EXPIRED = "expired",
+  PENDING = "pending",
+  REJECTED = "rejected",
 }
 
 export enum DataProcessingPurpose {
-  HEALTHCARE_SERVICES = 'healthcare_services',
-  CLAIMS_PROCESSING = 'claims_processing',
-  FRAUD_PREVENTION = 'fraud_prevention',
-  ANALYTICS = 'analytics',
-  MARKETING = 'marketing',
-  CUSTOMER_SUPPORT = 'customer_support',
-  REGULATORY_COMPLIANCE = 'regulatory_compliance',
-  RESEARCH = 'research'
+  HEALTHCARE_SERVICES = "healthcare_services",
+  CLAIMS_PROCESSING = "claims_processing",
+  FRAUD_PREVENTION = "fraud_prevention",
+  ANALYTICS = "analytics",
+  MARKETING = "marketing",
+  CUSTOMER_SUPPORT = "customer_support",
+  REGULATORY_COMPLIANCE = "regulatory_compliance",
+  RESEARCH = "research",
 }
 
 export enum DataClassification {
-  PUBLIC = 'public',
-  INTERNAL = 'internal',
-  CONFIDENTIAL = 'confidential',
-  RESTRICTED = 'restricted',
-  SENSITIVE_PERSONAL = 'sensitive_personal',
-  SPECIAL_CATEGORY = 'special_category'
+  PUBLIC = "public",
+  INTERNAL = "internal",
+  CONFIDENTIAL = "confidential",
+  RESTRICTED = "restricted",
+  SENSITIVE_PERSONAL = "sensitive_personal",
+  SPECIAL_CATEGORY = "special_category",
 }
 
 export enum DataType {
-  PERSONAL_IDENTIFIERS = 'personal_identifiers',
-  HEALTH_DATA = 'health_data',
-  FINANCIAL_DATA = 'financial_data',
-  BIOMETRIC_DATA = 'biometric_data',
-  LOCATION_DATA = 'location_data',
-  BEHAVIORAL_DATA = 'behavioral_data',
-  COMMUNICATION_DATA = 'communication_data',
-  TECHNICAL_DATA = 'technical_data'
+  PERSONAL_IDENTIFIERS = "personal_identifiers",
+  HEALTH_DATA = "health_data",
+  FINANCIAL_DATA = "financial_data",
+  BIOMETRIC_DATA = "biometric_data",
+  LOCATION_DATA = "location_data",
+  BEHAVIORAL_DATA = "behavioral_data",
+  COMMUNICATION_DATA = "communication_data",
+  TECHNICAL_DATA = "technical_data",
 }
 
 export enum LegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests'
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_TASK = "public_task",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
 export enum DataRegion {
-  EU = 'eu',
-  US = 'us',
-  APAC = 'apac',
-  CANADA = 'canada',
-  UK = 'uk',
-  VIETNAM = 'vietnam',
-  OTHER = 'other'
+  EU = "eu",
+  US = "us",
+  APAC = "apac",
+  CANADA = "canada",
+  UK = "uk",
+  VIETNAM = "vietnam",
+  OTHER = "other",
 }
 
 export enum TransferMechanism {
-  ADEQUACY_DECISION = 'adequacy_decision',
-  STANDARD_CONTRACTUAL_CLAUSES = 'standard_contractual_clauses',
-  BINDING_CORPORATE_RULES = 'binding_corporate_rules',
-  CERTIFICATION = 'certification',
-  CODE_OF_CONDUCT = 'code_of_conduct',
-  DEROGATIONS = 'derogations'
+  ADEQUACY_DECISION = "adequacy_decision",
+  STANDARD_CONTRACTUAL_CLAUSES = "standard_contractual_clauses",
+  BINDING_CORPORATE_RULES = "binding_corporate_rules",
+  CERTIFICATION = "certification",
+  CODE_OF_CONDUCT = "code_of_conduct",
+  DEROGATIONS = "derogations",
 }
 
 export enum ConsentGranularity {
-  GLOBAL = 'global',
-  PURPOSE_SPECIFIC = 'purpose_specific',
-  DATA_TYPE_SPECIFIC = 'data_type_specific',
-  PROCESSING_SPECIFIC = 'processing_specific'
+  GLOBAL = "global",
+  PURPOSE_SPECIFIC = "purpose_specific",
+  DATA_TYPE_SPECIFIC = "data_type_specific",
+  PROCESSING_SPECIFIC = "processing_specific",
 }
 
 export enum ConsentMethod {
-  CHECKBOX = 'checkbox',
-  DIGITAL_SIGNATURE = 'digital_signature',
-  VERBAL = 'verbal',
-  WRITTEN = 'written',
-  OPT_IN = 'opt_in',
-  DOUBLE_OPT_IN = 'double_opt_in'
+  CHECKBOX = "checkbox",
+  DIGITAL_SIGNATURE = "digital_signature",
+  VERBAL = "verbal",
+  WRITTEN = "written",
+  OPT_IN = "opt_in",
+  DOUBLE_OPT_IN = "double_opt_in",
 }
 
 export enum AuditAction {
-  CREATE = 'create',
-  READ = 'read',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  EXPORT = 'export',
-  ACCESS = 'access',
-  CONSENT_GIVEN = 'consent_given',
-  CONSENT_WITHDRAWN = 'consent_withdrawn',
-  DATA_ERASURE = 'data_erasure',
-  DATA_PORTABILITY = 'data_portability'
+  CREATE = "create",
+  READ = "read",
+  UPDATE = "update",
+  DELETE = "delete",
+  EXPORT = "export",
+  ACCESS = "access",
+  CONSENT_GIVEN = "consent_given",
+  CONSENT_WITHDRAWN = "consent_withdrawn",
+  DATA_ERASURE = "data_erasure",
+  DATA_PORTABILITY = "data_portability",
 }
 
 export enum ComplianceImpact {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  NONE = 'none'
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  NONE = "none",
 }
 
 export enum ComplianceReportType {
-  GDPR_COMPLIANCE = 'gdpr_compliance',
-  DATA_BREACH = 'data_breach',
-  CONSENT_ANALYSIS = 'consent_analysis',
-  DATA_RETENTION = 'data_retention',
-  CROSS_BORDER_TRANSFER = 'cross_border_transfer',
-  AUDIT_SUMMARY = 'audit_summary'
+  GDPR_COMPLIANCE = "gdpr_compliance",
+  DATA_BREACH = "data_breach",
+  CONSENT_ANALYSIS = "consent_analysis",
+  DATA_RETENTION = "data_retention",
+  CROSS_BORDER_TRANSFER = "cross_border_transfer",
+  AUDIT_SUMMARY = "audit_summary",
 }
 
 export enum RegulatoryFramework {
-  GDPR = 'gdpr',
-  CCPA = 'ccpa',
-  HIPAA = 'hipaa',
-  SOX = 'sox',
-  PCI_DSS = 'pci_dss',
-  ISO_27001 = 'iso_27001',
-  VIETNAM_CYBERSECURITY_LAW = 'vietnam_cybersecurity_law'
+  GDPR = "gdpr",
+  CCPA = "ccpa",
+  HIPAA = "hipaa",
+  SOX = "sox",
+  PCI_DSS = "pci_dss",
+  ISO_27001 = "iso_27001",
+  VIETNAM_CYBERSECURITY_LAW = "vietnam_cybersecurity_law",
 }
 
 export enum PIAStatus {
-  DRAFT = 'draft',
-  IN_REVIEW = 'in_review',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  REQUIRES_UPDATE = 'requires_update'
+  DRAFT = "draft",
+  IN_REVIEW = "in_review",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+  REQUIRES_UPDATE = "requires_update",
 }
 
 export enum RiskLevel {
-  VERY_LOW = 'very_low',
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  VERY_HIGH = 'very_high'
+  VERY_LOW = "very_low",
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  VERY_HIGH = "very_high",
 }
 
 export enum LegalHoldStatus {
-  ACTIVE = 'active',
-  RELEASED = 'released',
-  EXPIRED = 'expired',
-  SUSPENDED = 'suspended'
+  ACTIVE = "active",
+  RELEASED = "released",
+  EXPIRED = "expired",
+  SUSPENDED = "suspended",
 }
 
 export enum TrainingType {
-  ONBOARDING = 'onboarding',
-  ANNUAL_REFRESHER = 'annual_refresher',
-  SPECIALIZED = 'specialized',
-  INCIDENT_RESPONSE = 'incident_response'
+  ONBOARDING = "onboarding",
+  ANNUAL_REFRESHER = "annual_refresher",
+  SPECIALIZED = "specialized",
+  INCIDENT_RESPONSE = "incident_response",
 }
 
 export enum TrainingStatus {
-  DRAFT = 'draft',
-  PUBLISHED = 'published',
-  ARCHIVED = 'archived'
+  DRAFT = "draft",
+  PUBLISHED = "published",
+  ARCHIVED = "archived",
 }
 
 export enum ReportStatus {
-  GENERATING = 'generating',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  SCHEDULED = 'scheduled'
+  GENERATING = "generating",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  SCHEDULED = "scheduled",
 }
 
 // Complex Nested Types
@@ -347,7 +353,7 @@ export interface Safeguard {
   description: string;
   implementationDate: Date;
   reviewDate: Date;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
 }
 
 export interface ComplianceReportData {
@@ -361,7 +367,7 @@ export interface ComplianceReportData {
 export interface ComplianceViolation {
   id: string;
   type: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: "critical" | "high" | "medium" | "low";
   description: string;
   affectedRecords: number;
   detectedAt: Date;
@@ -386,12 +392,12 @@ export interface ComplianceFinding {
   description: string;
   evidence: string[];
   impactAssessment: string;
-  status: 'open' | 'in_progress' | 'resolved' | 'accepted_risk';
+  status: "open" | "in_progress" | "resolved" | "accepted_risk";
 }
 
 export interface ComplianceRecommendation {
   id: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   category: string;
   description: string;
   implementation: string;
@@ -401,7 +407,7 @@ export interface ComplianceRecommendation {
 }
 
 export interface ReportingPeriod {
-  type: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual' | 'custom';
+  type: "daily" | "weekly" | "monthly" | "quarterly" | "annual" | "custom";
   start: Date;
   end: Date;
 }
@@ -425,7 +431,7 @@ export interface RiskMitigation {
   implementation: string;
   timeline: string;
   responsible: string;
-  status: 'planned' | 'in_progress' | 'implemented' | 'verified';
+  status: "planned" | "in_progress" | "implemented" | "verified";
   residualRisk: RiskLevel;
 }
 
@@ -465,9 +471,9 @@ export interface LegalHoldNotification {
   recipient: string;
   sentAt: Date;
   acknowledgedAt?: Date;
-  method: 'email' | 'system' | 'manual';
+  method: "email" | "system" | "manual";
   content: string;
-  status: 'sent' | 'delivered' | 'acknowledged' | 'failed';
+  status: "sent" | "delivered" | "acknowledged" | "failed";
 }
 
 export interface TrainingModule {
@@ -483,7 +489,7 @@ export interface TrainingModule {
 
 export interface TrainingMaterial {
   id: string;
-  type: 'video' | 'document' | 'interactive' | 'quiz';
+  type: "video" | "document" | "interactive" | "quiz";
   title: string;
   url?: string;
   content?: string;
@@ -493,7 +499,7 @@ export interface TrainingMaterial {
 export interface TrainingAssessment {
   id: string;
   name: string;
-  type: 'quiz' | 'assignment' | 'practical';
+  type: "quiz" | "assignment" | "practical";
   questions: AssessmentQuestion[];
   passingScore: number;
   maxAttempts: number;
@@ -502,7 +508,7 @@ export interface TrainingAssessment {
 
 export interface AssessmentQuestion {
   id: string;
-  type: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay';
+  type: "multiple_choice" | "true_false" | "short_answer" | "essay";
   question: string;
   options?: string[];
   correctAnswer: string | string[];
@@ -511,7 +517,7 @@ export interface AssessmentQuestion {
 }
 
 export interface CompletionRequirement {
-  type: 'module' | 'assessment' | 'time' | 'attendance';
+  type: "module" | "assessment" | "time" | "attendance";
   target: string;
   threshold: number;
   description: string;

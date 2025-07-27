@@ -1,8 +1,8 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from "crypto";
+import { EventEmitter } from "events";
 
 export interface TokenizationConfig {
-  algorithm: 'AES-256-GCM' | 'Format-Preserving-Encryption';
+  algorithm: "AES-256-GCM" | "Format-Preserving-Encryption";
   keyRotationInterval: number; // hours
   tokenLength: number;
   preserveFormat: boolean;
@@ -15,7 +15,7 @@ export interface TokenVault {
   originalValue: string;
   tokenValue: string;
   dataType: string;
-  sensitivity: 'low' | 'medium' | 'high' | 'critical';
+  sensitivity: "low" | "medium" | "high" | "critical";
   createdAt: Date;
   lastAccessed: Date;
   accessCount: number;
@@ -24,7 +24,7 @@ export interface TokenVault {
 }
 
 export interface FormatPreservingRule {
-  dataType: 'ssn' | 'phone' | 'email' | 'creditcard' | 'custom';
+  dataType: "ssn" | "phone" | "email" | "creditcard" | "custom";
   pattern: string;
   preserveCharacters: string[];
   maskCharacters: string[];
@@ -63,13 +63,13 @@ export class TokenizationService extends EventEmitter {
   constructor(config?: Partial<TokenizationConfig>) {
     super();
     this.config = {
-      algorithm: 'AES-256-GCM',
+      algorithm: "AES-256-GCM",
       keyRotationInterval: 24 * 7, // Weekly
       tokenLength: 16,
       preserveFormat: true,
       reversible: true,
       vaultEncryption: true,
-      ...config
+      ...config,
     };
 
     this.tokenVault = new Map();
@@ -84,7 +84,7 @@ export class TokenizationService extends EventEmitter {
       averageDetokenizationTime: 0,
       errorCount: 0,
       keyRotations: 0,
-      formatTypes: new Map()
+      formatTypes: new Map(),
     };
   }
 
@@ -96,11 +96,11 @@ export class TokenizationService extends EventEmitter {
       this.setupFormatPreservingRules();
       this.scheduleKeyRotation();
       this.startVaultMaintenance();
-      
+
       this.isInitialized = true;
-      this.emit('initialized');
+      this.emit("initialized");
     } catch (error) {
-      this.emit('initializationError', error);
+      this.emit("initializationError", error);
       throw error;
     }
   }
@@ -108,7 +108,7 @@ export class TokenizationService extends EventEmitter {
   private async generateMasterKey(): Promise<void> {
     const keyId = `tokenization_key_${Date.now()}`;
     const keyData = crypto.randomBytes(32); // 256-bit key
-    
+
     const tokenKey: TokenizationKey = {
       keyId,
       version: 1,
@@ -116,39 +116,41 @@ export class TokenizationService extends EventEmitter {
       algorithm: this.config.algorithm,
       createdAt: new Date(),
       isActive: true,
-      rotationScheduled: new Date(Date.now() + this.config.keyRotationInterval * 60 * 60 * 1000)
+      rotationScheduled: new Date(
+        Date.now() + this.config.keyRotationInterval * 60 * 60 * 1000,
+      ),
     };
 
     this.tokenizationKeys.set(keyId, tokenKey);
-    this.emit('keyGenerated', { keyId, timestamp: new Date() });
+    this.emit("keyGenerated", { keyId, timestamp: new Date() });
   }
 
   private setupFormatPreservingRules(): void {
     const rules: FormatPreservingRule[] = [
       {
-        dataType: 'ssn',
-        pattern: '###-##-####',
-        preserveCharacters: ['-'],
-        maskCharacters: ['#']
+        dataType: "ssn",
+        pattern: "###-##-####",
+        preserveCharacters: ["-"],
+        maskCharacters: ["#"],
       },
       {
-        dataType: 'phone',
-        pattern: '(###) ###-####',
-        preserveCharacters: ['(', ')', ' ', '-'],
-        maskCharacters: ['#']
+        dataType: "phone",
+        pattern: "(###) ###-####",
+        preserveCharacters: ["(", ")", " ", "-"],
+        maskCharacters: ["#"],
       },
       {
-        dataType: 'email',
-        pattern: '****@****.***',
-        preserveCharacters: ['@', '.'],
-        maskCharacters: ['*']
+        dataType: "email",
+        pattern: "****@****.***",
+        preserveCharacters: ["@", "."],
+        maskCharacters: ["*"],
       },
       {
-        dataType: 'creditcard',
-        pattern: '####-####-####-####',
-        preserveCharacters: ['-'],
-        maskCharacters: ['#']
-      }
+        dataType: "creditcard",
+        pattern: "####-####-####-####",
+        preserveCharacters: ["-"],
+        maskCharacters: ["#"],
+      },
     ];
 
     for (const rule of rules) {
@@ -158,8 +160,8 @@ export class TokenizationService extends EventEmitter {
 
   async tokenize(
     originalValue: string,
-    dataType: string = 'string',
-    sensitivity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
+    dataType: string = "string",
+    sensitivity: "low" | "medium" | "high" | "critical" = "medium",
   ): Promise<string> {
     const startTime = Date.now();
 
@@ -180,7 +182,10 @@ export class TokenizationService extends EventEmitter {
       let tokenValue: string;
 
       if (this.config.preserveFormat && this.formatRules.has(dataType)) {
-        tokenValue = await this.generateFormatPreservingToken(originalValue, dataType);
+        tokenValue = await this.generateFormatPreservingToken(
+          originalValue,
+          dataType,
+        );
       } else {
         tokenValue = await this.generateStandardToken(originalValue);
       }
@@ -196,7 +201,7 @@ export class TokenizationService extends EventEmitter {
         lastAccessed: new Date(),
         accessCount: 1,
         keyVersion: this.getActiveKeyVersion(),
-        isActive: true
+        isActive: true,
       };
 
       // Store in vaults
@@ -209,11 +214,11 @@ export class TokenizationService extends EventEmitter {
       this.updateFormatMetrics(dataType);
       this.updateTokenGenerationTime(Date.now() - startTime);
 
-      this.emit('tokenGenerated', { tokenId, dataType, sensitivity });
+      this.emit("tokenGenerated", { tokenId, dataType, sensitivity });
       return tokenValue;
     } catch (error) {
       this.metrics.errorCount++;
-      this.emit('tokenizationError', { originalValue: '[REDACTED]', error });
+      this.emit("tokenizationError", { originalValue: "[REDACTED]", error });
       throw error;
     }
   }
@@ -223,12 +228,13 @@ export class TokenizationService extends EventEmitter {
 
     try {
       if (!this.config.reversible) {
-        throw new Error('Detokenization is disabled in current configuration');
+        throw new Error("Detokenization is disabled in current configuration");
       }
 
       // Find token in vault
-      const vaultEntry = Array.from(this.tokenVault.values())
-        .find(entry => entry.tokenValue === tokenValue && entry.isActive);
+      const vaultEntry = Array.from(this.tokenVault.values()).find(
+        (entry) => entry.tokenValue === tokenValue && entry.isActive,
+      );
 
       if (!vaultEntry) {
         return null;
@@ -241,22 +247,25 @@ export class TokenizationService extends EventEmitter {
       this.metrics.totalDetokenizations++;
       this.updateDetokenizationTime(Date.now() - startTime);
 
-      this.emit('tokenDetokenized', { tokenId: vaultEntry.tokenId });
+      this.emit("tokenDetokenized", { tokenId: vaultEntry.tokenId });
       return vaultEntry.originalValue;
     } catch (error) {
       this.metrics.errorCount++;
-      this.emit('detokenizationError', { tokenValue: '[REDACTED]', error });
+      this.emit("detokenizationError", { tokenValue: "[REDACTED]", error });
       throw error;
     }
   }
 
-  private async generateFormatPreservingToken(originalValue: string, dataType: string): Promise<string> {
+  private async generateFormatPreservingToken(
+    originalValue: string,
+    dataType: string,
+  ): Promise<string> {
     const rule = this.formatRules.get(dataType);
     if (!rule) {
       return this.generateStandardToken(originalValue);
     }
 
-    let token = '';
+    let token = "";
     let originalIndex = 0;
 
     for (const char of rule.pattern) {
@@ -272,7 +281,7 @@ export class TokenizationService extends EventEmitter {
           } else if (/[a-zA-Z]/.test(originalChar)) {
             const isUpperCase = originalChar === originalChar.toUpperCase();
             const randomChar = String.fromCharCode(
-              Math.floor(Math.random() * 26) + (isUpperCase ? 65 : 97)
+              Math.floor(Math.random() * 26) + (isUpperCase ? 65 : 97),
             );
             token += randomChar;
           } else {
@@ -292,82 +301,104 @@ export class TokenizationService extends EventEmitter {
   private async generateStandardToken(originalValue: string): Promise<string> {
     const activeKey = this.getActiveKey();
     if (!activeKey) {
-      throw new Error('No active tokenization key available');
+      throw new Error("No active tokenization key available");
     }
 
-    if (this.config.algorithm === 'AES-256-GCM') {
+    if (this.config.algorithm === "AES-256-GCM") {
       return this.generateAESToken(originalValue, activeKey);
     } else {
       return this.generateRandomToken();
     }
   }
 
-  private generateAESToken(originalValue: string, key: TokenizationKey): string {
+  private generateAESToken(
+    originalValue: string,
+    key: TokenizationKey,
+  ): string {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipherGCM('aes-256-gcm', key.keyData, iv);
-    
-    let encrypted = cipher.update(originalValue, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    
+    const cipher = crypto.createCipherGCM("aes-256-gcm", key.keyData, iv);
+
+    let encrypted = cipher.update(originalValue, "utf8", "hex");
+    encrypted += cipher.final("hex");
+
     const tag = cipher.getAuthTag();
-    
+
     // Combine IV, tag, and encrypted data, then encode to create token
-    const combined = Buffer.concat([iv, tag, Buffer.from(encrypted, 'hex')]);
-    return combined.toString('base64').replace(/[+/=]/g, '').substring(0, this.config.tokenLength);
+    const combined = Buffer.concat([iv, tag, Buffer.from(encrypted, "hex")]);
+    return combined
+      .toString("base64")
+      .replace(/[+/=]/g, "")
+      .substring(0, this.config.tokenLength);
   }
 
   private generateRandomToken(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let token = '';
-    
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let token = "";
+
     for (let i = 0; i < this.config.tokenLength; i++) {
       token += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    
+
     return token;
   }
 
   async batchTokenize(
-    values: Array<{ value: string; dataType?: string; sensitivity?: 'low' | 'medium' | 'high' | 'critical' }>
-  ): Promise<Array<{ originalValue: string; tokenValue: string; tokenId: string }>> {
+    values: Array<{
+      value: string;
+      dataType?: string;
+      sensitivity?: "low" | "medium" | "high" | "critical";
+    }>,
+  ): Promise<
+    Array<{ originalValue: string; tokenValue: string; tokenId: string }>
+  > {
     const results = [];
-    
+
     for (const item of values) {
       try {
-        const tokenValue = await this.tokenize(item.value, item.dataType, item.sensitivity);
+        const tokenValue = await this.tokenize(
+          item.value,
+          item.dataType,
+          item.sensitivity,
+        );
         const tokenId = this.reverseVault.get(item.value);
-        
+
         results.push({
           originalValue: item.value,
           tokenValue,
-          tokenId: tokenId || ''
+          tokenId: tokenId || "",
         });
       } catch (error) {
-        this.emit('batchTokenizationError', { value: '[REDACTED]', error });
+        this.emit("batchTokenizationError", { value: "[REDACTED]", error });
         results.push({
           originalValue: item.value,
-          tokenValue: '',
-          tokenId: ''
+          tokenValue: "",
+          tokenId: "",
         });
       }
     }
-    
+
     return results;
   }
 
-  async batchDetokenize(tokenValues: string[]): Promise<Array<{ tokenValue: string; originalValue: string | null }>> {
+  async batchDetokenize(
+    tokenValues: string[],
+  ): Promise<Array<{ tokenValue: string; originalValue: string | null }>> {
     const results = [];
-    
+
     for (const tokenValue of tokenValues) {
       try {
         const originalValue = await this.detokenize(tokenValue);
         results.push({ tokenValue, originalValue });
       } catch (error) {
-        this.emit('batchDetokenizationError', { tokenValue: '[REDACTED]', error });
+        this.emit("batchDetokenizationError", {
+          tokenValue: "[REDACTED]",
+          error,
+        });
         results.push({ tokenValue, originalValue: null });
       }
     }
-    
+
     return results;
   }
 
@@ -380,15 +411,15 @@ export class TokenizationService extends EventEmitter {
 
       await this.generateMasterKey();
       this.metrics.keyRotations++;
-      
+
       // Re-encrypt vault if vault encryption is enabled
       if (this.config.vaultEncryption) {
         await this.reencryptVault();
       }
 
-      this.emit('keysRotated', { timestamp: new Date() });
+      this.emit("keysRotated", { timestamp: new Date() });
     } catch (error) {
-      this.emit('keyRotationError', error);
+      this.emit("keyRotationError", error);
       throw error;
     }
   }
@@ -400,14 +431,16 @@ export class TokenizationService extends EventEmitter {
     for (const [tokenId, vaultEntry] of this.tokenVault.entries()) {
       if (vaultEntry.keyVersion !== newKeyVersion) {
         // Re-tokenize with new key
-        const newTokenValue = await this.generateStandardToken(vaultEntry.originalValue);
+        const newTokenValue = await this.generateStandardToken(
+          vaultEntry.originalValue,
+        );
         vaultEntry.tokenValue = newTokenValue;
         vaultEntry.keyVersion = newKeyVersion;
         reencryptedCount++;
       }
     }
 
-    this.emit('vaultReencrypted', { reencryptedCount, newKeyVersion });
+    this.emit("vaultReencrypted", { reencryptedCount, newKeyVersion });
   }
 
   async searchTokens(criteria: {
@@ -416,7 +449,7 @@ export class TokenizationService extends EventEmitter {
     createdAfter?: Date;
     createdBefore?: Date;
     accessedAfter?: Date;
-  }): Promise<Array<Omit<TokenVault, 'originalValue'>>> {
+  }): Promise<Array<Omit<TokenVault, "originalValue">>> {
     const results = [];
 
     for (const vaultEntry of this.tokenVault.values()) {
@@ -426,19 +459,31 @@ export class TokenizationService extends EventEmitter {
         matches = false;
       }
 
-      if (criteria.sensitivity && vaultEntry.sensitivity !== criteria.sensitivity) {
+      if (
+        criteria.sensitivity &&
+        vaultEntry.sensitivity !== criteria.sensitivity
+      ) {
         matches = false;
       }
 
-      if (criteria.createdAfter && vaultEntry.createdAt < criteria.createdAfter) {
+      if (
+        criteria.createdAfter &&
+        vaultEntry.createdAt < criteria.createdAfter
+      ) {
         matches = false;
       }
 
-      if (criteria.createdBefore && vaultEntry.createdAt > criteria.createdBefore) {
+      if (
+        criteria.createdBefore &&
+        vaultEntry.createdAt > criteria.createdBefore
+      ) {
         matches = false;
       }
 
-      if (criteria.accessedAfter && vaultEntry.lastAccessed < criteria.accessedAfter) {
+      if (
+        criteria.accessedAfter &&
+        vaultEntry.lastAccessed < criteria.accessedAfter
+      ) {
         matches = false;
       }
 
@@ -453,8 +498,9 @@ export class TokenizationService extends EventEmitter {
 
   async revokeToken(tokenValue: string): Promise<boolean> {
     try {
-      const vaultEntry = Array.from(this.tokenVault.values())
-        .find(entry => entry.tokenValue === tokenValue);
+      const vaultEntry = Array.from(this.tokenVault.values()).find(
+        (entry) => entry.tokenValue === tokenValue,
+      );
 
       if (!vaultEntry) {
         return false;
@@ -463,10 +509,10 @@ export class TokenizationService extends EventEmitter {
       vaultEntry.isActive = false;
       this.reverseVault.delete(vaultEntry.originalValue);
 
-      this.emit('tokenRevoked', { tokenId: vaultEntry.tokenId });
+      this.emit("tokenRevoked", { tokenId: vaultEntry.tokenId });
       return true;
     } catch (error) {
-      this.emit('tokenRevocationError', { tokenValue: '[REDACTED]', error });
+      this.emit("tokenRevocationError", { tokenValue: "[REDACTED]", error });
       return false;
     }
   }
@@ -484,8 +530,8 @@ export class TokenizationService extends EventEmitter {
     }
 
     this.metrics.vaultSize = this.tokenVault.size;
-    this.emit('expiredTokensCleanedUp', { cleanedCount, cutoffDate });
-    
+    this.emit("expiredTokensCleanedUp", { cleanedCount, cutoffDate });
+
     return cleanedCount;
   }
 
@@ -508,13 +554,17 @@ export class TokenizationService extends EventEmitter {
 
   private updateTokenGenerationTime(time: number): void {
     this.metrics.averageTokenGenerationTime =
-      (this.metrics.averageTokenGenerationTime * (this.metrics.totalTokensGenerated - 1) + time) /
+      (this.metrics.averageTokenGenerationTime *
+        (this.metrics.totalTokensGenerated - 1) +
+        time) /
       this.metrics.totalTokensGenerated;
   }
 
   private updateDetokenizationTime(time: number): void {
     this.metrics.averageDetokenizationTime =
-      (this.metrics.averageDetokenizationTime * (this.metrics.totalDetokenizations - 1) + time) /
+      (this.metrics.averageDetokenizationTime *
+        (this.metrics.totalDetokenizations - 1) +
+        time) /
       this.metrics.totalDetokenizations;
   }
 
@@ -524,20 +574,23 @@ export class TokenizationService extends EventEmitter {
       try {
         await this.rotateKeys();
       } catch (error) {
-        this.emit('scheduledRotationError', error);
+        this.emit("scheduledRotationError", error);
       }
     }, interval);
   }
 
   private startVaultMaintenance(): void {
     // Run maintenance daily
-    setInterval(async () => {
-      try {
-        await this.cleanupExpiredTokens();
-      } catch (error) {
-        this.emit('maintenanceError', error);
-      }
-    }, 24 * 60 * 60 * 1000);
+    setInterval(
+      async () => {
+        try {
+          await this.cleanupExpiredTokens();
+        } catch (error) {
+          this.emit("maintenanceError", error);
+        }
+      },
+      24 * 60 * 60 * 1000,
+    );
   }
 
   getMetrics(): TokenizationMetrics {
@@ -549,7 +602,7 @@ export class TokenizationService extends EventEmitter {
       averageDetokenizationTime: this.metrics.averageDetokenizationTime,
       errorCount: this.metrics.errorCount,
       keyRotations: this.metrics.keyRotations,
-      formatTypes: new Map(this.metrics.formatTypes)
+      formatTypes: new Map(this.metrics.formatTypes),
     };
   }
 
@@ -558,11 +611,11 @@ export class TokenizationService extends EventEmitter {
     activeTokens: number;
     byDataType: Map<string, number>;
     bySensitivity: Map<string, number>;
-    mostAccessedTokens: Array<Omit<TokenVault, 'originalValue'>>;
+    mostAccessedTokens: Array<Omit<TokenVault, "originalValue">>;
   } {
     const vaultEntries = Array.from(this.tokenVault.values());
-    const activeTokens = vaultEntries.filter(entry => entry.isActive);
-    
+    const activeTokens = vaultEntries.filter((entry) => entry.isActive);
+
     const byDataType = new Map<string, number>();
     const bySensitivity = new Map<string, number>();
 
@@ -579,7 +632,7 @@ export class TokenizationService extends EventEmitter {
     const mostAccessed = vaultEntries
       .sort((a, b) => b.accessCount - a.accessCount)
       .slice(0, 10)
-      .map(entry => {
+      .map((entry) => {
         const { originalValue, ...safeEntry } = entry;
         return safeEntry;
       });
@@ -589,24 +642,24 @@ export class TokenizationService extends EventEmitter {
       activeTokens: activeTokens.length,
       byDataType,
       bySensitivity,
-      mostAccessedTokens: mostAccessed
+      mostAccessedTokens: mostAccessed,
     };
   }
 
-  async exportTokens(
-    criteria?: {
-      dataType?: string;
-      sensitivity?: string;
-      includeOriginalValues?: boolean;
-    }
-  ): Promise<Array<Partial<TokenVault>>> {
+  async exportTokens(criteria?: {
+    dataType?: string;
+    sensitivity?: string;
+    includeOriginalValues?: boolean;
+  }): Promise<Array<Partial<TokenVault>>> {
     const tokens = await this.searchTokens(criteria || {});
-    
+
     if (criteria?.includeOriginalValues) {
       // Only for authorized exports with proper approval
-      return Array.from(this.tokenVault.values()).filter(entry => {
-        if (criteria.dataType && entry.dataType !== criteria.dataType) return false;
-        if (criteria.sensitivity && entry.sensitivity !== criteria.sensitivity) return false;
+      return Array.from(this.tokenVault.values()).filter((entry) => {
+        if (criteria.dataType && entry.dataType !== criteria.dataType)
+          return false;
+        if (criteria.sensitivity && entry.sensitivity !== criteria.sensitivity)
+          return false;
         return true;
       });
     }
@@ -615,7 +668,7 @@ export class TokenizationService extends EventEmitter {
   }
 
   async shutdown(): Promise<void> {
-    this.emit('shutdown');
+    this.emit("shutdown");
     this.removeAllListeners();
   }
 }

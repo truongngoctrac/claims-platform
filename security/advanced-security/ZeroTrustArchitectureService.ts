@@ -1,5 +1,5 @@
-import { ZeroTrustPolicy, AuthenticationEvent } from '../types';
-import { EventEmitter } from 'events';
+import { ZeroTrustPolicy, AuthenticationEvent } from "../types";
+import { EventEmitter } from "events";
 
 interface TrustScore {
   user_id: string;
@@ -13,7 +13,7 @@ interface TrustScore {
     network: number;
   };
   last_updated: Date;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
 }
 
 interface AccessRequest {
@@ -30,7 +30,7 @@ interface AccessRequest {
     mfa_verified: boolean;
   };
   trust_score: number;
-  decision: 'allow' | 'deny' | 'challenge';
+  decision: "allow" | "deny" | "challenge";
   policies_evaluated: string[];
   timestamp: Date;
 }
@@ -43,73 +43,89 @@ export class ZeroTrustArchitectureService extends EventEmitter {
 
   async initialize(): Promise<void> {
     this.initializePolicies();
-    this.emit('zero_trust_initialized');
+    this.emit("zero_trust_initialized");
   }
 
-  async evaluateAccess(request: Omit<AccessRequest, 'id' | 'timestamp' | 'decision' | 'policies_evaluated' | 'trust_score'>): Promise<{
-    decision: 'allow' | 'deny' | 'challenge';
+  async evaluateAccess(
+    request: Omit<
+      AccessRequest,
+      "id" | "timestamp" | "decision" | "policies_evaluated" | "trust_score"
+    >,
+  ): Promise<{
+    decision: "allow" | "deny" | "challenge";
     trust_score: number;
     required_actions: string[];
     policies_triggered: string[];
   }> {
-    const trustScore = await this.calculateTrustScore(request.user_id, request.context);
+    const trustScore = await this.calculateTrustScore(
+      request.user_id,
+      request.context,
+    );
     const policies = this.evaluatePolicies(request, trustScore);
-    
-    let decision: 'allow' | 'deny' | 'challenge' = 'allow';
+
+    let decision: "allow" | "deny" | "challenge" = "allow";
     const requiredActions: string[] = [];
-    
+
     if (trustScore < 3) {
-      decision = 'deny';
+      decision = "deny";
     } else if (trustScore < 6) {
-      decision = 'challenge';
-      requiredActions.push('additional_verification');
+      decision = "challenge";
+      requiredActions.push("additional_verification");
     }
-    
+
     return {
       decision,
       trust_score: trustScore,
       required_actions: requiredActions,
-      policies_triggered: policies.map(p => p.id)
+      policies_triggered: policies.map((p) => p.id),
     };
   }
 
   async isHealthy(): Promise<boolean> {
-    return this.policies.filter(p => p.enabled).length > 0;
+    return this.policies.filter((p) => p.enabled).length > 0;
   }
 
-  private async calculateTrustScore(userId: string, context: any): Promise<number> {
+  private async calculateTrustScore(
+    userId: string,
+    context: any,
+  ): Promise<number> {
     return Math.random() * 10; // Mock implementation
   }
 
-  private evaluatePolicies(request: any, trustScore: number): ZeroTrustPolicy[] {
-    return this.policies.filter(p => p.enabled && p.conditions.risk_score_threshold <= trustScore);
+  private evaluatePolicies(
+    request: any,
+    trustScore: number,
+  ): ZeroTrustPolicy[] {
+    return this.policies.filter(
+      (p) => p.enabled && p.conditions.risk_score_threshold <= trustScore,
+    );
   }
 
   private initializePolicies(): void {
     this.policies = [
       {
-        id: 'healthcare_data_access',
-        name: 'Healthcare Data Access Policy',
-        description: 'Zero trust policy for healthcare data access',
-        resource_type: 'database',
+        id: "healthcare_data_access",
+        name: "Healthcare Data Access Policy",
+        description: "Zero trust policy for healthcare data access",
+        resource_type: "database",
         conditions: {
-          user_attributes: { role: ['doctor', 'nurse'] },
+          user_attributes: { role: ["doctor", "nurse"] },
           device_attributes: { trusted: true },
-          location_constraints: ['Vietnam'],
-          time_constraints: ['08:00-18:00'],
-          risk_score_threshold: 7
+          location_constraints: ["Vietnam"],
+          time_constraints: ["08:00-18:00"],
+          risk_score_threshold: 7,
         },
         actions: {
           allow: true,
           additional_verification: false,
-          logging_level: 'full',
-          session_timeout: 3600
+          logging_level: "full",
+          session_timeout: 3600,
         },
         priority: 100,
         enabled: true,
         created_at: new Date(),
-        updated_at: new Date()
-      }
+        updated_at: new Date(),
+      },
     ];
   }
 }
