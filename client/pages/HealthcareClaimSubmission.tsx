@@ -485,7 +485,7 @@ export function HealthcareClaimSubmission() {
               {currentStep === 0 && (
                 <div className="space-y-6">
                   <div>
-                    <Label htmlFor="claimType">Loại yêu cầu bồi thường *</Label>
+                    <Label htmlFor="claimType" className="vietnamese-text">Loại yêu cầu bồi thường *</Label>
                     <Select
                       value={formData.type}
                       onValueChange={(value) =>
@@ -493,37 +493,37 @@ export function HealthcareClaimSubmission() {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại yêu cầu bồi thường" />
+                        <SelectValue placeholder="Chọn loại yêu cầu bồi thường" className="vietnamese-text" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={ClaimType.OUTPATIENT}>
+                        <SelectItem value={ClaimType.OUTPATIENT} className="vietnamese-text">
                           Ngoại trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.INPATIENT}>
+                        <SelectItem value={ClaimType.INPATIENT} className="vietnamese-text">
                           Nội trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.EMERGENCY}>
+                        <SelectItem value={ClaimType.EMERGENCY} className="vietnamese-text">
                           Cấp cứu
                         </SelectItem>
-                        <SelectItem value={ClaimType.DENTAL}>
+                        <SelectItem value={ClaimType.DENTAL} className="vietnamese-text">
                           Nha khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.MATERNITY}>
+                        <SelectItem value={ClaimType.MATERNITY} className="vietnamese-text">
                           Sản khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.PHARMACY}>
+                        <SelectItem value={ClaimType.PHARMACY} className="vietnamese-text">
                           Dược phẩm
                         </SelectItem>
-                        <SelectItem value={ClaimType.SURGERY}>
+                        <SelectItem value={ClaimType.SURGERY} className="vietnamese-text">
                           Phẫu thuật
                         </SelectItem>
-                        <SelectItem value={ClaimType.DIAGNOSTIC}>
+                        <SelectItem value={ClaimType.DIAGNOSTIC} className="vietnamese-text">
                           Chẩn đoán
                         </SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.type && (
-                      <div className="text-sm text-destructive mt-1">
+                      <div className="text-sm text-destructive mt-1 vietnamese-text">
                         {errors.type}
                       </div>
                     )}
@@ -531,7 +531,7 @@ export function HealthcareClaimSubmission() {
 
                   <Alert>
                     <Info className="h-4 w-4" />
-                    <AlertDescription>
+                    <AlertDescription className="vietnamese-text">
                       Vui lòng chọn loại yêu cầu bồi thường phù hợp với trường
                       hợp của bạn. Thông tin này sẽ giúp chúng tôi xử lý hồ sơ
                       nhanh chóng và chính xác hơn.
@@ -1162,7 +1162,7 @@ export function HealthcareClaimSubmission() {
                             VND
                           </div>
                           <div>
-                            <strong>Phương thức thanh toán:</strong>{" "}
+                            <strong>Phương thức thanh to��n:</strong>{" "}
                             {formData.financial.paymentMethod}
                           </div>
                         </div>
