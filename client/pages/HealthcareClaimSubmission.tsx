@@ -542,8 +542,8 @@ export function HealthcareClaimSubmission() {
 
               {/* Step 1: Patient Information */}
               {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <Label htmlFor="fullName">Họ và tên *</Label>
                       <Input
@@ -1162,7 +1162,7 @@ export function HealthcareClaimSubmission() {
                             VND
                           </div>
                           <div>
-                            <strong>Phương thức thanh to��n:</strong>{" "}
+                            <strong>Phương thức thanh toán:</strong>{" "}
                             {formData.financial.paymentMethod}
                           </div>
                         </div>
