@@ -248,7 +248,7 @@ export function Navigation() {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    className={`block px-3 py-2 rounded-md text-sm sm:text-base font-medium transition-colors vietnamese-text ${
                       isActive(item.path)
                         ? 'bg-orange-100 text-orange-700'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -259,7 +259,7 @@ export function Navigation() {
                       {item.icon}
                       <span>{item.label}</span>
                       {item.badge && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs vietnamese-text">
                           {item.badge}
                         </Badge>
                       )}
@@ -275,7 +275,7 @@ export function Navigation() {
       {/* Skip Link for Accessibility */}
       <a
         href="#main-content"
-        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground px-4 py-2 rounded z-50"
+        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground px-4 py-2 rounded z-50 vietnamese-text"
       >
         Nhảy đến nội dung chính
       </a>
