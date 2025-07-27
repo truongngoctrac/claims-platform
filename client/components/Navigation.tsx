@@ -113,15 +113,12 @@ export function Navigation() {
             <div className="flex items-center">
               <Link to="/" className="flex items-center space-x-2 sm:space-x-3">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-orange-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xs sm:text-sm">BH</span>
+                  <span className="text-white font-bold text-xs sm:text-sm">CF</span>
                 </div>
-                <div className="hidden sm:block">
+                <div>
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 vietnamese-text">
-                    Hệ thống Bồi thường BHYT
+                    ClaimFlow
                   </h1>
-                  <p className="text-xs text-gray-500 vietnamese-text">
-                    Nhanh chóng • Đơn giản • Minh bạch
-                  </p>
                 </div>
               </Link>
             </div>
