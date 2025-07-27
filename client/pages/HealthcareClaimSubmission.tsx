@@ -374,12 +374,12 @@ export function HealthcareClaimSubmission() {
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
 
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              Nộp hồ sơ thành c��ng!
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 vietnamese-text">
+              Nộp hồ sơ thành công!
             </h1>
 
-            <p className="text-lg text-muted-foreground mb-6">
-              Hồ sơ bồi thường của bạn đ�� được nộp thành công. Chúng tôi sẽ xử
+            <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
+              Hồ sơ bồi thường của bạn đã được nộp thành công. Chúng tôi sẽ xử
               lý và thông báo kết quả trong thời gian sớm nhất.
             </p>
 
