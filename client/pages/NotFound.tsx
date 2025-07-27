@@ -1,4 +1,3 @@
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { FileText, Home } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
