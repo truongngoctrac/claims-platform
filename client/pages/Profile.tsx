@@ -311,7 +311,6 @@ export function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
