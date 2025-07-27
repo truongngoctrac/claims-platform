@@ -57,13 +57,13 @@ export function Index() {
     <div className="min-h-screen bg-background">
 
       {/* Hero Section */}
-      <section className="relative px-6 py-16 md:py-24 overflow-hidden">
+      <section className="relative px-4 sm:px-6 py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-orange-50 via-white to-brand-blue-50 opacity-60" />
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
 
-        <div className="container mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto relative z-10 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
             {/* Content */}
             <div className="space-y-8">
               <div className="space-y-4">
@@ -403,7 +403,7 @@ export function Index() {
                   4. Thanh toán bồi thường
                 </h3>
                 <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
-                  Chuy���n khoản trực tiếp trong 24h
+                  Chuyển khoản trực tiếp trong 24h
                 </p>
               </div>
             </div>
