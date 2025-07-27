@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -379,7 +378,7 @@ export function HealthcareClaimSubmission() {
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
-              Hồ sơ bồi thường của bạn đã được nộp thành công. Chúng tôi sẽ xử
+              Hồ sơ bồi thường của bạn ��ã được nộp thành công. Chúng tôi sẽ xử
               lý và thông báo kết quả trong thời gian sớm nhất.
             </p>
 
@@ -1072,7 +1071,7 @@ export function HealthcareClaimSubmission() {
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
                       Vui lòng kiểm tra lại toàn bộ thông tin trước khi nộp hồ
-                      sơ. Sau khi nộp, bạn sẽ không thể chỉnh sửa thông tin.
+                      sơ. Sau khi n���p, bạn sẽ không thể chỉnh sửa thông tin.
                     </AlertDescription>
                   </Alert>
 
