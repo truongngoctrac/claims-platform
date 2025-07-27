@@ -243,7 +243,7 @@ export function RealTimeNotifications() {
                 </div>
               </div>
               
-              <div className="max-h-80 overflow-y-auto">
+              <div className="max-h-72 sm:max-h-80 overflow-y-auto">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
                     <div
