@@ -332,16 +332,16 @@ export function Index() {
       </section>
 
       {/* Process Timeline */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          <div className="text-center mb-12 sm:mb-16">
+            <Badge variant="outline" className="mb-4 vietnamese-text">
               Quy trình đơn giản
             </Badge>
-            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4 vietnamese-text">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 vietnamese-text">
               4 bước xử lý bồi thường
             </h2>
-            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto vietnamese-text">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto vietnamese-text">
               Quy trình minh bạch và tự động hóa giúp rút ngắn thời gian xử lý
             </p>
           </div>
@@ -354,16 +354,16 @@ export function Index() {
               style={{ width: "75%" }}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
               {/* Step 1 */}
               <div className="text-center relative">
                 <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
                   <FileText className="w-8 h-8" />
                 </div>
-                <h3 className="text-h3-mobile font-semibold mb-2">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 vietnamese-text">
                   1. Nộp yêu cầu online
                 </h3>
-                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                   Điền form và upload tài liệu trong 5 phút
                 </p>
               </div>
@@ -373,10 +373,10 @@ export function Index() {
                 <div className="w-16 h-16 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
                   <Shield className="w-8 h-8" />
                 </div>
-                <h3 className="text-h3-mobile font-semibold mb-2">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 vietnamese-text">
                   2. Xác minh thông tin
                 </h3>
-                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground vietnamese-text">
+                <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                   AI kiểm tra và xác thực tài liệu tự động
                 </p>
               </div>
@@ -386,10 +386,10 @@ export function Index() {
                 <div className="w-16 h-16 rounded-full bg-warning text-white flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
                   <Users className="w-8 h-8" />
                 </div>
-                <h3 className="text-h3-mobile font-semibold mb-2">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 vietnamese-text">
                   3. Đánh giá và phê duyệt
                 </h3>
-                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                   Chuyên viên thẩm định và đưa ra quyết định
                 </p>
               </div>
@@ -399,10 +399,10 @@ export function Index() {
                 <div className="w-16 h-16 rounded-full bg-success text-white flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10">
                   <Award className="w-8 h-8" />
                 </div>
-                <h3 className="text-h3-mobile font-semibold mb-2">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 vietnamese-text">
                   4. Thanh toán bồi thường
                 </h3>
-                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
                   Chuyển khoản trực tiếp trong 24h
                 </p>
               </div>
