@@ -108,18 +108,18 @@ export function Navigation() {
     <>
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-14 sm:h-16">
             {/* Logo and Brand */}
             <div className="flex items-center">
-              <Link to="/" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">BH</span>
+              <Link to="/" className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-orange-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xs sm:text-sm">BH</span>
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 vietnamese-text">
                     Hệ thống Bồi thường BHYT
                   </h1>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 vietnamese-text">
                     Nhanh chóng • Đơn giản • Minh bạch
                   </p>
                 </div>
@@ -201,7 +201,7 @@ export function Navigation() {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <HelpCircle className="mr-2 h-4 w-4" />
-                      <span>Hỗ trợ</span>
+                      <span>Hỗ tr���</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout} className="cursor-pointer">
