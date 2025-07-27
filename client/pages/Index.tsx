@@ -86,7 +86,7 @@ export function Index() {
                   Nộp yêu cầu bồi thường online trong{" "}
                   <span className="font-semibold text-primary">5 phút</span>,
                   theo dõi tiến độ real-time và nhận kết quả nhanh chóng. Hệ
-                  thống AI hỗ trợ xử lý tự động cho trải nghiệm tối ưu.
+                  thống AI hỗ trợ xử lý tự động cho trải nghiệm t��i ưu.
                 </p>
               </div>
 
@@ -470,59 +470,59 @@ export function Index() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-neutral-900 text-white">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
+      <footer className="py-8 sm:py-10 md:py-12 bg-neutral-900 text-white">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <div className="space-y-3 sm:space-y-4 sm:col-span-2 md:col-span-1">
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary-foreground" />
+                <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg bg-primary flex items-center justify-center">
+                  <FileText className="h-3 w-3 sm:h-5 sm:w-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold">ClaimFlow</span>
+                <span className="text-lg sm:text-xl font-bold vietnamese-text">ClaimFlow</span>
               </div>
-              <p className="text-neutral-400 text-sm">
+              <p className="text-neutral-400 text-xs sm:text-sm vietnamese-text">
                 Nền tảng bồi thường bảo hiểm y tế thông minh, nhanh chóng và
                 minh bạch.
               </p>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-primary" />
-                <span className="text-sm">Hotline: 1900-xxxx</span>
+                <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                <span className="text-xs sm:text-sm vietnamese-text">Hotline: 1900-xxxx</span>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Dịch vụ</h4>
-              <div className="space-y-2 text-sm text-neutral-400">
-                <div>Bồi thường ngoại trú</div>
-                <div>Bồi thường nội trú</div>
-                <div>Bồi thường cấp cứu</div>
-                <div>Bồi thường thai sản</div>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Dịch vụ</h4>
+              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
+                <div className="vietnamese-text">Bồi thường ngoại trú</div>
+                <div className="vietnamese-text">Bồi thường nội trú</div>
+                <div className="vietnamese-text">Bồi thường cấp cứu</div>
+                <div className="vietnamese-text">Bồi thường thai sản</div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Hỗ trợ</h4>
-              <div className="space-y-2 text-sm text-neutral-400">
-                <div>Hướng dẫn nộp hồ sơ</div>
-                <div>Câu hỏi thường gặp</div>
-                <div>Liên hệ hỗ trợ</div>
-                <div>Chính sách bảo mật</div>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Hỗ trợ</h4>
+              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
+                <div className="vietnamese-text">Hướng dẫn nộp hồ sơ</div>
+                <div className="vietnamese-text">Câu hỏi thường gặp</div>
+                <div className="vietnamese-text">Liên hệ hỗ trợ</div>
+                <div className="vietnamese-text">Chính sách bảo mật</div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Công ty</h4>
-              <div className="space-y-2 text-sm text-neutral-400">
-                <div>Về ClaimFlow</div>
-                <div>Tin tức</div>
-                <div>Tuyển dụng</div>
-                <div>Đối tác</div>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base vietnamese-text">Công ty</h4>
+              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
+                <div className="vietnamese-text">Về ClaimFlow</div>
+                <div className="vietnamese-text">Tin tức</div>
+                <div className="vietnamese-text">Tuyển dụng</div>
+                <div className="vietnamese-text">Đối tác</div>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-sm text-neutral-400">
-            <p>© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
+          <div className="border-t border-neutral-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-neutral-400">
+            <p className="vietnamese-text">© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
           </div>
         </div>
       </footer>
