@@ -219,24 +219,25 @@ export function RealTimeNotifications() {
           {/* Dropdown */}
           <div className="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] z-50">
             <Card>
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="font-semibold">Thông báo</h3>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b">
+                <h3 className="font-semibold text-sm sm:text-base vietnamese-text">Thông báo</h3>
+                <div className="flex items-center gap-1 sm:gap-2">
                   {unreadCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={markAllAsRead}
-                      className="text-xs"
+                      className="text-xs vietnamese-text px-2 py-1 h-auto"
                     >
-                      Đánh dấu đã đọc
+                      <span className="hidden sm:inline">Đánh dấu đã đọc</span>
+                      <span className="sm:hidden">Đã đọc</span>
                     </Button>
                   )}
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowDropdown(false)}
-                    className="p-1"
+                    className="p-1 h-auto w-auto"
                   >
                     <X className="h-4 w-4" />
                   </Button>
