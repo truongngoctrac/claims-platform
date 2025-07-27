@@ -285,21 +285,21 @@ export function Index() {
                 <div className="w-12 h-12 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center mb-4">
                   <Eye className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl vietnamese-text">
                   Theo dõi real-time
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-sm sm:text-base text-muted-foreground mb-4 vietnamese-text">
                   Cập nhật tiến độ xử lý theo thời gian thực với thông báo push
                 </p>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Thông báo tức thì</span>
+                  <span className="text-sm vietnamese-text">Thông báo tức thì</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Timeline chi tiết</span>
+                  <span className="text-sm vietnamese-text">Timeline chi tiết</span>
                 </div>
               </CardContent>
             </Card>
@@ -309,21 +309,21 @@ export function Index() {
                 <div className="w-12 h-12 rounded-xl bg-success text-white flex items-center justify-center mb-4">
                   <MessageCircle className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-h3-mobile md:text-h3-desktop">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl vietnamese-text">
                   Hỗ trợ 24/7
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-sm sm:text-base text-muted-foreground mb-4 vietnamese-text">
                   Đội ngũ chuyên viên và chatbot AI sẵn sàng hỗ trợ mọi lúc
                 </p>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Hotline 24/7</span>
+                  <span className="text-sm vietnamese-text">Hotline 24/7</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm">Chat AI thông minh</span>
+                  <span className="text-sm vietnamese-text">Chat AI thông minh</span>
                 </div>
               </CardContent>
             </Card>
