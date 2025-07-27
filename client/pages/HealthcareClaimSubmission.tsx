@@ -229,7 +229,7 @@ export function HealthcareClaimSubmission() {
     switch (stepIndex) {
       case 0: // Basic info
         if (!formData.type)
-          newErrors.type = "Vui lòng chọn loại yêu cầu bồi thường";
+          newErrors.type = "Vui lòng chọn loại yêu cầu bồi thư��ng";
         break;
       case 1: // Patient info
         if (!formData.patient.fullName)
@@ -411,14 +411,14 @@ export function HealthcareClaimSubmission() {
     <div className="min-h-screen bg-slate-50">
       <Navigation />
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 vietnamese-text">
               Nộp hồ sơ bồi thường y tế
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
               Vui lòng điền đầy đủ thông tin để nộp yêu cầu bồi thường
             </p>
           </div>
