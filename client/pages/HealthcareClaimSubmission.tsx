@@ -476,11 +476,11 @@ export function HealthcareClaimSubmission() {
           </div>
 
           {/* Form Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{steps[currentStep].title}</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg sm:text-xl vietnamese-text">{steps[currentStep].title}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               {/* Step 0: Basic Information */}
               {currentStep === 0 && (
                 <div className="space-y-6">
