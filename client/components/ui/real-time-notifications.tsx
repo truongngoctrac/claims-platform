@@ -264,7 +264,7 @@ export function RealTimeNotifications() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
-                            <h4 className={`text-sm font-medium ${
+                            <h4 className={`text-sm font-medium vietnamese-text break-words ${
                               !notification.read ? 'text-gray-900' : 'text-gray-600'
                             }`}>
                               {notification.title}
