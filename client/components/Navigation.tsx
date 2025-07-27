@@ -188,23 +188,23 @@ export function Navigation() {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer">
+                      <Link to="/profile" className="cursor-pointer vietnamese-text">
                         <User className="mr-2 h-4 w-4" />
                         <span>Hồ sơ cá nhân</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/settings" className="cursor-pointer">
+                      <Link to="/settings" className="cursor-pointer vietnamese-text">
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Cài đặt</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="vietnamese-text">
                       <HelpCircle className="mr-2 h-4 w-4" />
                       <span>Hỗ trợ</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer vietnamese-text">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Đăng xuất</span>
                     </DropdownMenuItem>
