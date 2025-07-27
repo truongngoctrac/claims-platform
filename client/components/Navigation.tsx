@@ -39,11 +39,6 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   {
-    label: 'Trang chủ',
-    path: '/',
-    icon: <Home className="h-4 w-4" />
-  },
-  {
     label: 'Nộp hồ sơ',
     path: '/submit-claim',
     icon: <FileText className="h-4 w-4" />
