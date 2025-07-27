@@ -65,24 +65,24 @@ export function Index() {
         <div className="container mx-auto relative z-10 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
             {/* Content */}
-            <div className="space-y-8">
-              <div className="space-y-4">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-3 sm:space-y-4">
                 <Badge
                   variant="secondary"
-                  className="bg-brand-orange-100 text-brand-orange-700 border-brand-orange-200"
+                  className="bg-brand-orange-100 text-brand-orange-700 border-brand-orange-200 text-xs sm:text-sm vietnamese-text"
                 >
-                  <Zap className="w-4 h-4 mr-2" />
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nền tảng bồi thường thông minh
                 </Badge>
 
-                <h1 className="text-h1-mobile md:text-h1-desktop font-bold text-foreground leading-tight">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight vietnamese-text">
                   Xử lý Bồi thường{" "}
                   <span className="text-primary">Nhanh chóng</span> -{" "}
                   <span className="text-secondary">Đơn giản</span> -{" "}
                   <span className="text-success">Minh bạch</span>
                 </h1>
 
-                <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed max-w-xl">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl vietnamese-text">
                   Nộp yêu cầu bồi thường online trong{" "}
                   <span className="font-semibold text-primary">5 phút</span>,
                   theo dõi tiến độ real-time và nhận kết quả nhanh chóng. Hệ
@@ -91,25 +91,25 @@ export function Index() {
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link to="/healthcare-claim" className="flex-1 sm:flex-none">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold btn-mobile shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 vietnamese-text min-h-[48px]"
                   >
-                    <FileText className="w-5 h-5 mr-2" />
+                    <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Nộp yêu cầu bồi thường ngay
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Button>
                 </Link>
 
-                <Link to="/track-status" className="flex-1 sm:flex-none">
+                <Link to="/claim-tracking" className="flex-1 sm:flex-none">
                   <Button
                     variant="outline"
                     size="lg"
-                    className="w-full sm:w-auto border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-8 py-4 text-lg font-semibold btn-mobile transition-all duration-300"
+                    className="w-full sm:w-auto border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all duration-300 vietnamese-text min-h-[48px]"
                   >
-                    <Eye className="w-5 h-5 mr-2" />
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Kiểm tra trạng thái yêu cầu
                   </Button>
                 </Link>
@@ -522,7 +522,7 @@ export function Index() {
           </div>
 
           <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-sm text-neutral-400">
-            <p>© 2024 ClaimFlow. Tất cả quyền được bảo lưu.</p>
+            <p>© 2024 ClaimFlow. Tất cả quy��n được bảo lưu.</p>
           </div>
         </div>
       </footer>
