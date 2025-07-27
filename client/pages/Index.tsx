@@ -338,11 +338,11 @@ export function Index() {
             <Badge variant="outline" className="mb-4">
               Quy trình đơn giản
             </Badge>
-            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4">
-              4 bước xử lý bồi th��ờng
+            <h2 className="text-h2-mobile md:text-h2-desktop font-bold text-foreground mb-4 vietnamese-text">
+              4 bước xử lý bồi thường
             </h2>
-            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto">
-              Quy trình minh bạch và tự động hóa giúp rút ng���n thời gian xử lý
+            <p className="text-body-mobile md:text-body-desktop text-muted-foreground max-w-2xl mx-auto vietnamese-text">
+              Quy trình minh bạch và tự động hóa giúp rút ngắn thời gian xử lý
             </p>
           </div>
 
