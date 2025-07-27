@@ -133,17 +133,17 @@ export function Navigation() {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors vietnamese-text ${
                       isActive(item.path)
                         ? 'bg-orange-100 text-orange-700'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 lg:space-x-2">
                       {item.icon}
-                      <span>{item.label}</span>
+                      <span className="hidden lg:inline">{item.label}</span>
                       {item.badge && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs vietnamese-text">
                           {item.badge}
                         </Badge>
                       )}
@@ -201,7 +201,7 @@ export function Navigation() {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <HelpCircle className="mr-2 h-4 w-4" />
-                      <span>Hỗ tr���</span>
+                      <span>Hỗ trợ</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout} className="cursor-pointer">
