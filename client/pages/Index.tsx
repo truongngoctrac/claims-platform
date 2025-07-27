@@ -376,8 +376,8 @@ export function Index() {
                 <h3 className="text-h3-mobile font-semibold mb-2">
                   2. Xác minh thông tin
                 </h3>
-                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
-                  AI kiểm tra và xác thực tài liệu t��� động
+                <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground vietnamese-text">
+                  AI kiểm tra và xác thực tài liệu tự động
                 </p>
               </div>
 
@@ -403,7 +403,7 @@ export function Index() {
                   4. Thanh toán bồi thường
                 </h3>
                 <p className="text-caption-mobile md:text-caption-desktop text-muted-foreground">
-                  Chuyển khoản trực tiếp trong 24h
+                  Chuy���n khoản trực tiếp trong 24h
                 </p>
               </div>
             </div>
