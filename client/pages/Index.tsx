@@ -445,7 +445,7 @@ export function Index() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full sm:w-auto border-white text-white hover:bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold vietnamese-text min-h-[48px]"
+              className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-primary px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold vietnamese-text min-h-[48px] bg-white/10 backdrop-blur-sm"
             >
               <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Gọi tư vấn: 1900-xxxx
