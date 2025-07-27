@@ -211,8 +211,6 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
