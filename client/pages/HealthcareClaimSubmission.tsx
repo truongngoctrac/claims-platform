@@ -148,32 +148,32 @@ export function HealthcareClaimSubmission() {
   const steps = [
     {
       id: "basic",
-      title: "Thông tin cơ bản",
+      title: t("claim.basic_info"),
       icon: <FileText className="w-5 h-5" />,
     },
     {
       id: "patient",
-      title: "Thông tin bệnh nhân",
+      title: t("claim.patient_info"),
       icon: <User className="w-5 h-5" />,
     },
     {
       id: "medical",
-      title: "Thông tin y tế",
+      title: t("claim.medical_info"),
       icon: <Hospital className="w-5 h-5" />,
     },
     {
       id: "financial",
-      title: "Thông tin tài chính",
+      title: t("claim.financial_info"),
       icon: <CreditCard className="w-5 h-5" />,
     },
     {
       id: "documents",
-      title: "Tài liệu",
+      title: t("claim.documents"),
       icon: <Upload className="w-5 h-5" />,
     },
     {
       id: "review",
-      title: "Xem lại",
+      title: t("claim.review"),
       icon: <CheckCircle className="w-5 h-5" />,
     },
   ];
@@ -374,7 +374,7 @@ export function HealthcareClaimSubmission() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 vietnamese-text">
-              N���p hồ sơ thành công!
+              Nộp hồ sơ thành công!
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
