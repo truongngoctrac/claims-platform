@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { User, UserRole } from "../shared/auth";
 
