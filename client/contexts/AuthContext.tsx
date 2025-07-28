@@ -163,17 +163,26 @@ export async function makeAuthenticatedRequest(
     ...options.headers,
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
 
-  if (response.status === 401) {
-    // Token expired or invalid, logout user
-    const authEvent = new CustomEvent("auth:logout");
-    window.dispatchEvent(authEvent);
-    throw new Error("Authentication expired");
+    if (response.status === 401 || response.status === 403) {
+      // Token expired or invalid, clear storage and redirect
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+
+      // Trigger a page reload to reset auth state
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
+    }
+
+    return response;
+  } catch (error) {
+    // Network or other errors
+    console.error("API request failed:", error);
+    throw error;
   }
-
-  return response;
 }
