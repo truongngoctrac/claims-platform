@@ -31,6 +31,7 @@ export function verifyToken(token: string): any {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (error) {
+    console.error("JWT verification failed:", error);
     return null;
   }
 }
