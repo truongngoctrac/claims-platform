@@ -45,12 +45,21 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
   useEffect(() => {
     const savedHistory = localStorage.getItem('searchHistory');
     if (savedHistory) {
-      setSearchHistory(JSON.parse(savedHistory));
+      const parsedHistory = JSON.parse(savedHistory).map((item: any) => ({
+        ...item,
+        timestamp: new Date(item.timestamp),
+        createdAt: item.createdAt ? new Date(item.createdAt) : undefined
+      }));
+      setSearchHistory(parsedHistory);
     }
 
     const savedSearchesData = localStorage.getItem('savedSearches');
     if (savedSearchesData) {
-      setSavedSearches(JSON.parse(savedSearchesData));
+      const parsedSavedSearches = JSON.parse(savedSearchesData).map((item: any) => ({
+        ...item,
+        createdAt: new Date(item.createdAt)
+      }));
+      setSavedSearches(parsedSavedSearches);
     }
   }, []);
 
@@ -142,7 +151,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
                 onFocus={() => setShowSuggestions(true)}
-                className="pl-10 pr-24"
+                className="pl-10 pr-24 vietnamese-text"
               />
               {query && (
                 <Button
@@ -156,7 +165,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
               )}
               <Button
                 onClick={handleSearch}
-                className="absolute right-2 top-1 h-8"
+                className="absolute right-2 top-1 h-8 vietnamese-text"
               >
                 Tìm
               </Button>
@@ -180,12 +189,13 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
                 variant={isAdvancedMode ? "default" : "outline"}
                 size="sm"
                 onClick={() => setIsAdvancedMode(!isAdvancedMode)}
+                className="vietnamese-text"
               >
                 <Filter className="h-4 w-4 mr-2" />
                 Tìm kiếm nâng cao
               </Button>
               {query && (
-                <Button variant="outline" size="sm" onClick={saveCurrentSearch}>
+                <Button variant="outline" size="sm" onClick={saveCurrentSearch} className="vietnamese-text">
                   <Star className="h-4 w-4 mr-2" />
                   Lưu tìm kiếm
                 </Button>
@@ -195,10 +205,10 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="relevance">Độ liên quan</SelectItem>
-                  <SelectItem value="date">Ngày tạo</SelectItem>
-                  <SelectItem value="amount">Số tiền</SelectItem>
-                  <SelectItem value="status">Trạng thái</SelectItem>
+                  <SelectItem value="relevance" className="vietnamese-text">Độ liên quan</SelectItem>
+                  <SelectItem value="date" className="vietnamese-text">Ngày tạo</SelectItem>
+                  <SelectItem value="amount" className="vietnamese-text">Số tiền</SelectItem>
+                  <SelectItem value="status" className="vietnamese-text">Trạng thái</SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -213,7 +223,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
             {/* Active Filters */}
             {Object.keys(filters).length > 0 && (
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm text-muted-foreground">Bộ lọc:</span>
+                <span className="text-sm text-muted-foreground vietnamese-text">Bộ lọc:</span>
                 {Object.entries(filters).map(([key, value]) => (
                   <Badge key={key} variant="secondary" className="gap-1">
                     {key}: {value}
@@ -247,7 +257,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
         {searchHistory.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 vietnamese-text">
                 <Clock className="h-4 w-4" />
                 Lịch sử tìm kiếm
               </CardTitle>
@@ -261,12 +271,12 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
                     onClick={() => setQuery(item.query)}
                   >
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{item.query}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.timestamp.toLocaleDateString('vi-VN')}
+                      <p className="text-sm font-medium vietnamese-text">{item.query}</p>
+                      <p className="text-xs text-muted-foreground vietnamese-text">
+                        {new Date(item.timestamp).toLocaleDateString('vi-VN')}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs vietnamese-text">
                       {item.resultCount} kết quả
                     </Badge>
                   </div>
@@ -280,7 +290,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
         {savedSearches.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 vietnamese-text">
                 <Star className="h-4 w-4" />
                 Tìm kiếm đã lưu
               </CardTitle>
@@ -296,8 +306,8 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
                       className="flex-1 cursor-pointer"
                       onClick={() => loadSavedSearch(item)}
                     >
-                      <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-medium vietnamese-text">{item.name}</p>
+                      <p className="text-xs text-muted-foreground vietnamese-text">
                         {item.query}
                       </p>
                     </div>
@@ -319,7 +329,7 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
       {/* Search Analytics Preview */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 vietnamese-text">
             <TrendingUp className="h-4 w-4" />
             Xu hướng tìm kiếm
           </CardTitle>
@@ -328,21 +338,21 @@ export function AdvancedSearchInterface({ onSearch, onAnalytics }: AdvancedSearc
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">{searchHistory.length}</p>
-              <p className="text-sm text-muted-foreground">Tìm kiếm gần đây</p>
+              <p className="text-sm text-muted-foreground vietnamese-text">Tìm kiếm gần đây</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">{savedSearches.length}</p>
-              <p className="text-sm text-muted-foreground">Tìm kiếm đã lưu</p>
+              <p className="text-sm text-muted-foreground vietnamese-text">Tìm kiếm đã lưu</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
                 {Object.keys(filters).length}
               </p>
-              <p className="text-sm text-muted-foreground">Bộ lọc đang dùng</p>
+              <p className="text-sm text-muted-foreground vietnamese-text">Bộ lọc đang dùng</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">0.12s</p>
-              <p className="text-sm text-muted-foreground">Thời gian phản hồi</p>
+              <p className="text-sm text-muted-foreground vietnamese-text">Thời gian phản hồi</p>
             </div>
           </div>
         </CardContent>
