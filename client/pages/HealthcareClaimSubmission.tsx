@@ -413,10 +413,10 @@ export function HealthcareClaimSubmission() {
           {/* Header */}
           <div className="mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 vietnamese-text">
-              Nộp hồ sơ bồi thường y tế
+              {t("claim.title")}
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
-              Vui lòng điền đầy đủ thông tin để nộp yêu cầu bồi thường
+              {t("claim.subtitle")}
             </p>
           </div>
 
@@ -819,7 +819,7 @@ export function HealthcareClaimSubmission() {
 
                     <div>
                       <Label htmlFor="treatmentDate">
-                        Ng��y khám/điều trị *
+                        Ngày khám/điều trị *
                       </Label>
                       <Input
                         id="treatmentDate"
@@ -1132,7 +1132,7 @@ export function HealthcareClaimSubmission() {
                             <strong>Họ tên:</strong> {formData.patient.fullName}
                           </div>
                           <div>
-                            <strong>Ngày sinh:</strong>{" "}
+                            <strong>Ng��y sinh:</strong>{" "}
                             {formData.patient.dateOfBirth}
                           </div>
                           <div>
