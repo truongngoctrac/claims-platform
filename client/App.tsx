@@ -66,7 +66,7 @@ function App() {
                     path="/submit-claim"
                     element={
                       <ProtectedRoute>
-                        <SubmitClaim />
+                        <HealthcareClaimSubmission />
                       </ProtectedRoute>
                     }
                   />
