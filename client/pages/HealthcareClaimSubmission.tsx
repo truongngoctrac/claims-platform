@@ -96,6 +96,7 @@ interface ClaimFormData {
 
 export function HealthcareClaimSubmission() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ClaimFormData>({
     type: "",
@@ -373,7 +374,7 @@ export function HealthcareClaimSubmission() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 vietnamese-text">
-              Nộp hồ sơ thành công!
+              N���p hồ sơ thành công!
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
