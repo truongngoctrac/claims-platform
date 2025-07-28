@@ -46,6 +46,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { makeAuthenticatedRequest } from "@/contexts/AuthContext";
 import { ClaimType, TreatmentType, DocumentType } from "@shared/healthcare";
 import { FileUpload } from "@/components/ui/file-upload";
+import { useTranslation } from "@/lib/i18n";
 
 interface ClaimFormData {
   type: ClaimType | "";
