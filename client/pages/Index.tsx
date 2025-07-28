@@ -98,7 +98,7 @@ export function Index() {
                       className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 vietnamese-text min-h-[48px]"
                     >
                       <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
-                      <span>Nộp yêu cầu bồi thường ngay</span>
+                      <span>Nộp yêu c��u bồi thường ngay</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </Button>
                   </Link>
@@ -492,13 +492,6 @@ export function Index() {
               <span className="vietnamese-text">Đảm bảo chất lượng</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Auth Test (Temporary) */}
-      <section className="py-8 bg-muted">
-        <div className="container mx-auto px-4 flex justify-center">
-          <AuthTest />
         </div>
       </section>
 
