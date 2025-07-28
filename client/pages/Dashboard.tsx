@@ -44,6 +44,7 @@ import { useTranslation } from "@/lib/i18n";
 
 export function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [claims, setClaims] = useState<any[]>([]);
   const [executives, setExecutives] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
