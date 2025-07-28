@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { AuthTest } from "@/components/AuthTest";
 
 // Counter animation hook
 function useCounter(end: number, duration: number = 2000) {
