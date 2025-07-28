@@ -466,8 +466,8 @@ export function HealthcareClaimSubmission() {
               <div className="text-xs sm:text-sm font-medium text-primary vietnamese-text">
                 {steps[currentStep].title}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Bước {currentStep + 1} / {steps.length}
+              <div className="text-xs text-muted-foreground mt-1 vietnamese-text">
+                {t("claim.step_of")} {currentStep + 1} / {steps.length}
               </div>
             </div>
           </div>
@@ -1132,7 +1132,7 @@ export function HealthcareClaimSubmission() {
                             <strong>Họ tên:</strong> {formData.patient.fullName}
                           </div>
                           <div>
-                            <strong>Ng��y sinh:</strong>{" "}
+                            <strong>Ngày sinh:</strong>{" "}
                             {formData.patient.dateOfBirth}
                           </div>
                           <div>
