@@ -374,30 +374,30 @@ export function HealthcareClaimSubmission() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 vietnamese-text">
-              Nộp hồ sơ thành công!
+              {t("claim.success_title")}
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
-              Hồ sơ bồi thường của bạn đã được nộp thành công. Chúng tôi sẽ xử
-              lý và thông báo kết quả trong thời gian sớm nhất.
+              {t("claim.success_message")}
             </p>
 
             <div className="bg-white rounded-lg p-6 mb-6">
-              <div className="text-sm text-muted-foreground mb-2">Mã hồ sơ</div>
+              <div className="text-sm text-muted-foreground mb-2 vietnamese-text">{t("claim.claim_id_label")}</div>
               <div className="text-2xl font-mono font-bold text-primary">
                 {claimId}
               </div>
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button onClick={() => (window.location.href = "/dashboard")}>
-                Xem danh sách hồ sơ
+              <Button onClick={() => (window.location.href = "/dashboard")} className="vietnamese-text">
+                {t("claim.view_claims")}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => window.location.reload()}
+                className="vietnamese-text"
               >
-                Nộp hồ sơ mới
+                {t("claim.submit_new")}
               </Button>
             </div>
           </div>
@@ -819,7 +819,7 @@ export function HealthcareClaimSubmission() {
 
                     <div>
                       <Label htmlFor="treatmentDate">
-                        Ngày khám/điều trị *
+                        Ng��y khám/điều trị *
                       </Label>
                       <Input
                         id="treatmentDate"
