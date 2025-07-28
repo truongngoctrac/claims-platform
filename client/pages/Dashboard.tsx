@@ -40,6 +40,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { makeAuthenticatedRequest } from "@/contexts/AuthContext";
 import { UserRole } from "@shared/auth";
+import { useTranslation } from "@/lib/i18n";
 
 export function Dashboard() {
   const { user } = useAuth();
