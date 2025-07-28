@@ -496,6 +496,13 @@ export function Index() {
         </div>
       </section>
 
+      {/* Auth Test (Temporary) */}
+      <section className="py-8 bg-muted">
+        <div className="container mx-auto px-4 flex justify-center">
+          <AuthTest />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 sm:py-10 md:py-12 bg-neutral-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
