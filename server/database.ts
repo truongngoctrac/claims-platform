@@ -121,8 +121,6 @@ class Database {
     ];
   }
 
-  private userPasswords = new Map<string, string>();
-
   // User management
   async createUser(
     userData: Omit<User, "id" | "createdAt">,
