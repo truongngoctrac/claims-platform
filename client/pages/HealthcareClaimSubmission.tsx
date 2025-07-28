@@ -1219,8 +1219,9 @@ export function HealthcareClaimSubmission() {
                   variant="outline"
                   onClick={handlePrevious}
                   disabled={currentStep === 0}
+                  className="vietnamese-text"
                 >
-                  Quay lại
+                  {t("claim.back")}
                 </Button>
 
                 <div className="flex gap-2">
@@ -1229,26 +1230,27 @@ export function HealthcareClaimSubmission() {
                       variant="outline"
                       onClick={handleSaveDraft}
                       disabled={isSaving}
+                      className="vietnamese-text"
                     >
                       {isSaving ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Save className="w-4 h-4 mr-2" />
                       )}
-                      Lưu nháp
+                      {t("claim.save_draft")}
                     </Button>
                   )}
 
                   {currentStep < steps.length - 1 ? (
-                    <Button onClick={handleNext}>Tiếp theo</Button>
+                    <Button onClick={handleNext} className="vietnamese-text">{t("claim.next")}</Button>
                   ) : (
-                    <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    <Button onClick={handleSubmit} disabled={isSubmitting} className="vietnamese-text">
                       {isSubmitting ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Send className="w-4 h-4 mr-2" />
                       )}
-                      Nộp hồ sơ
+                      {t("claim.submit")}
                     </Button>
                   )}
                 </div>
