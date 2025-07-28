@@ -116,18 +116,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
+    const currentToken = token || localStorage.getItem("auth_token");
+
     setUser(null);
     setToken(null);
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
 
     // Call logout endpoint
-    fetch("/api/auth/logout", {
-      method: "POST",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    }).catch(console.error);
+    if (currentToken) {
+      fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+        },
+      }).catch(console.error);
+    }
   };
 
   const value: AuthContextType = {
