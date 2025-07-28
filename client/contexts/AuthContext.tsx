@@ -42,8 +42,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setToken(storedToken);
         setUser(parsedUser);
 
-        // Validate token with server
-        validateToken(storedToken);
+        // Validate token with server (async, don't await)
+        validateToken(storedToken).catch(() => {
+          // If validation fails, user will be logged out
+          console.log("Token validation failed, user logged out");
+        });
       } catch (error) {
         console.error("Error parsing stored user data:", error);
         logout();
@@ -62,18 +65,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Token validation failed");
+        console.warn(`Token validation failed with status: ${response.status}`);
+        logout();
+        return;
       }
 
       const data = await response.json();
       if (data.success && data.user) {
         setUser(data.user);
       } else {
-        throw new Error("Invalid token response");
+        console.warn("Invalid token response format:", data);
+        logout();
       }
     } catch (error) {
-      console.error("Token validation error:", error);
-      logout();
+      console.error("Token validation network error:", error);
+      // Don't logout on network errors, keep the stored user
+      // Only logout if it's a 401/403 response
     }
   };
 
