@@ -7,6 +7,7 @@ class Database {
   private claims: any[] = [];
   private assignments: ClaimAssignment[] = [];
   private notifications: Notification[] = [];
+  private userPasswords = new Map<string, string>();
 
   constructor() {
     this.initializeData();
