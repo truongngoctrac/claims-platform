@@ -173,7 +173,7 @@ export function Dashboard() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading dashboard...</p>
+              <p className="text-muted-foreground vietnamese-text">{t('dashboard.loading')}</p>
             </div>
           </div>
         </div>
@@ -190,9 +190,17 @@ export function Dashboard() {
       rejected: "bg-red-100 text-red-800",
     };
 
+    const statusTexts: { [key: string]: string } = {
+      pending: t('status.pending'),
+      "in-review": t('status.in_review'),
+      approved: t('status.approved'),
+      "requires-info": t('status.requires_info'),
+      rejected: t('status.rejected'),
+    };
+
     return (
-      <Badge className={`${variants[status]} border-0`}>
-        {status.replace("-", " ")}
+      <Badge className={`${variants[status]} border-0 vietnamese-text`}>
+        {statusTexts[status] || status}
       </Badge>
     );
   };
@@ -204,9 +212,15 @@ export function Dashboard() {
       low: "bg-green-100 text-green-800 border-green-200",
     };
 
+    const priorityTexts: { [key: string]: string } = {
+      high: t('priority.high'),
+      medium: t('priority.medium'),
+      low: t('priority.low'),
+    };
+
     return (
-      <Badge variant="outline" className={variants[priority]}>
-        {priority}
+      <Badge variant="outline" className={`${variants[priority]} vietnamese-text`}>
+        {priorityTexts[priority] || priority}
       </Badge>
     );
   };
