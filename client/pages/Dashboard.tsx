@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,9 +40,11 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { makeAuthenticatedRequest } from "@/contexts/AuthContext";
 import { UserRole } from "@shared/auth";
+import { useTranslation } from "@/lib/i18n";
 
 export function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [claims, setClaims] = useState<any[]>([]);
   const [executives, setExecutives] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -168,12 +169,11 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading dashboard...</p>
+              <p className="text-muted-foreground vietnamese-text">{t('dashboard.loading')}</p>
             </div>
           </div>
         </div>
@@ -190,9 +190,17 @@ export function Dashboard() {
       rejected: "bg-red-100 text-red-800",
     };
 
+    const statusTexts: { [key: string]: string } = {
+      pending: t('status.pending'),
+      "in-review": t('status.in_review'),
+      approved: t('status.approved'),
+      "requires-info": t('status.requires_info'),
+      rejected: t('status.rejected'),
+    };
+
     return (
-      <Badge className={`${variants[status]} border-0`}>
-        {status.replace("-", " ")}
+      <Badge className={`${variants[status]} border-0 vietnamese-text`}>
+        {statusTexts[status] || status}
       </Badge>
     );
   };
@@ -204,36 +212,40 @@ export function Dashboard() {
       low: "bg-green-100 text-green-800 border-green-200",
     };
 
+    const priorityTexts: { [key: string]: string } = {
+      high: t('priority.high'),
+      medium: t('priority.medium'),
+      low: t('priority.low'),
+    };
+
     return (
-      <Badge variant="outline" className={variants[priority]}>
-        {priority}
+      <Badge variant="outline" className={`${variants[priority]} vietnamese-text`}>
+        {priorityTexts[priority] || priority}
       </Badge>
     );
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Claims Dashboard
+            <h1 className="text-3xl font-bold text-foreground mb-2 vietnamese-text">
+              {t('dashboard.title')}
             </h1>
-            <p className="text-muted-foreground">
-              Monitor and manage all claims processing activities
+            <p className="text-muted-foreground vietnamese-text">
+              {t('dashboard.subtitle')}
             </p>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
-            <Button variant="outline">
+            <Button variant="outline" className="vietnamese-text">
               <Filter className="w-4 h-4 mr-2" />
-              Filter
+              {t('dashboard.filter')}
             </Button>
-            <Button>
+            <Button className="vietnamese-text">
               <Plus className="w-4 h-4 mr-2" />
-              New Claim
+              {t('dashboard.new_claim')}
             </Button>
           </div>
         </div>
@@ -242,60 +254,60 @@ export function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Claims
+              <CardTitle className="text-sm font-medium vietnamese-text">
+                {t('dashboard.total_claims')}
               </CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">2,847</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">+12%</span> from last month
+              <p className="text-xs text-muted-foreground vietnamese-text">
+                <span className="text-green-600">+12%</span> {t('dashboard.from_last_month')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Pending Review
+              <CardTitle className="text-sm font-medium vietnamese-text">
+                {t('dashboard.pending_review')}
               </CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">147</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-orange-600">+8</span> since yesterday
+              <p className="text-xs text-muted-foreground vietnamese-text">
+                <span className="text-orange-600">+8</span> {t('dashboard.since_yesterday')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Processed Today
+              <CardTitle className="text-sm font-medium vietnamese-text">
+                {t('dashboard.processed_today')}
               </CardTitle>
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">89</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">+23%</span> vs. yesterday
+              <p className="text-xs text-muted-foreground vietnamese-text">
+                <span className="text-green-600">+23%</span> {t('dashboard.vs_yesterday')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Avg Processing Time
+              <CardTitle className="text-sm font-medium vietnamese-text">
+                {t('dashboard.avg_processing_time')}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2.3 days</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">-0.5</span> improvement
+              <div className="text-2xl font-bold vietnamese-text">2.3 {t('dashboard.days')}</div>
+              <p className="text-xs text-muted-foreground vietnamese-text">
+                <span className="text-green-600">-0.5</span> {t('dashboard.improvement')}
               </p>
             </CardContent>
           </Card>
@@ -305,34 +317,34 @@ export function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>Processing Performance</CardTitle>
+              <CardTitle className="vietnamese-text">{t('dashboard.processing_performance')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Auto Insurance Claims</span>
+                  <div className="flex justify-between text-sm mb-2 vietnamese-text">
+                    <span>Bảo hiểm ô tô</span>
                     <span>85%</span>
                   </div>
                   <Progress value={85} className="h-2" />
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Home Insurance Claims</span>
+                  <div className="flex justify-between text-sm mb-2 vietnamese-text">
+                    <span>Bảo hiểm nhà ở</span>
                     <span>92%</span>
                   </div>
                   <Progress value={92} className="h-2" />
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Health Insurance Claims</span>
+                  <div className="flex justify-between text-sm mb-2 vietnamese-text">
+                    <span>{t('dashboard.health_insurance')}</span>
                     <span>78%</span>
                   </div>
                   <Progress value={78} className="h-2" />
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Life Insurance Claims</span>
+                  <div className="flex justify-between text-sm mb-2 vietnamese-text">
+                    <span>Bảo hiểm nhân thọ</span>
                     <span>96%</span>
                   </div>
                   <Progress value={96} className="h-2" />
@@ -343,7 +355,7 @@ export function Dashboard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Team Performance</CardTitle>
+              <CardTitle className="vietnamese-text">{t('dashboard.team_performance')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -353,23 +365,23 @@ export function Dashboard() {
                       <Users className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Sarah Wilson</p>
-                      <p className="text-xs text-muted-foreground">24 claims</p>
+                      <p className="text-sm font-medium">Nguyễn Thị Minh</p>
+                      <p className="text-xs text-muted-foreground vietnamese-text">24 {t('dashboard.claims_count')}</p>
                     </div>
                   </div>
-                  <Badge variant="secondary">Top Performer</Badge>
+                  <Badge variant="secondary" className="vietnamese-text">{t('dashboard.top_performer')}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-claim-teal-100 flex items-center justify-center">
-                      <Users className="w-4 h-4 text-claim-teal-600" />
+                    <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
+                      <Users className="w-4 h-4 text-secondary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Mike Johnson</p>
-                      <p className="text-xs text-muted-foreground">21 claims</p>
+                      <p className="text-sm font-medium">Trần Văn Hoàng</p>
+                      <p className="text-xs text-muted-foreground vietnamese-text">21 {t('dashboard.claims_count')}</p>
                     </div>
                   </div>
-                  <Badge variant="outline">Excellent</Badge>
+                  <Badge variant="outline" className="vietnamese-text">{t('dashboard.excellent')}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -377,11 +389,11 @@ export function Dashboard() {
                       <Users className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Lisa Brown</p>
-                      <p className="text-xs text-muted-foreground">18 claims</p>
+                      <p className="text-sm font-medium">Lê Thị Hà</p>
+                      <p className="text-xs text-muted-foreground vietnamese-text">18 {t('dashboard.claims_count')}</p>
                     </div>
                   </div>
-                  <Badge variant="outline">Good</Badge>
+                  <Badge variant="outline" className="vietnamese-text">{t('dashboard.good')}</Badge>
                 </div>
               </div>
             </CardContent>
@@ -392,13 +404,13 @@ export function Dashboard() {
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <CardTitle>Recent Claims</CardTitle>
+              <CardTitle className="vietnamese-text">{t('dashboard.recent_claims')}</CardTitle>
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
-                    placeholder="Search claims..."
-                    className="pl-10 pr-4 py-2 border border-input rounded-md bg-background text-sm"
+                    placeholder={t('dashboard.search_placeholder')}
+                    className="pl-10 pr-4 py-2 border border-input rounded-md bg-background text-sm vietnamese-text"
                   />
                 </div>
               </div>
@@ -407,42 +419,42 @@ export function Dashboard() {
           <CardContent>
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="mb-4">
-                <TabsTrigger value="all">All Claims</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
-                <TabsTrigger value="in-review">In Review</TabsTrigger>
-                <TabsTrigger value="approved">Approved</TabsTrigger>
+                <TabsTrigger value="all" className="vietnamese-text">{t('dashboard.all_claims')}</TabsTrigger>
+                <TabsTrigger value="pending" className="vietnamese-text">{t('dashboard.pending')}</TabsTrigger>
+                <TabsTrigger value="in-review" className="vietnamese-text">{t('dashboard.in_review')}</TabsTrigger>
+                <TabsTrigger value="approved" className="vietnamese-text">{t('dashboard.approved')}</TabsTrigger>
               </TabsList>
               <TabsContent value="all">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Claim ID
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.claim_id')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Customer
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.customer')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Type
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.type')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Amount
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.amount')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Status
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.status')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Priority
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.priority')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Assignee
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.assignee')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Days Open
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.days_open')}
                         </th>
-                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground">
-                          Actions
+                        <th className="text-left py-3 px-2 font-medium text-sm text-muted-foreground vietnamese-text">
+                          {t('dashboard.actions')}
                         </th>
                       </tr>
                     </thead>
@@ -475,7 +487,7 @@ export function Dashboard() {
                           </td>
                           <td className="py-4 px-2">
                             <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium vietnamese-text ${
                                 claim.daysOpen > 5
                                   ? "bg-red-100 text-red-800"
                                   : claim.daysOpen > 3
@@ -483,7 +495,7 @@ export function Dashboard() {
                                     : "bg-green-100 text-green-800"
                               }`}
                             >
-                              {claim.daysOpen} days
+                              {claim.daysOpen} {t('dashboard.days')}
                             </span>
                           </td>
                           <td className="py-4 px-2">
@@ -503,18 +515,18 @@ export function Dashboard() {
                 </div>
               </TabsContent>
               <TabsContent value="pending">
-                <div className="text-center py-8 text-muted-foreground">
-                  Showing pending claims only...
+                <div className="text-center py-8 text-muted-foreground vietnamese-text">
+                  Đang hiển thị các yêu cầu chờ xử lý...
                 </div>
               </TabsContent>
               <TabsContent value="in-review">
-                <div className="text-center py-8 text-muted-foreground">
-                  Showing claims in review...
+                <div className="text-center py-8 text-muted-foreground vietnamese-text">
+                  Đang hiển thị các yêu cầu đang xem xét...
                 </div>
               </TabsContent>
               <TabsContent value="approved">
-                <div className="text-center py-8 text-muted-foreground">
-                  Showing approved claims...
+                <div className="text-center py-8 text-muted-foreground vietnamese-text">
+                  Đang hiển thị các yêu cầu đã duyệt...
                 </div>
               </TabsContent>
             </Tabs>

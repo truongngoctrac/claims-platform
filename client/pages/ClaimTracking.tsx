@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -92,7 +91,9 @@ interface ClaimDetails {
 
 export function ClaimTracking() {
   const { user } = useAuth();
-  const [searchMethod, setSearchMethod] = useState<"claim" | "contract" | "phone">("claim");
+  const [searchMethod, setSearchMethod] = useState<
+    "claim" | "contract" | "phone"
+  >("claim");
   const [searchData, setSearchData] = useState({
     claimNumber: "",
     contractNumber: "",
@@ -112,7 +113,7 @@ export function ClaimTracking() {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Mock claim data
       const mockClaim: ClaimDetails = {
@@ -218,7 +219,8 @@ export function ClaimTracking() {
             id: "1",
             author: "Hệ thống",
             role: "system",
-            message: "Hồ sơ của bạn đã được tiếp nhận và đang trong quá trình xử lý",
+            message:
+              "Hồ sơ của bạn đã được tiếp nhận và đang trong quá trình xử lý",
             timestamp: "15/01/2024 09:30",
             type: "info",
           },
@@ -226,7 +228,8 @@ export function ClaimTracking() {
             id: "2",
             author: "Nguyễn Thị Mai",
             role: "Chuyên viên thẩm định",
-            message: "Chúng tôi đã xác minh thành công các tài liệu của bạn. Hồ sơ đang được chuyển sang bước đánh giá.",
+            message:
+              "Chúng tôi đã xác minh thành công các tài liệu của bạn. Hồ sơ đang được chuyển sang bước đánh giá.",
             timestamp: "15/01/2024 16:45",
             type: "update",
           },
@@ -234,7 +237,8 @@ export function ClaimTracking() {
             id: "3",
             author: "Hệ thống",
             role: "system",
-            message: "Thời gian xử lý dự kiến: 3-5 ngày làm việc kể từ ngày nhận hồ sơ",
+            message:
+              "Thời gian xử lý dự kiến: 3-5 ngày làm việc kể từ ngày nhận hồ sơ",
             timestamp: "16/01/2024 09:00",
             type: "info",
           },
@@ -282,8 +286,6 @@ export function ClaimTracking() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -306,7 +308,10 @@ export function ClaimTracking() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Tabs value={searchMethod} onValueChange={(value) => setSearchMethod(value as any)}>
+                <Tabs
+                  value={searchMethod}
+                  onValueChange={(value) => setSearchMethod(value as any)}
+                >
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="claim">Mã hồ sơ</TabsTrigger>
                     <TabsTrigger value="contract">Số hợp đồng</TabsTrigger>
@@ -321,7 +326,10 @@ export function ClaimTracking() {
                         placeholder="Ví dụ: HC240115001"
                         value={searchData.claimNumber}
                         onChange={(e) =>
-                          setSearchData(prev => ({ ...prev, claimNumber: e.target.value }))
+                          setSearchData((prev) => ({
+                            ...prev,
+                            claimNumber: e.target.value,
+                          }))
                         }
                       />
                       <p className="text-sm text-muted-foreground mt-1">
@@ -333,13 +341,18 @@ export function ClaimTracking() {
                   <TabsContent value="contract" className="space-y-4 mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="contractNumber">Số hợp đồng bảo hiểm</Label>
+                        <Label htmlFor="contractNumber">
+                          Số hợp đồng bảo hiểm
+                        </Label>
                         <Input
                           id="contractNumber"
                           placeholder="Ví d���: PVI202400123"
                           value={searchData.contractNumber}
                           onChange={(e) =>
-                            setSearchData(prev => ({ ...prev, contractNumber: e.target.value }))
+                            setSearchData((prev) => ({
+                              ...prev,
+                              contractNumber: e.target.value,
+                            }))
                           }
                         />
                       </div>
@@ -350,7 +363,10 @@ export function ClaimTracking() {
                           placeholder="Họ tên hoặc CMND"
                           value={searchData.personalInfo}
                           onChange={(e) =>
-                            setSearchData(prev => ({ ...prev, personalInfo: e.target.value }))
+                            setSearchData((prev) => ({
+                              ...prev,
+                              personalInfo: e.target.value,
+                            }))
                           }
                         />
                       </div>
@@ -365,7 +381,10 @@ export function ClaimTracking() {
                         placeholder="Ví dụ: 0912345678"
                         value={searchData.phoneNumber}
                         onChange={(e) =>
-                          setSearchData(prev => ({ ...prev, phoneNumber: e.target.value }))
+                          setSearchData((prev) => ({
+                            ...prev,
+                            phoneNumber: e.target.value,
+                          }))
                         }
                       />
                       {!showOTPInput ? (
@@ -386,7 +405,10 @@ export function ClaimTracking() {
                             placeholder="Nhập mã 6 số"
                             value={searchData.otp}
                             onChange={(e) =>
-                              setSearchData(prev => ({ ...prev, otp: e.target.value }))
+                              setSearchData((prev) => ({
+                                ...prev,
+                                otp: e.target.value,
+                              }))
                             }
                             maxLength={6}
                           />
@@ -424,10 +446,7 @@ export function ClaimTracking() {
             <div className="space-y-6">
               {/* Header Actions */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setClaimDetails(null)}
-                >
+                <Button variant="outline" onClick={() => setClaimDetails(null)}>
                   ← Tìm ki��m khác
                 </Button>
 
@@ -459,14 +478,23 @@ export function ClaimTracking() {
                       <CardTitle className="text-h2-mobile md:text-h2-desktop">
                         {claimDetails.claimNumber}
                       </CardTitle>
-                      <p className="text-muted-foreground">{claimDetails.type}</p>
+                      <p className="text-muted-foreground">
+                        {claimDetails.type}
+                      </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Badge className={cn("text-sm", getStatusColor(claimDetails.status))}>
+                      <Badge
+                        className={cn(
+                          "text-sm",
+                          getStatusColor(claimDetails.status),
+                        )}
+                      >
                         {claimDetails.status}
                       </Badge>
                       <div className="text-sm text-muted-foreground">
-                        Ước tính hoàn thành: {calculateDaysLeft(claimDetails.estimatedCompletion)} ngày nữa
+                        Ước tính hoàn thành:{" "}
+                        {calculateDaysLeft(claimDetails.estimatedCompletion)}{" "}
+                        ngày nữa
                       </div>
                     </div>
                   </div>
@@ -480,9 +508,17 @@ export function ClaimTracking() {
                         Thông tin bệnh nhân
                       </h4>
                       <div className="space-y-1 text-sm">
-                        <div><strong>Họ tên:</strong> {claimDetails.patient.name}</div>
-                        <div><strong>Ngày sinh:</strong> {claimDetails.patient.dateOfBirth}</div>
-                        <div><strong>Số BHYT:</strong> {claimDetails.patient.insuranceNumber}</div>
+                        <div>
+                          <strong>Họ tên:</strong> {claimDetails.patient.name}
+                        </div>
+                        <div>
+                          <strong>Ngày sinh:</strong>{" "}
+                          {claimDetails.patient.dateOfBirth}
+                        </div>
+                        <div>
+                          <strong>Số BHYT:</strong>{" "}
+                          {claimDetails.patient.insuranceNumber}
+                        </div>
                       </div>
                     </div>
 
@@ -493,9 +529,20 @@ export function ClaimTracking() {
                         Thông tin điều trị
                       </h4>
                       <div className="space-y-1 text-sm">
-                        <div><strong>Bệnh viện:</strong> {claimDetails.hospital.name}</div>
-                        <div><strong>Ngày điều trị:</strong> {claimDetails.hospital.treatmentDate}</div>
-                        <div><strong>Ngày nộp:</strong> {new Date(claimDetails.submittedAt).toLocaleDateString("vi-VN")}</div>
+                        <div>
+                          <strong>Bệnh viện:</strong>{" "}
+                          {claimDetails.hospital.name}
+                        </div>
+                        <div>
+                          <strong>Ngày điều trị:</strong>{" "}
+                          {claimDetails.hospital.treatmentDate}
+                        </div>
+                        <div>
+                          <strong>Ngày nộp:</strong>{" "}
+                          {new Date(
+                            claimDetails.submittedAt,
+                          ).toLocaleDateString("vi-VN")}
+                        </div>
                       </div>
                     </div>
 
@@ -506,10 +553,23 @@ export function ClaimTracking() {
                         Thông tin tài chính
                       </h4>
                       <div className="space-y-1 text-sm">
-                        <div><strong>Tổng chi phí:</strong> {formatCurrency(claimDetails.financial.totalAmount)}</div>
-                        <div><strong>Yêu cầu bồi thường:</strong> {formatCurrency(claimDetails.financial.requestedAmount)}</div>
+                        <div>
+                          <strong>Tổng chi phí:</strong>{" "}
+                          {formatCurrency(claimDetails.financial.totalAmount)}
+                        </div>
+                        <div>
+                          <strong>Yêu cầu bồi thường:</strong>{" "}
+                          {formatCurrency(
+                            claimDetails.financial.requestedAmount,
+                          )}
+                        </div>
                         {claimDetails.financial.approvedAmount && (
-                          <div><strong>Số tiền duyệt:</strong> {formatCurrency(claimDetails.financial.approvedAmount)}</div>
+                          <div>
+                            <strong>Số tiền duyệt:</strong>{" "}
+                            {formatCurrency(
+                              claimDetails.financial.approvedAmount,
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -531,17 +591,25 @@ export function ClaimTracking() {
                       <div key={status.id} className="flex gap-4">
                         {/* Timeline dot */}
                         <div className="flex flex-col items-center">
-                          <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center text-white",
-                            status.completed ? status.color : status.current ? "bg-warning" : "bg-muted"
-                          )}>
+                          <div
+                            className={cn(
+                              "w-10 h-10 rounded-full flex items-center justify-center text-white",
+                              status.completed
+                                ? status.color
+                                : status.current
+                                  ? "bg-warning"
+                                  : "bg-muted",
+                            )}
+                          >
                             {status.icon}
                           </div>
                           {index < claimDetails.timeline.length - 1 && (
-                            <div className={cn(
-                              "w-0.5 h-8 mt-2",
-                              status.completed ? "bg-success" : "bg-muted"
-                            )} />
+                            <div
+                              className={cn(
+                                "w-0.5 h-8 mt-2",
+                                status.completed ? "bg-success" : "bg-muted",
+                              )}
+                            />
                           )}
                         </div>
 
@@ -555,7 +623,9 @@ export function ClaimTracking() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-sm">{status.description}</p>
+                          <p className="text-muted-foreground text-sm">
+                            {status.description}
+                          </p>
                           {status.timestamp && (
                             <div className="text-xs text-muted-foreground mt-1">
                               {status.timestamp}
@@ -579,7 +649,10 @@ export function ClaimTracking() {
                 <CardContent>
                   <div className="space-y-3">
                     {claimDetails.documents.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={doc.id}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div className="flex items-center gap-3">
                           <FileText className="w-5 h-5 text-muted-foreground" />
                           <div>
@@ -617,7 +690,10 @@ export function ClaimTracking() {
                 <CardContent>
                   <div className="space-y-4">
                     {claimDetails.communications.map((comm) => (
-                      <div key={comm.id} className="border-l-2 border-primary/20 pl-4">
+                      <div
+                        key={comm.id}
+                        className="border-l-2 border-primary/20 pl-4"
+                      >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{comm.author}</span>
@@ -629,7 +705,9 @@ export function ClaimTracking() {
                             {comm.timestamp}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">{comm.message}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {comm.message}
+                        </p>
                       </div>
                     ))}
                   </div>

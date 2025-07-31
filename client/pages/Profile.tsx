@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -311,7 +311,6 @@ export function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -326,8 +325,6 @@ export function Profile() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

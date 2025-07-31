@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -47,6 +46,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { makeAuthenticatedRequest } from "@/contexts/AuthContext";
 import { ClaimType, TreatmentType, DocumentType } from "@shared/healthcare";
 import { FileUpload } from "@/components/ui/file-upload";
+import { useTranslation } from "@/lib/i18n";
 
 interface ClaimFormData {
   type: ClaimType | "";
@@ -96,6 +96,7 @@ interface ClaimFormData {
 
 export function HealthcareClaimSubmission() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ClaimFormData>({
     type: "",
@@ -147,32 +148,32 @@ export function HealthcareClaimSubmission() {
   const steps = [
     {
       id: "basic",
-      title: "Thông tin cơ bản",
+      title: t("claim.basic_info"),
       icon: <FileText className="w-5 h-5" />,
     },
     {
       id: "patient",
-      title: "Thông tin bệnh nhân",
+      title: t("claim.patient_info"),
       icon: <User className="w-5 h-5" />,
     },
     {
       id: "medical",
-      title: "Thông tin y tế",
+      title: t("claim.medical_info"),
       icon: <Hospital className="w-5 h-5" />,
     },
     {
       id: "financial",
-      title: "Thông tin tài chính",
+      title: t("claim.financial_info"),
       icon: <CreditCard className="w-5 h-5" />,
     },
     {
       id: "documents",
-      title: "Tài liệu",
+      title: t("claim.documents"),
       icon: <Upload className="w-5 h-5" />,
     },
     {
       id: "review",
-      title: "Xem lại",
+      title: t("claim.review"),
       icon: <CheckCircle className="w-5 h-5" />,
     },
   ];
@@ -366,39 +367,37 @@ export function HealthcareClaimSubmission() {
   if (submitSuccess) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
-
         <div className="container mx-auto px-6 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
 
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              Nộp hồ sơ thành c��ng!
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 vietnamese-text">
+              {t("claim.success_title")}
             </h1>
 
-            <p className="text-lg text-muted-foreground mb-6">
-              Hồ sơ bồi thường của bạn đ�� được nộp thành công. Chúng tôi sẽ xử
-              lý và thông báo kết quả trong thời gian sớm nhất.
+            <p className="text-base sm:text-lg text-muted-foreground mb-6 vietnamese-text">
+              {t("claim.success_message")}
             </p>
 
             <div className="bg-white rounded-lg p-6 mb-6">
-              <div className="text-sm text-muted-foreground mb-2">Mã hồ sơ</div>
+              <div className="text-sm text-muted-foreground mb-2 vietnamese-text">{t("claim.claim_id_label")}</div>
               <div className="text-2xl font-mono font-bold text-primary">
                 {claimId}
               </div>
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button onClick={() => (window.location.href = "/dashboard")}>
-                Xem danh sách hồ sơ
+              <Button onClick={() => (window.location.href = "/dashboard")} className="vietnamese-text">
+                {t("claim.view_claims")}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => window.location.reload()}
+                className="vietnamese-text"
               >
-                Nộp hồ sơ mới
+                {t("claim.submit_new")}
               </Button>
             </div>
           </div>
@@ -409,42 +408,40 @@ export function HealthcareClaimSubmission() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-
-      <div className="container mx-auto px-6 py-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Nộp hồ sơ bồi thường y tế
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 vietnamese-text">
+              {t("claim.title")}
             </h1>
-            <p className="text-muted-foreground">
-              Vui lòng điền đầy đủ thông tin để nộp yêu cầu bồi thường
+            <p className="text-sm sm:text-base text-muted-foreground vietnamese-text">
+              {t("claim.subtitle")}
             </p>
           </div>
 
           {/* Progress Steps */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center justify-between overflow-x-auto pb-2">
               {steps.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`flex items-center ${
+                  className={`flex items-center min-w-0 ${
                     index < steps.length - 1 ? "flex-1" : ""
                   }`}
                 >
                   <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex-shrink-0 ${
                       index <= currentStep
                         ? "bg-primary border-primary text-primary-foreground"
                         : "border-muted-foreground text-muted-foreground"
                     }`}
                   >
-                    {step.icon}
+                    <span className="scale-75 sm:scale-100">{step.icon}</span>
                   </div>
-                  <div className="ml-3 hidden md:block">
+                  <div className="ml-2 sm:ml-3 hidden lg:block min-w-0">
                     <div
-                      className={`text-sm font-medium ${
+                      className={`text-xs sm:text-sm font-medium vietnamese-text truncate ${
                         index <= currentStep
                           ? "text-primary"
                           : "text-muted-foreground"
@@ -455,7 +452,7 @@ export function HealthcareClaimSubmission() {
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-4 ${
+                      className={`flex-1 h-0.5 mx-2 sm:mx-4 ${
                         index < currentStep ? "bg-primary" : "bg-muted"
                       }`}
                     />
@@ -463,19 +460,33 @@ export function HealthcareClaimSubmission() {
                 </div>
               ))}
             </div>
+
+            {/* Mobile step indicator */}
+            <div className="lg:hidden text-center mt-3">
+              <div className="text-xs sm:text-sm font-medium text-primary vietnamese-text">
+                {steps[currentStep].title}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1 vietnamese-text">
+                {t("claim.step_of")} {currentStep + 1} / {steps.length}
+              </div>
+            </div>
           </div>
 
           {/* Form Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{steps[currentStep].title}</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg sm:text-xl vietnamese-text">
+                {steps[currentStep].title}
+              </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               {/* Step 0: Basic Information */}
               {currentStep === 0 && (
                 <div className="space-y-6">
                   <div>
-                    <Label htmlFor="claimType">Loại yêu cầu bồi thường *</Label>
+                    <Label htmlFor="claimType" className="vietnamese-text">
+                      Loại yêu cầu bồi thường *
+                    </Label>
                     <Select
                       value={formData.type}
                       onValueChange={(value) =>
@@ -483,37 +494,64 @@ export function HealthcareClaimSubmission() {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại yêu cầu bồi thường" />
+                        <SelectValue
+                          placeholder="Chọn loại yêu cầu bồi thường"
+                          className="vietnamese-text"
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={ClaimType.OUTPATIENT}>
+                        <SelectItem
+                          value={ClaimType.OUTPATIENT}
+                          className="vietnamese-text"
+                        >
                           Ngoại trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.INPATIENT}>
+                        <SelectItem
+                          value={ClaimType.INPATIENT}
+                          className="vietnamese-text"
+                        >
                           Nội trú
                         </SelectItem>
-                        <SelectItem value={ClaimType.EMERGENCY}>
+                        <SelectItem
+                          value={ClaimType.EMERGENCY}
+                          className="vietnamese-text"
+                        >
                           Cấp cứu
                         </SelectItem>
-                        <SelectItem value={ClaimType.DENTAL}>
+                        <SelectItem
+                          value={ClaimType.DENTAL}
+                          className="vietnamese-text"
+                        >
                           Nha khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.MATERNITY}>
+                        <SelectItem
+                          value={ClaimType.MATERNITY}
+                          className="vietnamese-text"
+                        >
                           Sản khoa
                         </SelectItem>
-                        <SelectItem value={ClaimType.PHARMACY}>
+                        <SelectItem
+                          value={ClaimType.PHARMACY}
+                          className="vietnamese-text"
+                        >
                           Dược phẩm
                         </SelectItem>
-                        <SelectItem value={ClaimType.SURGERY}>
+                        <SelectItem
+                          value={ClaimType.SURGERY}
+                          className="vietnamese-text"
+                        >
                           Phẫu thuật
                         </SelectItem>
-                        <SelectItem value={ClaimType.DIAGNOSTIC}>
+                        <SelectItem
+                          value={ClaimType.DIAGNOSTIC}
+                          className="vietnamese-text"
+                        >
                           Chẩn đoán
                         </SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.type && (
-                      <div className="text-sm text-destructive mt-1">
+                      <div className="text-sm text-destructive mt-1 vietnamese-text">
                         {errors.type}
                       </div>
                     )}
@@ -521,7 +559,7 @@ export function HealthcareClaimSubmission() {
 
                   <Alert>
                     <Info className="h-4 w-4" />
-                    <AlertDescription>
+                    <AlertDescription className="vietnamese-text">
                       Vui lòng chọn loại yêu cầu bồi thường phù hợp với trường
                       hợp của bạn. Thông tin này sẽ giúp chúng tôi xử lý hồ sơ
                       nhanh chóng và chính xác hơn.
@@ -532,8 +570,8 @@ export function HealthcareClaimSubmission() {
 
               {/* Step 1: Patient Information */}
               {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <Label htmlFor="fullName">Họ và tên *</Label>
                       <Input
@@ -1181,8 +1219,9 @@ export function HealthcareClaimSubmission() {
                   variant="outline"
                   onClick={handlePrevious}
                   disabled={currentStep === 0}
+                  className="vietnamese-text"
                 >
-                  Quay lại
+                  {t("claim.back")}
                 </Button>
 
                 <div className="flex gap-2">
@@ -1191,26 +1230,27 @@ export function HealthcareClaimSubmission() {
                       variant="outline"
                       onClick={handleSaveDraft}
                       disabled={isSaving}
+                      className="vietnamese-text"
                     >
                       {isSaving ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Save className="w-4 h-4 mr-2" />
                       )}
-                      Lưu nháp
+                      {t("claim.save_draft")}
                     </Button>
                   )}
 
                   {currentStep < steps.length - 1 ? (
-                    <Button onClick={handleNext}>Tiếp theo</Button>
+                    <Button onClick={handleNext} className="vietnamese-text">{t("claim.next")}</Button>
                   ) : (
-                    <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    <Button onClick={handleSubmit} disabled={isSubmitting} className="vietnamese-text">
                       {isSubmitting ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Send className="w-4 h-4 mr-2" />
                       )}
-                      Nộp hồ sơ
+                      {t("claim.submit")}
                     </Button>
                   )}
                 </div>

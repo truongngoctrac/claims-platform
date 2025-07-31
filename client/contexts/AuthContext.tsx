@@ -42,8 +42,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setToken(storedToken);
         setUser(parsedUser);
 
-        // Validate token with server
-        validateToken(storedToken);
+        // Validate token with server (async, don't await)
+        validateToken(storedToken).catch(() => {
+          // If validation fails, user will be logged out
+          console.log("Token validation failed, user logged out");
+        });
       } catch (error) {
         console.error("Error parsing stored user data:", error);
         logout();
@@ -62,18 +65,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Token validation failed");
+        console.warn(`Token validation failed with status: ${response.status}`);
+        logout();
+        return;
       }
 
       const data = await response.json();
       if (data.success && data.user) {
         setUser(data.user);
       } else {
-        throw new Error("Invalid token response");
+        console.warn("Invalid token response format:", data);
+        logout();
       }
     } catch (error) {
-      console.error("Token validation error:", error);
-      logout();
+      console.error("Token validation network error:", error);
+      // Don't logout on network errors, keep the stored user
+      // Only logout if it's a 401/403 response
     }
   };
 
@@ -109,18 +116,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
+    const currentToken = token || localStorage.getItem("auth_token");
+
     setUser(null);
     setToken(null);
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
 
     // Call logout endpoint
-    fetch("/api/auth/logout", {
-      method: "POST",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    }).catch(console.error);
+    if (currentToken) {
+      fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+        },
+      }).catch(console.error);
+    }
   };
 
   const value: AuthContextType = {
@@ -152,17 +163,26 @@ export async function makeAuthenticatedRequest(
     ...options.headers,
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
 
-  if (response.status === 401) {
-    // Token expired or invalid, logout user
-    const authEvent = new CustomEvent("auth:logout");
-    window.dispatchEvent(authEvent);
-    throw new Error("Authentication expired");
+    if (response.status === 401 || response.status === 403) {
+      // Token expired or invalid, clear storage and redirect
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+
+      // Trigger a page reload to reset auth state
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
+    }
+
+    return response;
+  } catch (error) {
+    // Network or other errors
+    console.error("API request failed:", error);
+    throw error;
   }
-
-  return response;
 }
